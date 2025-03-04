@@ -1,0 +1,77 @@
+<!-- Location container -->
+<div class="location-container" *ngIf="!userProfiles.length">
+  <button 
+    class="location-button"
+    (click)="loadProfiles()"
+    [disabled]="isLoading"
+  >
+    <span class="button-text">{{ isLoading ? 'Finding Profiles...' : 'Find Profiles Near Me' }}</span>
+    <span class="button-icon"><i class="fas fa-satellite-dish"></i></span>
+  </button>
+  
+  <!-- Error display -->
+  <div *ngIf="locationError" class="error-message">
+    <i class="fas fa-exclamation-triangle"></i>
+    {{ locationError }}
+  </div>
+</div>
+
+<!-- Profiles grid -->
+<div class="profiles-grid">
+  <!-- Loading state -->
+  <div *ngIf="isLoading && !userProfiles.length" class="loading-state">
+    <app-custom-spinner></app-custom-spinner>
+    <p>Discovering profiles in your area...</p>
+  </div>
+  
+  <!-- Profile cards -->
+  <div *ngFor="let profile of userProfiles" class="profile-card">
+    <!-- Background image fills entire card -->
+    <div class="card-background" [style.background-image]="'url(' + profile.images[0] + ')'"></div>
+    
+    <!-- Glass overlay -->
+    <div class="glass-overlay"></div>
+    
+    <!-- Card content positioned on top of background -->
+    <div class="card-content-wrapper">
+      <!-- Header section -->
+      <div class="card-header">
+        <div class="profile-meta">
+          <h3 class="profile-name">{{ profile.fullName }}</h3>
+          <p class="profile-username">{{ '@' + profile.username }}</p>
+        </div>
+        
+        <!-- Badges -->
+        <div class="badge-container">
+          <span *ngIf="profile.level === 'vip'" class="badge vip-badge">
+            <i class="fas fa-star"></i> VIP
+          </span>
+          <span *ngIf="profile.level === 'premium'" class="badge premium-badge">
+            <i class="fas fa-crown"></i> Premium
+          </span>
+        </div>
+      </div>
+      
+      <!-- Middle content -->
+      <div class="card-content">
+        <div class="services-section">
+          <i class="fas fa-briefcase"></i>
+          <span class="services-list">{{ profile.services.join(', ') }}</span>
+        </div>
+        <div *ngIf="profile.distance" class="distance-indicator">
+          <i class="fas fa-map-marker-alt"></i>
+          <span class="distance-value">
+            {{ profile.distance | number:'1.0-0' }} meters away
+          </span>
+        </div>
+      </div>
+      
+      <!-- Footer -->
+      <div class="card-footer">
+        <button class="action-button">
+          <i class="fas fa-eye"></i> View Profile
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -5,126 +5,107 @@ const profileSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
-    unique: true
+  },
+  fullName: {
+    type: String,
+    trim: true,
+  },
+  username: {
+    type: String,
+    trim: true,
+    unique: true,
   },
   bio: {
     type: String,
-    maxlength: 500,
-    validate: {
-      validator: function(v) {
-        // Basic profanity filter
-        return !/\[badword\]/gi.test(v);
-      },
-      message: 'Bio contains restricted content'
-    }
+    trim: true,
   },
   services: {
     type: [String],
-    enum: [
-      'incall',
-      'outcall',
-      'GFE',
-      'PSE',
-      'social-companionship',
-      'travel-companion',
-      'erotic-massage'
-    ],
-  },
-  level: {
-    type: String,
-    enum: ['vip', 'regular']
+    default: [],
   },
   rates: {
     incall: {
-      type: Map,
-      of: Number,
+      '30 minutes': { type: Number, min: 0 },
+      '1 hour': { type: Number, min: 0 },
     },
     outcall: {
-      type: Map,
-      of: Number,
-    }
+      '30 minutes': { type: Number, min: 0 },
+      '1 hour': { type: Number, min: 0 },
+    },
   },
   physicalAttributes: {
-    gender: {
-      type: String,
-      enum: ['female', 'male', 'trans', 'non-binary'],
-    },
-    birthdate: Date,
-    height: Number,
-    weight: Number,
-    ethnicity: String,
-    bustSize: String,
-    bustType: String,
-    pubicHair: String,
-    tattoos: Boolean,
-    piercings: Boolean
+    gender: { type: String, trim: true },
+    birthdate: { type: Date },
+    height: { type: Number, min: 0 }, // Height in cm
+    weight: { type: Number, min: 0 }, // Weight in kg
+    ethnicity: { type: String, trim: true },
+    bustSize: { type: String, trim: true },
+    bustType: { type: String, trim: true },
+    pubicHair: { type: String, trim: true },
+    tattoos: { type: Boolean, default: false },
+    piercings: { type: Boolean, default: false },
   },
-  availabileToMeet: {
-    meetingWith: {
-      type: [String],
-      enum: ['men', 'women', 'couples', 'trans']
-    },
-    available24_7: Boolean,
-    advanceBooking: Boolean
+  availableToMeet: {
+    meetingWith: { type: [String], default: [] },
+    available24_7: { type: Boolean, default: false },
+    advanceBooking: { type: Boolean, default: false },
   },
   contact: {
-    phone: String,
-    country: String,
-    city: String,
+    phone: { type: String, trim: true },
+    country: { type: String, trim: true },
+    city: { type: String, trim: true },
     location: {
-      type: {
-        type: String,
-        enum: ['Point'],
-      },
-      coordinates: {
-        type: [Number],
-      }
+      type: { type: String, default: 'Point' },
+      coordinates: { type: [Number], default: [0, 0] }
     }
   },
-  workingTime: String,
-  availability: {
-    schedule: {
-      type: Map,
-      of: Boolean,
-    },
-    timezone: {
-      type: String,
-    }
+  level: {
+    type: String,
+    enum: ['standard', 'premium', 'vip'],
+    default: 'standard',
   },
-  termsAccepted: {
-    type: Boolean,
-    default: false
-  },
+  workingTime: { type: String, trim: true },
+  termsAccepted: { type: Boolean, default: false },
   verificationStatus: {
     type: String,
     enum: ['pending', 'verified', 'rejected'],
-    default: 'pending'
+    default: 'pending',
   },
   moderationFlags: {
-    contentWarnings: Number,
-    lastReviewed: Date,
-    reviewerNotes: String
+    contentWarnings: { type: Number, default: 0 },
+    lastReviewed: { type: Date },
+    reviewerNotes: { type: String, trim: true },
   },
-  verificationDocuments: [String]
-}, { 
-  timestamps: true,
-  toJSON: { virtuals: true },
-  toObject: { virtuals: true }
+  verificationDocuments: { type: [String], default: [] },
+  images: { type: [String], default: [] },
+  videos: { type: [String], default: [] },
 });
 
-// Index for searchable fields
-profileSchema.index({
-  bio: 'text',
-  services: 'text'
-});
+// Add a 2dsphere geospatial index for proximity queries
+profileSchema.index({ 'contact.location': '2dsphere' });
+// Profile.js (no modifications needed)
+profileSchema.index({ 'contact.location': '2dsphere' });
 
-profileSchema.statics.createProfile = async function(userId, birthdate, profileData) {
+// Static method to create a profile
+profileSchema.statics.createProfile = async function (userId, birthdate, profileData) {
   const profile = new this({
     user: userId,
-    birthdate, 
-    ...profileData
+    birthdate,
+    ...profileData,
   });
   return await profile.save();
 };
 
-export default mongoose.model('Profile', profileSchema);
+// Static method to update a profile
+profileSchema.statics.updateProfile = async function (userId, profileData) {
+  const updatedProfile = await this.findOneAndUpdate(
+    { user: userId },
+    { $set: profileData },
+    { new: true, runValidators: true }
+  );
+  return updatedProfile;
+};
+
+const Profile = mongoose.model('Profile', profileSchema);
+
+export default Profile;

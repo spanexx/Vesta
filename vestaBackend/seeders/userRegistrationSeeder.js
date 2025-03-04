@@ -1,5 +1,5 @@
-const axios = require('axios');
-const MongoClient = require('mongodb').MongoClient;
+import axios from 'axios';
+import { MongoClient } from 'mongodb';
 const url = 'mongodb+srv://girlfriendExp:cc58uyAWEgVu7KT6@girlfriendexp.7qu5l.mongodb.net/Vesta?retryWrites=true&w=majority&appName=girlfriendExp';
 const dbName = 'Vesta';
 

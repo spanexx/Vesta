@@ -1,15 +1,18 @@
 import express from 'express';
-import auth from '../middleware/auth.js';
-import Profile from '../models/Profile.js';
 import User from '../models/User.js';
+import Profile from '../models/Profile.js';
+import auth from '../middleware/auth.js';
 import createErrorResponse from '../utils/errorHandler.js';
 
-// update profile
 const router = express.Router();
+
+// update profile
 router.post('/update', auth, async (req, res) => {
   try {
     const profileData = {
       user: req.userId,
+      fullName: req.body.fullName,  // Added fullName
+      username: req.body.username,  // Added username
       bio: req.body.bio,
       services: req.body.services,
       rates: {
@@ -39,7 +42,10 @@ router.post('/update', auth, async (req, res) => {
         city: req.body.contact.city,
         location: req.body.contact.location && {
           type: 'Point',
-          coordinates: [parseFloat(req.body.contact.location.coordinates[0]), parseFloat(req.body.contact.location.coordinates[1])]
+          coordinates: [
+            parseFloat(req.body.contact.location.coordinates[0]),
+            parseFloat(req.body.contact.location.coordinates[1])
+          ]
         }
       },
       workingTime: req.body.workingTime,
@@ -50,38 +56,43 @@ router.post('/update', auth, async (req, res) => {
         lastReviewed: req.body.moderationFlags.lastReviewed,
         reviewerNotes: req.body.moderationFlags.reviewerNotes
       },
-      verificationDocuments: req.body.verificationDocuments
+      verificationDocuments: req.body.verificationDocuments,
+      level: req.body.level,
+      images: req.body.images,
+      videos: req.body.videos
     };
-    console.warn('Request Body: ', req.body.contact.location)
+
     if (!profileData.termsAccepted) {
       return createErrorResponse(res, 400, 'TERMS_NOT_ACCEPTED', 'Must accept terms of service');
     }
 
     const user = await User.findById(req.userId);
+    console.log()
     if (!user) {
       return createErrorResponse(res, 404, 'USER_NOT_FOUND', 'User not found');
     }
-    const profile = await Profile.findOneAndUpdate({ user: req.userId }, profileData, { new: true, upsert: true }).catch((error) => {
-      createErrorResponse(res, 500, 'PROFILE_UPDATE_FAILED', 'Profile update failed', error);
-    });
 
-    res.json(profile);
+    // Use the static updateProfile method defined in the Profile model
+    const updatedProfile = await Profile.updateProfile(req.userId, profileData);
+    res.json(updatedProfile);
   } catch (error) {
     createErrorResponse(res, 500, 'PROFILE_UPDATE_FAILED', 'Profile update failed', error);
   }
 });
+
 
 // Filter profiles by service type
 router.get('/filter', async (req, res) => {
   try {
     const serviceType = req.query.serviceType;
     if (!serviceType) {
-      return createErrorResponse(res, 400, 'SERVICE_TYPE_REQUIRED', 'Service type is required');
+      return res.status(400).json({ error: 'SERVICE_TYPE_REQUIRED', message: 'Service type is required' });
     }
     const profiles = await Profile.find({ services: { $in: [serviceType] } });
     res.json(profiles);
   } catch (error) {
-    createErrorResponse(res, 500, 'FILTER_PROFILES_FAILED', 'Failed to filter profiles', error);
+    console.error('Error filtering profiles:', error);
+    res.status(500).json({ error: 'FILTER_PROFILES_FAILED', message: 'Failed to filter profiles' });
   }
 });
 
@@ -90,7 +101,7 @@ router.get('/location', async (req, res) => {
   try {
     const location = req.query.location;
     if (!location) {
-      return createErrorResponse(res, 400, 'LOCATION_REQUIRED', 'Location is required');
+      return res.status(400).json({ error: 'LOCATION_REQUIRED', message: 'Location is required' });
     }
     const profiles = await Profile.find({
       'contact.location': {
@@ -105,22 +116,47 @@ router.get('/location', async (req, res) => {
     });
     res.json(profiles);
   } catch (error) {
-    createErrorResponse(res, 500, 'FILTER_PROFILES_FAILED', 'Failed to filter profiles', error);
+    console.error('Error filtering profiles by location:', error);
+    res.status(500).json({ error: 'FILTER_PROFILES_FAILED', message: 'Failed to filter profiles' });
   }
 });
 
-// Get availability calendar
-router.get('/availability', async (req, res) => {
+// Get all profiles
+router.get('/profiles', async (req, res) => {
   try {
-    const startDate = req.query.startDate;
-    const endDate = req.query.endDate;
-    if (!startDate || !endDate) {
-      return createErrorResponse(res, 400, 'DATES_REQUIRED', 'Start and end dates are required');
+    const query = {};
+    if (req.query.viewerLocation) {
+      query['contact.city'] = req.query.location;
     }
-    const profiles = await Profile.find({ availability: { $elemMatch: { startDate: { $gte: startDate }, endDate: { $lte: endDate } } } });
+    if (req.query.age) {
+      const minAge = new Date().getFullYear() - req.query.age;
+      const maxAge = new Date().getFullYear() - req.query.age + 1;
+      query.birthdate = { $gte: new Date(minAge, 0, 1), $lt: new Date(maxAge, 0, 1) };
+    }
+    if (req.query.services) {
+      query.services = { $in: [req.query.services] };
+    }
+    const profiles = await Profile.find(query);
+    if (req.query.viewerLocation) {
+      profiles.sort((a, b) => {
+        if (a.level === 'vip' && b.level !== 'vip') {
+          return -1;
+        } else if (a.level === 'premium' && b.level !== 'premium' && b.level !== 'vip') {
+          return -1;
+        } else if (a.level === 'standard' && b.level !== 'standard' && b.level !== 'premium' && b.level !== 'vip') {
+          return -1;
+        } else {
+          // Calculate distance between two points
+          const distanceA = calculateDistance(a.contact.location.coordinates, req.query.viewerLocation);
+          const distanceB = calculateDistance(b.contact.location.coordinates, req.query.viewerLocation);
+          return distanceA - distanceB;
+        }
+      });
+    }
     res.json(profiles);
   } catch (error) {
-    createErrorResponse(res, 500, 'GET_AVAILABILITY_FAILED', 'Failed to get availability', error);
+    console.error('Error getting profiles:', error);
+    res.status(500).json({ error: 'GET_PROFILES_FAILED', message: 'Failed to get profiles' });
   }
 });
 
@@ -130,11 +166,11 @@ router.get('/:id', async (req, res) => {
     const profile = await Profile.findById(req.params.id)
       .populate('user', 'email verified')
       .select('-__v -user.password');
-
-    if (!profile) return createErrorResponse(res, 404, 'PROFILE_NOT_FOUND', 'Profile not found');
+    if (!profile) return res.status(404).json({ error: 'PROFILE_NOT_FOUND', message: 'Profile not found' });
     res.json(profile);
   } catch (error) {
-    createErrorResponse(res, 500, 'SERVER_ERROR', 'Server error', error);
+    console.error('Error getting public profile:', error);
+    res.status(500).json({ error: 'SERVER_ERROR', message: 'Server error' });
   }
 });
 

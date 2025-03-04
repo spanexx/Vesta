@@ -1,0 +1,7 @@
+<button 
+  class="location-button"
+  (click)="loadProfiles()"
+  [disabled]="isLoading"
+>
+  {{ isLoading ? 'Finding Profiles...' : 'Find Profiles Near Me' }}
+</button>
