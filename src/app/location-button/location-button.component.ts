@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { AuthenticationService } from '../services/authentication.service';
 import { LocationService } from '../services/location.service';
 import { LocationPromptComponent } from '../components/location-prompt/location-prompt.component';
-import { Profile } from '../models/profile.model';
+import { UserProfile } from '../interfaces/profile.interface';
 
 @Component({
   selector: 'app-location-button',
@@ -42,13 +42,11 @@ export class LocationButtonComponent {
         this.authService.getProfiles(
           latitude,
           longitude
-        ).subscribe({
-          next: (profiles: Profile[]) => {
-            // TO DO: handle profiles
-          },
-          error: (error: any) => {
-            // TO DO: handle error
-          }
+        ).subscribe((profiles) => {
+          // Handle profiles
+          console.log(profiles);
+        }, (error) => {
+          console.error(error);
         });
       } else {
         const defaultLocation = this.locationService.getDefaultLocation();
@@ -57,17 +55,15 @@ export class LocationButtonComponent {
         this.authService.getProfiles(
           latitude,
           longitude
-        ).subscribe({
-          next: (profiles: Profile[]) => {
-            // TO DO: handle profiles
-          },
-          error: (error: any) => {
-            // TO DO: handle error
-          }
+        ).subscribe((profiles) => {
+          // Handle profiles
+          console.log(profiles);
+        }, (error) => {
+          console.error(error);
         });
       }
     } catch (error) {
-      // TO DO: handle error
+      console.error(error);
     }
   }
 }

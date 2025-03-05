@@ -1,16 +1,17 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import User from '../models/User.js';
-import Profile from '../models/Profile.js';
+import geoip from 'geoip-lite';
+import UserProfile from '../models/UserProfile.js';
 import createErrorResponse from '../utils/errorHandler.js';
+import authMiddleware from '../middleware/auth.js';  // Add this import
 
 const router = express.Router();
 
 // User registration with age verification
 router.post('/register', async (req, res) => {
   try {
-    const { username, email, password, birthdate } = req.body;
+    const { username, email, password, birthdate, currentLocation } = req.body;
 
     // Age verification (18+)
     const age = new Date().getFullYear() - new Date(birthdate).getFullYear();
@@ -18,35 +19,81 @@ router.post('/register', async (req, res) => {
       return res.status(403).json({ error: 'Must be 18 or older to register' });
     }
 
-    console.log('Registering user...');
-    const user = new User({
+    let contactData = {};
+
+    // If the client provided location data, use it.
+    if (
+      currentLocation &&
+      currentLocation.latitude &&
+      currentLocation.longitude
+    ) {
+      contactData = {
+        location: {
+          type: 'Point',
+          coordinates: [
+            parseFloat(currentLocation.longitude),
+            parseFloat(currentLocation.latitude)
+          ]
+        },
+        city: currentLocation.city || 'Unknown',
+        country: currentLocation.country || 'Unknown',
+      };
+      console.log('Using client-provided location:', contactData);
+    } else {
+      // Otherwise, fallback to geoip lookup.
+      const ip = req.headers['x-forwarded-for'] || req.ip;
+      console.log('Registering user from IP:', ip);
+
+      const ipLocation = geoip.lookup(ip);
+      console.log('GeoIP lookup result:', ipLocation);
+
+      if (ipLocation && ipLocation.ll) {
+        // geoip-lite returns [latitude, longitude]; flip them to [longitude, latitude]
+        contactData = {
+          location: {
+            type: 'Point',
+            coordinates: [ipLocation.ll[1], ipLocation.ll[0]]
+          },
+          city: ipLocation.city,
+          country: ipLocation.country,
+        };
+      } else {
+        console.warn('No valid location found for IP, using default location.');
+        contactData = {
+          location: {
+            type: 'Point',
+            coordinates: [0, 0] // Default value; change if desired.
+          },
+          city: 'Unknown',
+          country: 'Unknown',
+        };
+      }
+      console.log('Contact data set to:', contactData);
+    }
+
+    const user = new UserProfile({
       username,
       email,
       password,
       birthdate: new Date(birthdate),
+      contact: contactData,
     });
 
     await user.save();
     console.log('User saved...');
 
-    // Create a profile for the new user
-    const profileData = {}; // Add any default profile data here if needed
-    await Profile.createProfile(user._id, birthdate, profileData);
-    console.log('Profile created...');
-
-    res.status(201).json({ message: 'User created and profile initialized' });
+    res.status(201).json({ message: 'User created!!!' });
   } catch (error) {
     createErrorResponse(res, 500, 'REGISTRATION_FAILED', 'Registration failed', error);
   }
 });
-
 // User login
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
     // Find the user and include the password field explicitly
-    const user = await User.findOne({ email }).select('+password');
+    const user = await UserProfile.findOne({ email }).select('+password');
 
     // Check if user exists and if password is correct
     if (!user || !(await bcrypt.compare(password, user.password))) {
@@ -71,7 +118,7 @@ router.post('/login', async (req, res) => {
 router.get('/user/:email', async (req, res) => {
   try {
     const email = req.params.email;
-    const user = await User.findOne({ email });
+    const user = await UserProfile.findOne({ email });
     if (user) {
       res.json(user);
     } else {
@@ -116,15 +163,14 @@ router.get('/profiles', async (req, res) => {
           },
           distanceField: 'distance',
           spherical: true,
-          query: query, // Applies filters
-          // Remove maxDistance to include all profiles
+          query: query,
         }
       });
 
       // ------ 3. Priority Sorting ------
       pipeline.push({
         $sort: {
-          level: -1, // VIP first
+          profileLevel: -1, // VIP (or higher level) first
           distance: 1 // Closest first within same level
         }
       });
@@ -132,7 +178,7 @@ router.get('/profiles', async (req, res) => {
       pipeline.push({ $match: query });
       pipeline.push({
         $sort: {
-          level: -1 // Sort by level if no location
+          profileLevel: -1 // Sort by profile level if no location provided
         }
       });
     }
@@ -143,11 +189,25 @@ router.get('/profiles', async (req, res) => {
     pipeline.push({ $skip: (page - 1) * limit });
     pipeline.push({ $limit: limit });
 
-    const profiles = await Profile.aggregate(pipeline);
+    const profiles = await UserProfile.aggregate(pipeline);
     res.json(profiles);
   } catch (error) {
     console.error('Error getting profiles:', error);
     createErrorResponse(res, 500, 'GET_PROFILES_FAILED', 'Failed to get profiles', error);
   }
 });
+router.get('/me', authMiddleware, async (req, res) => {
+  try {
+    const user = await UserProfile.findById(req.userId);
+    console.log('User found:', user);
+    if (!user) {
+      return createErrorResponse(res, 404, 'USER_NOT_FOUND', 'User not found');
+    }
+    res.json(user);
+  } catch (error) {
+    createErrorResponse(res, 500, 'GET_PROFILE_FAILED', 'Failed to get profile', error);
+  }
+});
+
+
 export default router;

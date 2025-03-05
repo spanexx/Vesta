@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -6,13 +7,22 @@ import { Injectable } from '@angular/core';
 export class LocationService {
   private readonly fallbackLocation = {
     latitude: 40.7128, // New York City
-    longitude: -74.006
+    longitude: -74.006,
+    city: 'New York',
+    country: 'USA'
   };
 
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
   /**
-   * Get precise user location with explicit permission handling
+   * Get default fallback location.
+   */
+  getDefaultLocation(): { latitude: number; longitude: number; city: string; country: string } {
+    return { ...this.fallbackLocation };
+  }
+
+  /**
+   * Get precise user location.
    */
   async getPreciseLocation(): Promise<{ latitude: number; longitude: number }> {
     return new Promise((resolve, reject) => {
@@ -22,12 +32,12 @@ export class LocationService {
       }
 
       navigator.geolocation.getCurrentPosition(
-        position => resolve({
+        (position) => resolve({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude
         }),
-        error => {
-          switch(error.code) {
+        (error) => {
+          switch (error.code) {
             case error.PERMISSION_DENIED:
               reject(new Error('PERMISSION_DENIED'));
               break;
@@ -43,36 +53,50 @@ export class LocationService {
         },
         {
           enableHighAccuracy: true,
-          timeout: 10000, // 10 seconds
-          maximumAge: 0
+          timeout: 10000,
+          maximumAge: 0,
         }
       );
     });
   }
 
   /**
-   * Get default fallback location (New York City)
+   * Reverse Geocode: Convert Latitude & Longitude to City & Country.
    */
-  getDefaultLocation(): { latitude: number; longitude: number } {
-    return { ...this.fallbackLocation };
+  async getCityAndCountry(latitude: number, longitude: number): Promise<{ city: string, country: string }> {
+    try {
+      const url = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`;
+      const response: any = await this.http.get(url).toPromise();
+
+      const city = response.address.city || response.address.town || response.address.village || 'Unknown';
+      const country = response.address.country || 'Unknown';
+
+      return { city, country };
+    } catch (error) {
+      console.error('Reverse geocoding failed:', error);
+      return { city: 'Unknown', country: 'Unknown' };
+    }
   }
 
   /**
-   * Smart location fetcher with permission awareness
+   * Get Smart Location: Fetch precise location and then get city/country.
    */
-  async getSmartLocation(): Promise<{ 
-    location: { latitude: number; longitude: number },
-    isFallback: boolean 
+  async getSmartLocation(): Promise<{
+    location: { latitude: number; longitude: number; city: string; country: string };
+    isFallback: boolean;
   }> {
     try {
+      const { latitude, longitude } = await this.getPreciseLocation();
+      const { city, country } = await this.getCityAndCountry(latitude, longitude);
+
       return {
-        location: await this.getPreciseLocation(),
+        location: { latitude, longitude, city, country },
         isFallback: false
       };
     } catch (error) {
-      console.warn('Location fetch failed:', error);
+      console.warn('Geolocation unavailable, using fallback location:', error);
       return {
-        location: this.getDefaultLocation(),
+        location: { ...this.fallbackLocation },
         isFallback: true
       };
     }

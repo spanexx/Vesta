@@ -1,0 +1,125 @@
+<div class="profile-update-container">
+  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-form">
+    
+    <!-- Basic Info Section -->
+    <section class="form-section" data-aos="fade-up">
+      <h2>Basic Information</h2>
+      <div class="form-group">
+        <input type="text" formControlName="username" placeholder="Username" [disabled]="true">
+        <input type="email" formControlName="email" placeholder="Email" [disabled]="true">
+        <input type="date" formControlName="birthdate" [disabled]="true">
+        <input type="text" formControlName="fullName" placeholder="Full Name">
+        <textarea formControlName="bio" placeholder="Your bio (minimum 50 characters)"></textarea>
+        <select formControlName="role">
+          <option value="onenight">One Night</option>
+          <option value="girlfriend">Girlfriend</option>
+          <option value="wife">Wife</option>
+          <option value="mistress">Mistress</option>
+          <option value="pornstar">Pornstar</option>
+        </select>
+        <select formControlName="profileLevel">
+          <option value="standard">Standard</option>
+          <option value="premium">Premium</option>
+          <option value="vip">VIP</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Services and Rates Section -->
+    <section class="form-section" formGroupName="rates" data-aos="fade-up" data-aos-delay="100">
+      <h2>Services & Rates</h2>
+      <div formGroupName="incall">
+        <h3>Incall Rates</h3>
+        <input type="number" formControlName="30 minutes" placeholder="30 minutes rate">
+        <input type="number" formControlName="1 hour" placeholder="1 hour rate">
+      </div>
+      <div formGroupName="outcall">
+        <h3>Outcall Rates</h3>
+        <input type="number" formControlName="30 minutes" placeholder="30 minutes rate">
+        <input type="number" formControlName="1 hour" placeholder="1 hour rate">
+      </div>
+    </section>
+
+    <!-- Physical Attributes Section -->
+    <section class="form-section" formGroupName="physicalAttributes" data-aos="fade-up" data-aos-delay="200">
+      <h2>Physical Attributes</h2>
+      <select formControlName="gender">
+        <option value="">Select Gender</option>
+        <option value="female">Female</option>
+        <option value="male">Male</option>
+        <option value="other">Other</option>
+      </select>
+      <input type="number" formControlName="height" placeholder="Height (cm)">
+      <input type="number" formControlName="weight" placeholder="Weight (kg)">
+      <input type="text" formControlName="ethnicity" placeholder="Ethnicity">
+      <input type="text" formControlName="bustSize" placeholder="Bust Size">
+      <input type="text" formControlName="bustType" placeholder="Bust Type">
+      <input type="text" formControlName="pubicHair" placeholder="Pubic Hair">
+      <div class="checkbox-group">
+        <label>
+          <input type="checkbox" formControlName="tattoos"> Has Tattoos
+        </label>
+        <label>
+          <input type="checkbox" formControlName="piercings"> Has Piercings
+        </label>
+      </div>
+    </section>
+
+    <!-- Availability Section -->
+    <section class="form-section" formGroupName="availableToMeet" data-aos="fade-up" data-aos-delay="300">
+      <h2>Availability</h2>
+      <div class="checkbox-group">
+        <label>
+          <input type="checkbox" formControlName="available24_7"> Available 24/7
+        </label>
+        <label>
+          <input type="checkbox" formControlName="advanceBooking"> Accept Advance Booking
+        </label>
+      </div>
+      <input type="text" formControlName="workingTime" placeholder="Working Hours">
+    </section>
+
+    <!-- Contact Information Section -->
+    <section class="form-section" formGroupName="contact" data-aos="fade-up" data-aos-delay="400">
+      <h2>Contact Information</h2>
+      <input type="tel" formControlName="phone" placeholder="Phone Number">
+      <input type="text" formControlName="country" placeholder="Country">
+      <input type="text" formControlName="city" placeholder="City">
+      <div formGroupName="location">
+        <input type="number" formControlName="coordinates" placeholder="Latitude">
+        <input type="number" formControlName="coordinates" placeholder="Longitude">
+      </div>
+    </section>
+
+    <!-- Emergency Contact Section -->
+    <section class="form-section" formGroupName="emergencyContact" data-aos="fade-up" data-aos-delay="500">
+      <h2>Emergency Contact</h2>
+      <input type="text" formControlName="name" placeholder="Contact Name">
+      <input type="tel" formControlName="phoneNumber" placeholder="Contact Phone">
+      <input type="text" formControlName="relationship" placeholder="Relationship">
+    </section>
+
+    <!-- Terms and Verification -->
+    <section class="form-section" data-aos="fade-up" data-aos-delay="600">
+      <h2>Terms & Conditions</h2>
+      <div class="checkbox-group">
+        <label>
+          <input type="checkbox" formControlName="termsAccepted">
+          I accept the terms and conditions
+        </label>
+      </div>
+    </section>
+
+    <!-- Submit Button -->
+    <div class="form-actions" data-aos="fade-up" data-aos-delay="700">
+      <button type="submit" [disabled]="!profileForm.valid || isSubmitting" [class.isSubmitting]="isSubmitting">
+        {{ isSubmitting ? 'Updating...' : 'Update Profile' }}
+      </button>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="submitError" class="error-message" data-aos="fade-in">
+      {{ submitError }}
+    </div>
+  </form>
+</div>

@@ -1,0 +1,69 @@
+<div class="registration-container">
+  <h2>Create Account</h2>
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" id="username" formControlName="username" class="form-control">
+      <div *ngIf="registerForm.get('username')?.errors?.['required'] && registerForm.get('username')?.touched"
+           class="error-message">
+        Username is required
+      </div>
+      <div *ngIf="registerForm.get('username')?.errors?.['minlength'] && registerForm.get('username')?.touched"
+           class="error-message">
+        Username must be at least 4 characters
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" formControlName="email" class="form-control">
+      <div *ngIf="registerForm.get('email')?.errors?.['required'] && registerForm.get('email')?.touched"
+           class="error-message">
+        Email is required
+      </div>
+      <div *ngIf="registerForm.get('email')?.errors?.['email'] && registerForm.get('email')?.touched"
+           class="error-message">
+        Please enter a valid email
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" formControlName="password" class="form-control">
+      <div *ngIf="registerForm.get('password')?.errors?.['required'] && registerForm.get('password')?.touched"
+           class="error-message">
+        Password is required
+      </div>
+      <div *ngIf="registerForm.get('password')?.errors?.['minlength'] && registerForm.get('password')?.touched"
+           class="error-message">
+        Password must be at least 6 characters
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="birthdate">Birthdate</label>
+      <input type="date" id="birthdate" formControlName="birthdate" class="form-control">
+      <div *ngIf="registerForm.get('birthdate')?.errors?.['required'] && registerForm.get('birthdate')?.touched"
+           class="error-message">
+        Birthdate is required
+      </div>
+      <div *ngIf="registerForm.get('birthdate')?.errors?.['underage'] && registerForm.get('birthdate')?.touched"
+           class="error-message">
+        You must be at least 13 years old
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid">
+      Register
+    </button>
+
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="successMessage" class="alert alert-success mt-3">
+      {{ successMessage }}
+    </div>
+  </form>
+</div>

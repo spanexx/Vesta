@@ -1,0 +1,144 @@
+<div class="profile-detail-container">
+  <div *ngIf="isLoading" class="loading-state">
+    <app-custom-spinner></app-custom-spinner>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <div *ngIf="profile && !isLoading" class="profile-content">
+    <!-- Header Section -->
+    <div class="profile-header">
+      <div class="profile-badges">
+        <span *ngIf="profile.verified" class="badge verified">Verified</span>
+        <span class="badge level">{{profile.profileLevel}}</span>
+        <span class="badge status">{{profile.status}}</span>
+      </div>
+      <h1>{{profile.fullName}}</h1>
+      <p class="username">{{'@' + profile.username}}</p>
+      <p class="role">{{profile.role}}</p>
+    </div>
+
+    <!-- Image Gallery -->
+    <div class="image-gallery">
+      <div class="main-images" *ngIf="profile.images?.length">
+        <img *ngFor="let image of profile.images" [src]="image" [alt]="profile.fullName">
+      </div>
+      <div class="videos" *ngIf="profile.videos?.length">
+        <video *ngFor="let video of profile.videos" controls>
+          <source [src]="video" type="video/mp4">
+        </video>
+      </div>
+    </div>
+
+    <!-- Bio Section -->
+    <div class="bio-section">
+      <h2>About Me</h2>
+      <p>{{profile.bio}}</p>
+    </div>
+
+    <!-- Services Section -->
+    <div class="services-section" *ngIf="profile.services?.length">
+      <h2>Services</h2>
+      <ul class="services-list">
+        <li *ngFor="let service of profile.services">{{service}}</li>
+      </ul>
+    </div>
+
+    <!-- Rates Section -->
+    <!-- <div class="rates-section" *ngIf="profile.rates">
+      <h2>Rates</h2>
+      <div class="rates-grid">
+        <div class="incall" *ngIf="profile.rates.incall">
+          <h3>Incall</h3>
+          <p *ngIf="profile.rates.incall['30 minutes']">30 mins: {{profile.rates.incall | currency}}</p>
+          <p *ngIf="profile.rates.incall['1 hour']">1 hour: {{profile.rates.incall['1 hour'] | currency}}</p>
+        </div>
+        <div class="outcall" *ngIf="profile.rates.outcall">
+          <h3>Outcall</h3>
+          <p *ngIf="profile.rates.outcall['30 minutes']">30 mins: {{profile.rates.outcall['30 minutes'] | currency}}</p>
+          <p *ngIf="profile.rates.outcall['1 hour']">1 hour: {{profile.rates.outcall['1 hour'] | currency}}</p>
+        </div>
+      </div>
+    </div> -->
+
+    <!-- Physical Attributes -->
+    <div class="attributes-section" *ngIf="profile.physicalAttributes">
+      <h2>Physical Attributes</h2>
+      <div class="attributes-grid">
+        <div *ngIf="profile.physicalAttributes.gender" class="attribute">
+          <span class="label">Gender:</span> {{profile.physicalAttributes.gender}}
+        </div>
+        <div *ngIf="profile.physicalAttributes.height" class="attribute">
+          <span class="label">Height:</span> {{profile.physicalAttributes.height}}cm
+        </div>
+        <div *ngIf="profile.physicalAttributes.weight" class="attribute">
+          <span class="label">Weight:</span> {{profile.physicalAttributes.weight}}kg
+        </div>
+        <div *ngIf="profile.physicalAttributes.ethnicity" class="attribute">
+          <span class="label">Ethnicity:</span> {{profile.physicalAttributes.ethnicity}}
+        </div>
+        <div *ngIf="profile.physicalAttributes.bustSize" class="attribute">
+          <span class="label">Bust Size:</span> {{profile.physicalAttributes.bustSize}}
+        </div>
+        <div *ngIf="profile.physicalAttributes.bustType" class="attribute">
+          <span class="label">Bust Type:</span> {{profile.physicalAttributes.bustType}}
+        </div>
+        <div *ngIf="profile.physicalAttributes.pubicHair" class="attribute">
+          <span class="label">Pubic Hair:</span> {{profile.physicalAttributes.pubicHair}}
+        </div>
+        <div class="attribute">
+          <span class="label">Tattoos:</span> {{profile.physicalAttributes.tattoos ? 'Yes' : 'No'}}
+        </div>
+        <div class="attribute">
+          <span class="label">Piercings:</span> {{profile.physicalAttributes.piercings ? 'Yes' : 'No'}}
+        </div>
+      </div>
+    </div>
+
+    <!-- Availability Section -->
+    <div class="availability-section" *ngIf="profile.availableToMeet">
+      <h2>Availability</h2>
+      <div class="availability-details">
+        <p *ngIf="profile.availableToMeet.available24_7">Available 24/7</p>
+        <p *ngIf="profile.availableToMeet.advanceBooking">Advance Booking Available</p>
+        <div *ngIf="profile.availableToMeet.meetingWith?.length">
+          <h3>Meeting With:</h3>
+          <ul>
+            <li *ngFor="let meetWith of profile.availableToMeet.meetingWith">{{meetWith}}</li>
+          </ul>
+        </div>
+        <p *ngIf="profile.workingTime">Working Hours: {{profile.workingTime}}</p>
+      </div>
+    </div>
+
+    <!-- Contact Information -->
+    <div class="contact-section" *ngIf="profile.contact">
+      <h2>Contact Information</h2>
+      <div class="contact-details">
+        <p *ngIf="profile.contact.phone">Phone: {{profile.contact.phone}}</p>
+        <p *ngIf="profile.contact.country">Country: {{profile.contact.country}}</p>
+        <p *ngIf="profile.contact.city">City: {{profile.contact.city}}</p>
+      </div>
+    </div>
+
+    <!-- Additional Information -->
+    <div class="additional-info">
+      <div class="verification-status">
+        <h2>Verification Status</h2>
+        <p>{{profile.verificationStatus}}</p>
+      </div>
+      
+      <!-- <div class="member-since" *ngIf="profile.createdAt">
+        <h2>Member Since</h2>
+        <p>{{profile.createdAt | date}}</p>
+      </div> -->
+
+      <!-- <div class="last-login" *ngIf="profile.lastLogin">
+        <h2>Last Active</h2>
+        <p>{{profile.lastLogin | date:'medium'}}</p>
+      </div> -->
+    </div>
+  </div>
+</div>

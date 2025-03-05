@@ -6,12 +6,12 @@ const apiUrl = environment.apiUrl;
 const authRoutes = `${apiUrl}/auth`;
 const profileRoutes = `${apiUrl}/profiles`;
 const moderationRoutes = `${apiUrl}/moderation`;
-
+const meRoute = `${authRoutes}/me`; // Add this new route
 
 // Exporting the routes for use in the application
 export {
   authRoutes,
   profileRoutes,
   moderationRoutes,
-
+  meRoute,
 };

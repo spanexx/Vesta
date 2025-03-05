@@ -1,18 +1,17 @@
 import express from 'express';
-import User from '../models/User.js';
-import Profile from '../models/Profile.js';
+import UserProfile from '../models/UserProfile.js';
 import auth from '../middleware/auth.js';
 import createErrorResponse from '../utils/errorHandler.js';
 
 const router = express.Router();
 
-// update profile
+// Update profile using the UserProfile static method
 router.post('/update', auth, async (req, res) => {
   try {
     const profileData = {
       user: req.userId,
-      fullName: req.body.fullName,  // Added fullName
-      username: req.body.username,  // Added username
+      fullName: req.body.fullName,      // Added fullName
+      username: req.body.username,      // Added username
       bio: req.body.bio,
       services: req.body.services,
       rates: {
@@ -31,10 +30,10 @@ router.post('/update', auth, async (req, res) => {
         tattoos: req.body.physicalAttributes.tattoos,
         piercings: req.body.physicalAttributes.piercings
       },
-      availabileToMeet: {
-        meetingWith: req.body.availabileToMeet.meetingWith,
-        available24_7: req.body.availabileToMeet.available24_7,
-        advanceBooking: req.body.availabileToMeet.advanceBooking
+      availableToMeet: {
+        meetingWith: req.body.availableToMeet.meetingWith,
+        available24_7: req.body.availableToMeet.available24_7,
+        advanceBooking: req.body.availableToMeet.advanceBooking
       },
       contact: {
         phone: req.body.contact.phone,
@@ -57,96 +56,244 @@ router.post('/update', auth, async (req, res) => {
         reviewerNotes: req.body.moderationFlags.reviewerNotes
       },
       verificationDocuments: req.body.verificationDocuments,
-      level: req.body.level,
+      profileLevel: req.body.profileLevel, 
       images: req.body.images,
       videos: req.body.videos
     };
 
     if (!profileData.termsAccepted) {
-      return createErrorResponse(res, 400, 'TERMS_NOT_ACCEPTED', 'Must accept terms of service');
+      return createErrorResponse(
+        res,
+        400,
+        'TERMS_NOT_ACCEPTED',
+        'Must accept terms of service'
+      );
     }
 
-    const user = await User.findById(req.userId);
-    console.log()
-    if (!user) {
-      return createErrorResponse(res, 404, 'USER_NOT_FOUND', 'User not found');
+    // Check if the user profile exists
+    const userProfile = await UserProfile.findById(req.userId);
+    if (!userProfile) {
+      return createErrorResponse(
+        res,
+        404,
+        'USER_NOT_FOUND',
+        'User not found'
+      );
     }
 
-    // Use the static updateProfile method defined in the Profile model
-    const updatedProfile = await Profile.updateProfile(req.userId, profileData);
+    // Use the static updateProfile method on the UserProfile model
+    const updatedProfile = await UserProfile.updateProfile(req.userId, profileData);
     res.json(updatedProfile);
   } catch (error) {
-    createErrorResponse(res, 500, 'PROFILE_UPDATE_FAILED', 'Profile update failed', error);
+    createErrorResponse(
+      res,
+      500,
+      'PROFILE_UPDATE_FAILED',
+      'Profile update failed',
+      error
+    );
   }
 });
 
+// Update profile picture
+router.put('/profile-picture', auth, async (req, res) => {
+  try {
+    const { pictureUrl } = req.body;
+    
+    if (!pictureUrl) {
+      return createErrorResponse(
+        res,
+        400,
+        'INVALID_INPUT',
+        'Profile picture URL is required'
+      );
+    }
+
+    const updatedProfile = await UserProfile.findByIdAndUpdate(
+      req.userId,
+      { profilePicture: pictureUrl },
+      { new: true }
+    );
+
+    if (!updatedProfile) {
+      return createErrorResponse(
+        res,
+        404,
+        'PROFILE_NOT_FOUND',
+        'Profile not found'
+      );
+    }
+
+    res.json(updatedProfile);
+  } catch (error) {
+    createErrorResponse(
+      res,
+      500,
+      'UPDATE_FAILED',
+      'Failed to update profile picture',
+      error
+    );
+  }
+});
+
+// Update profile videos
+router.put('/videos', auth, async (req, res) => {
+  try {
+    const { videos } = req.body;
+    
+    if (!Array.isArray(videos)) {
+      return createErrorResponse(
+        res,
+        400,
+        'INVALID_INPUT',
+        'Videos must be an array of URLs'
+      );
+    }
+
+    const updatedProfile = await UserProfile.updateVideos(req.userId, videos);
+
+    if (!updatedProfile) {
+      return createErrorResponse(
+        res,
+        404,
+        'PROFILE_NOT_FOUND',
+        'Profile not found'
+      );
+    }
+
+    res.json(updatedProfile);
+  } catch (error) {
+    createErrorResponse(
+      res,
+      500,
+      'UPDATE_FAILED',
+      'Failed to update profile videos',
+      error
+    );
+  }
+});
+
+// Update profile images
+router.put('/images', auth, async (req, res) => {
+  try {
+    const { images } = req.body;
+    
+    if (!Array.isArray(images)) {
+      return createErrorResponse(
+        res,
+        400,
+        'INVALID_INPUT',
+        'Images must be an array of URLs'
+      );
+    }
+
+    const updatedProfile = await UserProfile.updateImages(req.userId, images);
+
+    if (!updatedProfile) {
+      return createErrorResponse(
+        res,
+        404,
+        'PROFILE_NOT_FOUND',
+        'Profile not found'
+      );
+    }
+
+    res.json(updatedProfile);
+  } catch (error) {
+    createErrorResponse(
+      res,
+      500,
+      'UPDATE_FAILED',
+      'Failed to update profile images',
+      error
+    );
+  }
+});
 
 // Filter profiles by service type
 router.get('/filter', async (req, res) => {
   try {
     const serviceType = req.query.serviceType;
     if (!serviceType) {
-      return res.status(400).json({ error: 'SERVICE_TYPE_REQUIRED', message: 'Service type is required' });
+      return res.status(400).json({
+        error: 'SERVICE_TYPE_REQUIRED',
+        message: 'Service type is required'
+      });
     }
-    const profiles = await Profile.find({ services: { $in: [serviceType] } });
+    const profiles = await UserProfile.find({ services: { $in: [serviceType] } });
     res.json(profiles);
   } catch (error) {
     console.error('Error filtering profiles:', error);
-    res.status(500).json({ error: 'FILTER_PROFILES_FAILED', message: 'Failed to filter profiles' });
+    res.status(500).json({
+      error: 'FILTER_PROFILES_FAILED',
+      message: 'Failed to filter profiles'
+    });
   }
 });
 
 // Filter profiles by location
 router.get('/location', async (req, res) => {
   try {
-    const location = req.query.location;
-    if (!location) {
-      return res.status(400).json({ error: 'LOCATION_REQUIRED', message: 'Location is required' });
+    const { country, city } = req.query;
+    const query = {};
+    console.log("Country", country);
+    console.log("City", city);
+    
+    if (country) query['contact.country'] = { $regex: country, $options: 'i' };
+    if (city) query['contact.city'] = { $regex: city, $options: 'i' };
+    
+    if (!country && !city) {
+      return res.status(400).json({
+        error: 'LOCATION_PARAM_REQUIRED',
+        message: 'At least one location parameter (country or city) is required'
+      });
     }
-    const profiles = await Profile.find({
-      'contact.location': {
-        $near: {
-          $geometry: {
-            type: 'Point',
-            coordinates: [location.longitude, location.latitude]
-          },
-          $maxDistance: 10000
-        }
-      }
-    });
+
+    const profiles = await UserProfile.find(query);
     res.json(profiles);
   } catch (error) {
-    console.error('Error filtering profiles by location:', error);
-    res.status(500).json({ error: 'FILTER_PROFILES_FAILED', message: 'Failed to filter profiles' });
+    // Error handling
   }
 });
 
-// Get all profiles
+// Get all profiles with optional filters and sorting
 router.get('/profiles', async (req, res) => {
   try {
     const query = {};
     if (req.query.viewerLocation) {
-      query['contact.city'] = req.query.location;
+      query['contact.city'] = req.query.viewerLocation;
     }
     if (req.query.age) {
       const minAge = new Date().getFullYear() - req.query.age;
       const maxAge = new Date().getFullYear() - req.query.age + 1;
-      query.birthdate = { $gte: new Date(minAge, 0, 1), $lt: new Date(maxAge, 0, 1) };
+      query.birthdate = {
+        $gte: new Date(minAge, 0, 1),
+        $lt: new Date(maxAge, 0, 1)
+      };
     }
     if (req.query.services) {
       query.services = { $in: [req.query.services] };
     }
-    const profiles = await Profile.find(query);
+    const profiles = await UserProfile.find(query);
     if (req.query.viewerLocation) {
       profiles.sort((a, b) => {
-        if (a.level === 'vip' && b.level !== 'vip') {
+        if (a.profileLevel === 'vip' && b.profileLevel !== 'vip') {
           return -1;
-        } else if (a.level === 'premium' && b.level !== 'premium' && b.level !== 'vip') {
+        } else if (
+          a.profileLevel === 'premium' &&
+          b.profileLevel !== 'premium' &&
+          b.profileLevel !== 'vip'
+        ) {
           return -1;
-        } else if (a.level === 'standard' && b.level !== 'standard' && b.level !== 'premium' && b.level !== 'vip') {
+        } else if (
+          a.profileLevel === 'standard' &&
+          b.profileLevel !== 'standard' &&
+          b.profileLevel !== 'premium' &&
+          b.profileLevel !== 'vip'
+        ) {
           return -1;
         } else {
-          // Calculate distance between two points
+          // Calculate distance between two points (assumes calculateDistance is defined)
           const distanceA = calculateDistance(a.contact.location.coordinates, req.query.viewerLocation);
           const distanceB = calculateDistance(b.contact.location.coordinates, req.query.viewerLocation);
           return distanceA - distanceB;
@@ -156,21 +303,39 @@ router.get('/profiles', async (req, res) => {
     res.json(profiles);
   } catch (error) {
     console.error('Error getting profiles:', error);
-    res.status(500).json({ error: 'GET_PROFILES_FAILED', message: 'Failed to get profiles' });
+    res.status(500).json({
+      error: 'GET_PROFILES_FAILED',
+      message: 'Failed to get profiles'
+    });
   }
 });
 
 // Get public profile
 router.get('/:id', async (req, res) => {
   try {
-    const profile = await Profile.findById(req.params.id)
-      .populate('user', 'email verified')
-      .select('-__v -user.password');
-    if (!profile) return res.status(404).json({ error: 'PROFILE_NOT_FOUND', message: 'Profile not found' });
+    const profile = await UserProfile.findById(req.params.id)
+      .select('-__v')
+      .lean();
+      console.log("Profile", profile);
+    if (!profile) {
+      return createErrorResponse(
+        res,
+        404,
+        'PROFILE_NOT_FOUND',
+        'Profile not found'
+      );
+    }
+
     res.json(profile);
   } catch (error) {
     console.error('Error getting public profile:', error);
-    res.status(500).json({ error: 'SERVER_ERROR', message: 'Server error' });
+    createErrorResponse(
+      res,
+      500,
+      'SERVER_ERROR',
+      'Error retrieving profile',
+      error
+    );
   }
 });
 

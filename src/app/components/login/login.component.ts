@@ -21,11 +21,11 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    navigator.geolocation.getCurrentPosition((position) => {
-      const latitude = position.coords.latitude;
-      const longitude = position.coords.longitude;
-      console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
-    });
+    // navigator.geolocation.getCurrentPosition((position) => {
+    //   const latitude = position.coords.latitude;
+    //   const longitude = position.coords.longitude;
+    //   console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+    // });
   }
 
   login(): void {
