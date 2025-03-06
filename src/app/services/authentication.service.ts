@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, tap, throwError } from 'rxjs';
-import { UserProfile } from '../interfaces/profile.interface';
+import { UserProfile } from '../models/userProfile.model';
 import { authRoutes, meRoute } from '../../environments/apiRoutes';
 import { LoginResponse } from '../interfaces/auth.interface';
 import { Router } from '@angular/router';
@@ -21,6 +21,43 @@ export class AuthenticationService {
     const savedUser = localStorage.getItem('currentUser');
     if (savedUser) {
       this.currentUserSubject.next(JSON.parse(savedUser));
+    }
+  }
+
+  private setCurrentUser(user: UserProfile): void {
+     // Define minimal user type
+  interface MinimalUser {
+    _id: string;
+    email: string;
+    username: string;
+    profilePicture: string;
+    isCurrentUser: boolean;
+  }
+
+  // Create minimal user object with default profile picture if none exists
+  const minimalUser: MinimalUser = {
+    _id: user._id,
+    email: user.email,
+    username: user.username,
+    profilePicture: user.profilePicture || '/assets/images/default-profile.png', // Provide default value
+    isCurrentUser: true
+  };
+  
+    try {
+      localStorage.setItem('currentUser', JSON.stringify(minimalUser));
+      this.currentUserSubject.next(user);
+    } catch (error: unknown) {
+      // Type guard for DOMException
+      if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+        localStorage.clear(); // Clear all items
+        try {
+          localStorage.setItem('currentUser', JSON.stringify(minimalUser));
+        } catch (retryError) {
+          console.error('Could not store user data even after clearing storage');
+        }
+      } else {
+        console.error('Error storing user data:', error);
+      }
     }
   }
 
@@ -113,8 +150,7 @@ export class AuthenticationService {
   getCurrentUser(): Observable<UserProfile> {
     return this.http.get<UserProfile>(meRoute).pipe(
       tap(user => {
-        this.currentUserSubject.next(user);
-        localStorage.setItem('currentUser', JSON.stringify(user));
+        this.setCurrentUser(user);
       }),
       catchError(error => {
         console.error('Failed to fetch current user:', error);
@@ -122,7 +158,6 @@ export class AuthenticationService {
       })
     );
   }
-
   /**
    * Log out the current user.
    */

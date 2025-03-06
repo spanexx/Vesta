@@ -6,36 +6,100 @@
   <div *ngIf="error" class="error-message">
     {{ error }}
   </div>
-
   <div *ngIf="profile && !isLoading" class="profile-content">
-    <!-- Header Section -->
-    <div class="profile-header">
-      <div class="profile-badges">
-        <span *ngIf="profile.verified" class="badge verified">Verified</span>
-        <span class="badge level">{{profile.profileLevel}}</span>
-        <span class="badge status">{{profile.status}}</span>
+    <div class="profile-top-section">
+      <!-- Profile Picture Section -->
+      <div class="profile-picture-section">
+        <div class="profile-picture">
+          <img [src]="profile.profilePicture" [alt]="profile.fullName">
+        </div>
       </div>
-      <h1>{{profile.fullName}}</h1>
-      <p class="username">{{'@' + profile.username}}</p>
-      <p class="role">{{profile.role}}</p>
+
+      <div class="profile-right-section">
+
+        <!-- Header Section -->
+        <div class="profile-header">
+          <div class="editable-field" (click)="startEditing('fullName', profile.fullName || '')" *ngIf="profile">
+            <h1 *ngIf="editingField !== 'fullName'">{{profile.fullName || 'No name provided'}}</h1>
+            <div *ngIf="editingField === 'fullName'" class="edit-controls">
+              <input type="text" [(ngModel)]="tempEditValue" (keyup.enter)="saveField('fullName')" (keyup.escape)="cancelEditing()">
+              <div class="edit-buttons">
+                <button (click)="saveField('fullName')" class="save-btn">Save</button>
+                <button (click)="cancelEditing()" class="cancel-btn">Cancel</button>
+              </div>
+            </div>
+          </div>
+
+          <p class="username">
+              {{  '@' + profile.username}}
+            <i *ngIf="profile.verified" class="fas fa-gem verified-badge"><i class="fas fa-check verified-badge"></i></i>
+          </p>
+          <p class="birthday" *ngIf="profile.birthdate">Age: {{formatBirthday(profile.birthdate)}}</p>
+            <div class="bio" (click)="startEditing('bio', profile.bio || '')" *ngIf="profile">
+              <p *ngIf="editingField !== 'bio'">Bio: <span>{{profile.bio || 'No bio provided'}}</span></p>
+              <div *ngIf="editingField === 'bio'" class="edit-controls">
+                <textarea [(ngModel)]="tempEditValue" (keyup.enter)="saveField('bio')" (keyup.escape)="cancelEditing()"></textarea>
+                <div class="edit-buttons">
+                  <button (click)="saveField('bio')" class="save-btn">Save</button>
+                  <button (click)="cancelEditing()" class="cancel-btn">Cancel</button>
+                </div>
+              </div>
+            </div>
+
+        </div>
+      </div>
+      <div>
+        
+      <div class="profile-badges">
+        <span class="badge level" [ngClass]="{
+          'level-standard': profile.profileLevel.toLowerCase() === 'standard',
+          'level-premium': profile.profileLevel.toLowerCase() === 'premium',
+          'level-vip': profile.profileLevel.toLowerCase() === 'vip'
+        }">
+          {{profile.profileLevel}}
+          <i *ngIf="profile.profileLevel.toLowerCase() === 'vip'" class="fas fa-star vip-star"></i>
+        </span>
+        <span class="badge status" [ngClass]="{
+          'status-active': profile.status === 'active',
+          'status-suspended': profile.status === 'suspended',
+          'status-pending': profile.status === 'pending'
+        }">{{profile.status}}</span>
+        <span *ngIf="isCurrentUser" class="badge settings" routerLink="/settings"><i class="fas fa-magic"></i></span>
+
+      </div>
+      <div class="like-buttons-section">
+        <button (click)="addUserLike()" class="like-button user-like">
+          <i class="fas fa-heart"></i>
+          <span>{{profile.userlikes || 0}}</span>
+        </button>
+        <button (click)="addViewerLike()" class="like-button viewer-like">
+          <i class="fas fa-eye"></i>
+          <span>{{profile.viewerlikes || 0}}</span>
+        </button>
+      </div>
+    </div>
     </div>
 
     <!-- Image Gallery -->
     <div class="image-gallery">
       <div class="main-images" *ngIf="profile.images?.length">
-        <img *ngFor="let image of profile.images" [src]="image" [alt]="profile.fullName">
+        <div class="gallery-item" *ngFor="let image of profile.images">
+          <img [src]="image" [alt]="profile.fullName" (click)="openImageModal(image)">
+        </div>
       </div>
       <div class="videos" *ngIf="profile.videos?.length">
-        <video *ngFor="let video of profile.videos" controls>
-          <source [src]="video" type="video/mp4">
-        </video>
+        <div class="gallery-item" *ngFor="let video of profile.videos">
+          <video controls>
+            <source [src]="video" type="video/mp4">
+          </video>
+        </div>
       </div>
     </div>
 
     <!-- Bio Section -->
     <div class="bio-section">
-      <h2>About Me</h2>
-      <p>{{profile.bio}}</p>
+      <h2>Role</h2>
+      <p class="role">{{profile.role}}</p>
     </div>
 
     <!-- Services Section -->
@@ -45,23 +109,6 @@
         <li *ngFor="let service of profile.services">{{service}}</li>
       </ul>
     </div>
-
-    <!-- Rates Section -->
-    <!-- <div class="rates-section" *ngIf="profile.rates">
-      <h2>Rates</h2>
-      <div class="rates-grid">
-        <div class="incall" *ngIf="profile.rates.incall">
-          <h3>Incall</h3>
-          <p *ngIf="profile.rates.incall['30 minutes']">30 mins: {{profile.rates.incall | currency}}</p>
-          <p *ngIf="profile.rates.incall['1 hour']">1 hour: {{profile.rates.incall['1 hour'] | currency}}</p>
-        </div>
-        <div class="outcall" *ngIf="profile.rates.outcall">
-          <h3>Outcall</h3>
-          <p *ngIf="profile.rates.outcall['30 minutes']">30 mins: {{profile.rates.outcall['30 minutes'] | currency}}</p>
-          <p *ngIf="profile.rates.outcall['1 hour']">1 hour: {{profile.rates.outcall['1 hour'] | currency}}</p>
-        </div>
-      </div>
-    </div> -->
 
     <!-- Physical Attributes -->
     <div class="attributes-section" *ngIf="profile.physicalAttributes">
@@ -120,25 +167,45 @@
         <p *ngIf="profile.contact.phone">Phone: {{profile.contact.phone}}</p>
         <p *ngIf="profile.contact.country">Country: {{profile.contact.country}}</p>
         <p *ngIf="profile.contact.city">City: {{profile.contact.city}}</p>
+        <p *ngIf="profile.contact.city">Email: {{profile.email}}</p>
       </div>
     </div>
 
     <!-- Additional Information -->
     <div class="additional-info">
-      <div class="verification-status">
-        <h2>Verification Status</h2>
-        <p>{{profile.verificationStatus}}</p>
+      <div class="rates" *ngIf="rates.incall || rates.outcall">
+        <h2>Rates</h2>
+        <table class="rates-table">
+          <thead>
+            <tr>
+              <th>Duration</th>
+              <th>Incall</th>
+              <th>Outcall</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>30 minutes</td>
+              <td>{{ rates.incall?.['30 minutes'] ? '$' + rates.incall['30 minutes'] : 'N/A' }}</td>
+              <td>{{ rates.outcall?.['30 minutes'] ? '$' + rates.outcall['30 minutes'] : 'N/A' }}</td>
+            </tr>
+            <tr>
+              <td>1 hour</td>
+              <td>{{ rates.incall?.['1 hour'] ? '$' + rates.incall['1 hour'] : 'N/A' }}</td>
+              <td>{{ rates.outcall?.['1 hour'] ? '$' + rates.outcall['1 hour'] : 'N/A' }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      
-      <!-- <div class="member-since" *ngIf="profile.createdAt">
-        <h2>Member Since</h2>
-        <p>{{profile.createdAt | date}}</p>
-      </div> -->
+    </div>
+  </div>
 
-      <!-- <div class="last-login" *ngIf="profile.lastLogin">
-        <h2>Last Active</h2>
-        <p>{{profile.lastLogin | date:'medium'}}</p>
-      </div> -->
+
+  <!-- Add this at the bottom of your component -->
+  <div class="image-modal" *ngIf="selectedImage" (click)="closeImageModal()">
+    <div class="modal-content">
+      <span class="close-button" (click)="closeImageModal()">&times;</span>
+      <img [src]="selectedImage" alt="Full size image">
     </div>
   </div>
 </div>

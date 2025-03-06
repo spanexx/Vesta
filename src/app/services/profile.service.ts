@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AuthenticationService } from './authentication.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, catchError } from 'rxjs';
-import { UserProfile } from '../interfaces/profile.interface';
+import { UserProfile } from '../models/userProfile.model';
 import { profileRoutes } from '../../environments/apiRoutes';
 
 export interface LocationFilter {
@@ -62,15 +62,33 @@ export class ProfileService {
     });
   }
 
-  updateProfilePicture(pictureUrl: string): Observable<UserProfile> {
-    return this.http.put<UserProfile>(`${profileRoutes}/profile-picture`, { pictureUrl });
+  
+  updateImages(userId: string, images: string[]): Observable<any> {
+    return this.http.put(`${profileRoutes}/${userId}/images`, { images });
   }
 
-  updateProfileVideos(videos: string[]): Observable<UserProfile> {
-    return this.http.put<UserProfile>(`${profileRoutes}/videos`, { videos });
+  updateVideos(userId: string, videos: string[]): Observable<any> {
+    return this.http.put(`${profileRoutes}/${userId}/videos`, { videos });
   }
 
-  updateProfileImages(images: string[]): Observable<UserProfile> {
-    return this.http.put<UserProfile>(`${profileRoutes}/images`, { images });
+  updateProfilePicture(userId: string, profilePicture: string): Observable<any> {
+    const url = `${profileRoutes}/${userId}/profilePicture`;
+    console.log('Updating profile picture with URL:', url);
+    console.log('Payload:', { profilePicture });
+    return this.http.put(url, { profilePicture });
+  }
+
+  addUserLike(profileId: string): Observable<{ userlikes: number }> {
+    return this.http.post<{ userlikes: number }>(`${profileRoutes}/${profileId}/like/user`, {});
+  }
+
+  addViewerLike(profileId: string): Observable<{ viewerlikes: number }> {
+    return this.http.post<{ viewerlikes: number }>(`${profileRoutes}/${profileId}/like/viewer`, {});
+  }
+
+  updateField(fieldName: string, value: any): Observable<UserProfile> {
+    return this.http.patch<UserProfile>(`${profileRoutes}/field/${fieldName}`, { value });
   }
 }
+
+

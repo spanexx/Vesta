@@ -4,10 +4,11 @@ import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { ProfileService, LocationFilter, ProfileQueryParams } from '../../services/profile.service';
-import { UserProfile } from '../../interfaces/profile.interface';
+import { UserProfile } from '../../models/userProfile.model';
 import { CustomSpinnerComponent } from '../../custom-spinner/custom-spinner.component';
 import { FilterPipe } from '../../pipes/filter.pipe';
 import { calculateDistance } from '../../utils/distance.util';
+import { LocationFilterComponent } from '../location-filter/location-filter.component';
 
 type ProfileLevel = 'vip' | 'premium' | 'standard' | 'basic';
 
@@ -19,7 +20,8 @@ type ProfileLevel = 'vip' | 'premium' | 'standard' | 'basic';
     FormsModule,
     RouterModule,
     CustomSpinnerComponent,
-    FilterPipe
+    // FilterPipe,
+    LocationFilterComponent
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
@@ -32,29 +34,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   private queryParamsSub?: Subscription;
   userLocation: [number, number] | null = null;
 
-  // Expanded country and cities list
-  countries = [
-    'Poland', 'Germany', 'France', 'Spain', 'Italy', 'United Kingdom', 
-    'Netherlands', 'Belgium', 'Sweden', 'Norway', 'Denmark', 'Finland',
-    'Switzerland', 'Austria', 'Portugal', 'Greece', 'Ireland', 'Romania',
-    'Bulgaria', 'Hungary', 'Czech Republic', 'Slovakia', 'Croatia'
-  ];
-
-  cities: { [country: string]: string[] } = {
-    'Poland': ['Warsaw', 'Krakow', 'Gdansk', 'Poznan', 'Wroclaw', 'Lodz', 'Szczecin', 'Bydgoszcz'],
-    'Germany': ['Berlin', 'Munich', 'Hamburg', 'Frankfurt', 'Cologne', 'Stuttgart', 'Dusseldorf', 'Dresden'],
-    'France': ['Paris', 'Lyon', 'Marseille', 'Toulouse', 'Nice', 'Nantes', 'Bordeaux', 'Strasbourg'],
-    'Spain': ['Madrid', 'Barcelona', 'Valencia', 'Seville', 'Bilbao', 'Malaga', 'Alicante', 'Zaragoza'],
-    'Italy': ['Rome', 'Milan', 'Naples', 'Turin', 'Florence', 'Venice', 'Bologna', 'Genoa'],
-    'United Kingdom': ['London', 'Manchester', 'Birmingham', 'Glasgow', 'Liverpool', 'Edinburgh', 'Bristol', 'Leeds'],
-    // Add more countries and cities as needed...
-  };
-
   currentFilter: LocationFilter = {};
-
-  // Add new properties for search
-  countrySearch: string = '';
-  citySearch: string = '';
 
   constructor(
     private profileService: ProfileService,
@@ -76,53 +56,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.queryParamsSub?.unsubscribe();
   }
 
-  // Add new methods for custom location input
-  onCountrySearchChange(searchText: string): void {
-    if (!this.countries.includes(searchText) && searchText.trim()) {
-      // If country is not in list but there's valid text, update filter
-      this.updateUrlParams({ 
-        country: searchText,
-        city: undefined // Reset city when changing country
-      });
-    }
+  // Handle filter component events
+  onFilterChange(filter: LocationFilter): void {
+    this.updateUrlParams(filter);
   }
 
-  onCitySearchChange(searchText: string): void {
-    if (!this.getCitiesForCountry(this.currentFilter.country).includes(searchText) && searchText.trim()) {
-      // If city is not in list but there's valid text, update filter
-      this.updateUrlParams({ 
-        ...this.currentFilter,
-        city: searchText 
-      });
-    }
+  onLocationRequest(): void {
+    this.loadProfiles(true);
   }
 
-  // Modify existing methods
-  onCountrySelect(country: string): void {
-    this.countrySearch = country; // Update search input
-    const queryParams: LocationFilter = { country };
-    
-    if (this.currentFilter.country !== country) {
-      queryParams.city = undefined;
-      this.citySearch = ''; // Reset city search
-    } else {
-      queryParams.city = this.currentFilter.city;
-    }
-
-    this.updateUrlParams(queryParams);
-  }
-
-  onCitySelect(city: string): void {
-    this.citySearch = city; // Update search input
-    this.updateUrlParams({
-      ...this.currentFilter,
-      city
-    });
-  }
-
-  clearFilters(): void {
-    this.countrySearch = '';
-    this.citySearch = '';
+  onClearFilters(): void {
     this.router.navigate(['/']);
   }
 
@@ -151,8 +94,6 @@ export class HomeComponent implements OnInit, OnDestroy {
           (position) => {
             // Clear any existing filters when using location
             this.currentFilter = {};
-            this.countrySearch = '';
-            this.citySearch = '';
             
             this.userLocation = [position.coords.longitude, position.coords.latitude];
             
@@ -254,10 +195,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.error = 'Failed to load profiles. Please try again later.';
     this.isLoading = false;
     console.error('Profile loading error:', error);
-  }
-
-  getCitiesForCountry(country?: string): string[] {
-    return country ? this.cities[country] || [] : [];
   }
 
   // Add helper method to safely get coordinates

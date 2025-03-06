@@ -74,6 +74,14 @@ const userProfileSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
+  userlikes: {
+    type: Number,
+    default: 0,
+  },
+  viewerlikes: {
+    type: Number,
+    default: 0,
+  },
   services: {
     type: [String],
     default: [],
@@ -184,18 +192,65 @@ userProfileSchema.statics.updateProfile = async function (userId, profileData) {
   return updatedProfile;
 };
 
-userProfileSchema.statics.updateVideos = async function(userId, videos) {
-  return this.findByIdAndUpdate(
+userProfileSchema.statics.updateField = async function(userId, fieldName, value) {
+  // Create the update object dynamically
+  const updateObj = {};
+  updateObj[fieldName] = value;
+
+  // Perform the update
+  const updatedProfile = await this.findByIdAndUpdate(
     userId,
-    { $set: { videos } },
-    { new: true, runValidators: true }
+    { $set: updateObj },
+    { 
+      new: true, 
+      runValidators: true 
+    }
+  );
+
+  if (!updatedProfile) {
+    throw new Error('Profile not found');
+  }
+
+  return updatedProfile;
+};
+
+userProfileSchema.statics.incrementUserLikes = async function(profileId) {
+  return this.findByIdAndUpdate(
+    profileId,
+    { $inc: { userlikes: 1 } },
+    { new: true }
+  );
+};
+
+userProfileSchema.statics.incrementViewerLikes = async function(profileId) {
+  return this.findByIdAndUpdate(
+    profileId,
+    { $inc: { viewerlikes: 1 } },
+    { new: true }
   );
 };
 
 userProfileSchema.statics.updateImages = async function(userId, images) {
   return this.findByIdAndUpdate(
     userId,
-    { $set: { images } },
+    { $addToSet: { images: { $each: images } } }, // Append new images
+    { new: true, runValidators: true }
+  );
+};
+
+userProfileSchema.statics.updateVideos = async function(userId, videos) {
+  return this.findByIdAndUpdate(
+    userId,
+    { $addToSet: { videos: { $each: videos } } }, // Append new videos
+    { new: true, runValidators: true }
+  );
+};
+
+// Static method to update profile picture
+userProfileSchema.statics.updateProfilePicture = async function(userId, profilePicture) {
+  return this.findByIdAndUpdate(
+    userId,
+    { $set: { profilePicture } },
     { new: true, runValidators: true }
   );
 };

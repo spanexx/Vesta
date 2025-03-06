@@ -4,7 +4,9 @@ import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { UpdateProfileComponent } from './components/update-profile/update-profile.component';
 import { ProfileDetailComponent } from './components/profile-detail/profile-detail.component';
+import { LogoutComponent } from './components/logout/logout.component';
 import { authGuard } from './guards/auth.guard';
+import { ProfileSettingsComponent } from './components/profile-settings/profile-settings.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -19,4 +21,14 @@ export const routes: Routes = [
     path: 'profile/:id', 
     component: ProfileDetailComponent,
   },
+  {
+    path: 'logout',
+    component: LogoutComponent
+  },
+  { path: 'settings', 
+    component: ProfileSettingsComponent,
+    canActivate: [authGuard]
+
+  },
+
 ];

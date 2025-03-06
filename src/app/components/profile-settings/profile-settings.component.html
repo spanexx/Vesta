@@ -1,0 +1,73 @@
+<div class="settings-container">
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+    </div>
+  
+    <!-- Profile Picture Section -->
+    <section class="profile-picture-section">
+      <h2>Profile Picture</h2>
+      <div class="preview-container">
+        <img [src]="profilePicturePreview" *ngIf="profilePicturePreview" alt="Profile Picture Preview">
+      </div>
+      <input 
+        type="file" 
+        (change)="onProfilePictureSelected($event)" 
+        accept="image/*" 
+        id="profile-picture-input"
+        hidden>
+      <label for="profile-picture-input" class="upload-button">
+        <i class="fas fa-camera"></i>
+        Change Profile Picture
+      </label>
+    </section>
+  
+    <!-- Gallery Section -->
+    <section class="gallery-section">
+      <h2>Gallery</h2>
+      <div class="upload-buttons">
+        <input 
+          type="file" 
+          (change)="onImagesSelected($event)" 
+          accept="image/*" 
+          multiple 
+          id="images-input"
+          hidden>
+        <label for="images-input" class="upload-button">
+          <i class="fas fa-images"></i>
+          Add Images
+        </label>
+  
+        <input 
+          type="file" 
+          (change)="onVideosSelected($event)" 
+          accept="video/*" 
+          multiple 
+          id="videos-input"
+          hidden>
+        <label for="videos-input" class="upload-button">
+          <i class="fas fa-video"></i>
+          Add Videos
+        </label>
+      </div>
+    </section>
+  
+    <!-- Profile Form -->
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-form">
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" formControlName="fullName">
+      </div>
+  
+      <div class="form-group">
+        <label for="bio">Bio</label>
+        <textarea id="bio" formControlName="bio" rows="4"></textarea>
+        <small *ngIf="profileForm.get('bio')?.errors?.['minlength']">
+          Bio must be at least 50 characters long.
+        </small>
+      </div>
+  
+      <button type="submit" [disabled]="!profileForm.valid || isLoading" class="submit-button">
+        {{ isLoading ? 'Updating...' : 'Update Profile' }}
+      </button>
+    </form>
+  </div>

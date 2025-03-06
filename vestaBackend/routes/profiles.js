@@ -1,7 +1,40 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import UserProfile from '../models/UserProfile.js';
 import auth from '../middleware/auth.js';
 import createErrorResponse from '../utils/errorHandler.js';
+import multer from 'multer';
+import path from 'path';
+import { GridFsStorage } from 'multer-gridfs-storage';
+import Grid from 'gridfs-stream';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+
+// Create GridFS stream
+let gfs;
+mongoose.connection.once('open', () => {
+  gfs = Grid(mongoose.connection.db, mongoose.mongo);
+  gfs.collection('uploads');
+});
+
+// Update the storage configuration
+const storage = new GridFsStorage({
+  url: process.env.MONGODB_URI,
+  options: { useNewUrlParser: true, useUnifiedTopology: true },
+  file: (req, file) => {
+    return new Promise((resolve, reject) => {
+      const fileInfo = {
+        filename: `${Date.now()}-${file.originalname}`,
+        bucketName: 'uploads'
+      };
+      resolve(fileInfo);
+    });
+  }
+});
+
+const upload = multer({ storage });
 
 const router = express.Router();
 
@@ -338,5 +371,127 @@ router.get('/:id', async (req, res) => {
     );
   }
 });
+
+// Add user like to profile
+router.post('/:id/like/user', auth, async (req, res) => {
+  try {
+    const profile = await UserProfile.incrementUserLikes(req.params.id);
+    if (!profile) {
+      return createErrorResponse(
+        res,
+        404,
+        'PROFILE_NOT_FOUND',
+        'Profile not found'
+      );
+    }
+    res.json({ userlikes: profile.userlikes });
+  } catch (error) {
+    createErrorResponse(
+      res,
+      500,
+      'LIKE_UPDATE_FAILED',
+      'Failed to update user likes',
+      error
+    );
+  }
+});
+
+// Add viewer like to profile
+router.post('/:id/like/viewer', async (req, res) => {
+  try {
+    const profile = await UserProfile.incrementViewerLikes(req.params.id);
+    if (!profile) {
+      return createErrorResponse(
+        res,
+        404,
+        'PROFILE_NOT_FOUND',
+        'Profile not found'
+      );
+    }
+    res.json({ viewerlikes: profile.viewerlikes });
+  } catch (error) {
+    createErrorResponse(
+      res,
+      500,
+      'LIKE_UPDATE_FAILED',
+      'Failed to update viewer likes',
+      error
+    );
+  }
+});
+
+// Update individual field
+router.patch('/field/:fieldName', auth, async (req, res) => {
+  try {
+    const { fieldName } = req.params;
+    const { value } = req.body;
+    console.log('Updating field:', fieldName, 'with value:', value);
+
+    // Basic validation
+    if (value === undefined) {
+      return res.status(400).json({
+        error: 'INVALID_INPUT',
+        message: 'Value is required'
+      });
+    }
+
+    // Create update object
+    const updateData = {};
+    updateData[fieldName] = value;
+
+    const updatedProfile = await UserProfile.findByIdAndUpdate(
+      req.userId,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedProfile) {
+      return res.status(404).json({
+        error: 'PROFILE_NOT_FOUND',
+        message: 'Profile not found'
+      });
+    }
+
+    res.json(updatedProfile);
+  } catch (error) {
+    console.error('Field update error:', error);
+    res.status(500).json({
+      error: 'FIELD_UPDATE_FAILED',
+      message: 'Failed to update field',
+      details: error.message
+    });
+  }
+});
+
+// Update images
+router.put('/:userId/images', async (req, res) => {
+  try {
+    const updatedProfile = await UserProfile.updateImages(req.params.userId, req.body.images);
+    res.status(200).json(updatedProfile);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// Update videos
+router.put('/:userId/videos', async (req, res) => {
+  try {
+    const updatedProfile = await UserProfile.updateVideos(req.params.userId, req.body.videos);
+    res.status(200).json(updatedProfile);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// Update profile picture
+router.put('/:userId/profilePicture', async (req, res) => {
+  try {
+    const updatedProfile = await UserProfile.updateProfilePicture(req.params.userId, req.body.profilePicture);
+    res.status(200).json(updatedProfile);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
 
 export default router;

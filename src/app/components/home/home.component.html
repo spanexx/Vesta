@@ -1,111 +1,35 @@
 <div class="page-container">
-  <!-- Sidebar -->
-  <aside class="filters-sidebar">
-    <div class="sidebar-header">
-      <h2>Filter Profiles</h2>
-      <button 
-        class="location-button"
-        (click)="loadProfiles(true)"
-        [disabled]="isLoading"
-      >
-        <span class="button-text">{{ isLoading ? 'Finding...' : 'Use My Location' }}</span>
-        <i class="fas fa-satellite-dish"></i>
-      </button>
-    </div>
+  <app-location-filter
+    [isLoading]="isLoading"
+    [locationError]="locationError"
+    [currentFilter]="currentFilter"
+    (locationRequest)="onLocationRequest()"
+    (filterChange)="onFilterChange($event)"
+    (clearFiltersRequest)="onClearFilters()"
+  ></app-location-filter>
 
-    <!-- Location Error -->
-    <div *ngIf="locationError" class="error-message">
-      <i class="fas fa-exclamation-triangle"></i>
-      {{ locationError }}
-    </div>
-
-    <!-- Countries List -->
-    <div class="filter-section">
-      <h3>Countries</h3>
-      <div class="search-box">
-        <input 
-          type="text" 
-          placeholder="Search or enter country..." 
-          [(ngModel)]="countrySearch"
-          (ngModelChange)="onCountrySearchChange($event)"
-        >
-      </div>
-      <div class="filter-list">
-        <button
-          *ngFor="let country of countries | filter:countrySearch"
-          [class.active]="currentFilter.country === country"
-          (click)="onCountrySelect(country)"
-          class="filter-item"
-        >
-          {{ country }}
-        </button>
-      </div>
-    </div>
-
-    <!-- Cities List -->
-    <div class="filter-section" *ngIf="currentFilter.country">
-      <h3>Cities in {{ currentFilter.country }}</h3>
-      <div class="search-box">
-        <input 
-          type="text" 
-          placeholder="Search or enter city..." 
-          [(ngModel)]="citySearch"
-          (ngModelChange)="onCitySearchChange($event)"
-        >
-      </div>
-      <div class="filter-list">
-        <button
-          *ngFor="let city of getCitiesForCountry(currentFilter.country) | filter:citySearch"
-          [class.active]="currentFilter.city === city"
-          (click)="onCitySelect(city)"
-          class="filter-item"
-        >
-          {{ city }}
-        </button>
-      </div>
-    </div>
-
-    <!-- Clear Filters -->
-    <div class="filter-actions" *ngIf="currentFilter.country || currentFilter.city">
-      <button class="clear-filters-button" (click)="clearFilters()">
-        Clear All Filters
-      </button>
-    </div>
-  </aside>
-
-  <!-- Main Content -->
   <main class="main-content">
-    <!-- Error message -->
     <div *ngIf="error" class="error-message">
       {{ error }}
     </div>
 
-    <!-- Profiles grid -->
     <div class="profiles-grid">
-      <!-- Loading state -->
       <div *ngIf="isLoading && !userProfiles.length" class="loading-state">
         <app-custom-spinner></app-custom-spinner>
         <p>Discovering profiles in your area...</p>
       </div>
       
-      <!-- Profile cards -->
       <div *ngFor="let profile of userProfiles" class="profile-card" [routerLink]="['/profile', profile._id]">
-        <!-- Background image fills entire card -->
         <div class="card-background" [style.background-image]="'url(' + profile.images[0] + ')'"></div>
-        
-        <!-- Glass overlay -->
         <div class="glass-overlay"></div>
         
-        <!-- Card content positioned on top of background -->
         <div class="card-content-wrapper">
-          <!-- Header section -->
           <div class="card-header">
             <div class="profile-meta">
               <h3 class="profile-name">{{ profile.fullName }}</h3>
               <p class="profile-username">{{ '@' + profile.username }}</p>
             </div>
             
-            <!-- Badges -->
             <div class="badge-container">
               <span *ngIf="profile.profileLevel === 'vip'" class="badge vip-badge">
                 <i class="fas fa-star"></i> VIP
@@ -116,7 +40,6 @@
             </div>
           </div>
           
-          <!-- Middle content -->
           <div class="card-content">
             <div class="services-section">
               <i class="fas fa-briefcase"></i>
@@ -130,7 +53,6 @@
             </div>
           </div>
           
-          <!-- Footer -->
           <div class="card-footer">
             <button class="action-button" [routerLink]="['/profile', profile._id]">
               <i class="fas fa-eye"></i> View Profile

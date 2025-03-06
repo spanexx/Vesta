@@ -1,0 +1,68 @@
+<aside class="filters-sidebar">
+  <div class="sidebar-header">
+    <h2>Filter Profiles</h2>
+    <button 
+      class="location-button"
+      (click)="useLocation()"
+      [disabled]="isLoading"
+    >
+      <span class="button-text">{{ isLoading ? 'Finding...' : 'Use My Location' }}</span>
+      <i class="fas fa-satellite-dish"></i>
+    </button>
+  </div>
+
+  <div *ngIf="locationError" class="error-message">
+    <i class="fas fa-exclamation-triangle"></i>
+    {{ locationError }}
+  </div>
+
+  <div class="filter-section">
+    <h3>Countries</h3>
+    <div class="search-box">
+      <input 
+        type="text" 
+        placeholder="Search or enter country..." 
+        [(ngModel)]="countrySearch"
+        (ngModelChange)="onCountrySearchChange($event)"
+      >
+    </div>
+    <div class="filter-list">
+      <button
+        *ngFor="let country of countries | filter:countrySearch"
+        [class.active]="currentFilter.country === country"
+        (click)="onCountrySelect(country)"
+        class="filter-item"
+      >
+        {{ country }}
+      </button>
+    </div>
+  </div>
+
+  <div class="filter-section" *ngIf="currentFilter.country">
+    <h3>Cities in {{ currentFilter.country }}</h3>
+    <div class="search-box">
+      <input 
+        type="text" 
+        placeholder="Search or enter city..." 
+        [(ngModel)]="citySearch"
+        (ngModelChange)="onCitySearchChange($event)"
+      >
+    </div>
+    <div class="filter-list">
+      <button
+        *ngFor="let city of getCitiesForCountry(currentFilter.country) | filter:citySearch"
+        [class.active]="currentFilter.city === city"
+        (click)="onCitySelect(city)"
+        class="filter-item"
+      >
+        {{ city }}
+      </button>
+    </div>
+  </div>
+
+  <div class="filter-actions" *ngIf="currentFilter.country || currentFilter.city">
+    <button class="clear-filters-button" (click)="clearFilters()">
+      Clear All Filters
+    </button>
+  </div>
+</aside>

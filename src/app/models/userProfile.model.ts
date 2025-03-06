@@ -1,5 +1,5 @@
 export interface UserProfile {
-    _id?: string;
+    _id: string;
     // User Fields
     username: string;
     email: string;
@@ -21,16 +21,17 @@ export interface UserProfile {
     fullName?: string;
     bio?: string;
     services: string[];
-    rates?: {
-      incall?: {
-        '30 minutes'?: number;
-        '1 hour'?: number;
+    rates: {
+      incall: {
+        '30 minutes': number;
+        '1 hour': number;
       };
-      outcall?: {
-        '30 minutes'?: number;
-        '1 hour'?: number;
+      outcall: {
+        '30 minutes': number;
+        '1 hour': number;
       };
     };
+    level: 'vip' | 'premium' | 'standard';
     physicalAttributes?: {
       gender?: string;
       height?: number; // in cm
@@ -67,8 +68,11 @@ export interface UserProfile {
     };
     images: string[];
     videos: string[];
-    
+    profilePicture: string | null;
+    userlikes: number;
+    viewerlikes: number;
     // Timestamps
     createdAt?: Date;
     updatedAt?: Date;
+    [key: string]: any; // Add index signature to allow dynamic property access
   }
