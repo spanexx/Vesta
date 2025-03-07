@@ -33,14 +33,23 @@ export interface UserProfile {
     };
     level: 'vip' | 'premium' | 'standard';
     physicalAttributes?: {
+      /** female, male, or other */
       gender?: string;
-      height?: number; // in cm
-      weight?: number; // in kg
+      /** height in centimeters (cm) */
+      height?: number;
+      /** weight in kilograms (kg) */
+      weight?: number;
+      /** e.g., Asian, Black, Caucasian, Hispanic, Indian, Middle Eastern, Mixed, Other */
       ethnicity?: string;
+      /** e.g., 32A, 34B, 36C, etc. */
       bustSize?: string;
+      /** Natural, Enhanced, etc. */
       bustType?: string;
+      /** Shaved, Trimmed, Natural, etc. */
       pubicHair?: string;
+      /** true/false */
       tattoos?: boolean;
+      /** true/false */
       piercings?: boolean;
     };
     availableToMeet?: {

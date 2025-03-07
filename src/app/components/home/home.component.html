@@ -43,7 +43,7 @@
           <div class="card-content">
             <div class="services-section">
               <i class="fas fa-briefcase"></i>
-              <span class="services-list">{{ profile.services.join(', ') }}</span>
+              <span class="services-list">Services: {{profile.services.included.join(', ')}}</span>
             </div>
             <div class="distance-indicator" *ngIf="userLocation && getCoordinates(profile)">
               <i class="fas fa-map-marker-alt"></i>

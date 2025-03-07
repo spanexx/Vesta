@@ -399,6 +399,29 @@ export class ProfileDetailComponent implements OnInit {
 
     let valueToSend: any = this.editingState.currentValue;
 
+    // Add validation for select fields
+    if (fieldName === 'physicalAttributes.gender') {
+      if (!valueToSend || valueToSend === '') {
+        this.error = 'Please select a gender';
+        return;
+      }
+      if (!['female', 'male', 'other'].includes(valueToSend)) {
+        this.error = 'Invalid gender value';
+        return;
+      }
+    }
+  
+    if (fieldName === 'physicalAttributes.pubicHair') {
+      if (!valueToSend || valueToSend === '') {
+        this.error = 'Please select a style';
+        return;
+      }
+      if (!['Shaved', 'Trimmed', 'Natural'].includes(valueToSend)) {
+        this.error = 'Invalid style value';
+        return;
+      }
+    }
+
     // Special handling for rates
     if (fieldName === 'rates') {
       valueToSend = {
@@ -658,9 +681,31 @@ export class ProfileDetailComponent implements OnInit {
 
   handleServiceSelection(service: string, event: Event): void {
     const checkbox = event.target as HTMLInputElement;
-    this.serviceSelections.included[service] = checkbox.checked;
     
-    // Update currentValue to reflect current selections
+    if (checkbox.checked) {
+      // If service is being included, remove it from extra prices
+      this.serviceSelections.included[service] = true;
+      this.serviceSelections.extra[service] = null;
+    } else {
+      this.serviceSelections.included[service] = false;
+    }
+  
+    this.editingState.currentValue = {
+      included: Object.keys(this.serviceSelections.included)
+        .filter(key => this.serviceSelections.included[key]),
+      extra: this.serviceSelections.extra
+    } as ServiceUpdate;
+  }
+
+  handleExtraPriceChange(service: string, price: number | null): void {
+    if (price && price > 0) {
+      // If setting an extra price, remove from included services
+      this.serviceSelections.included[service] = false;
+      this.serviceSelections.extra[service] = price;
+    } else {
+      this.serviceSelections.extra[service] = null;
+    }
+  
     this.editingState.currentValue = {
       included: Object.keys(this.serviceSelections.included)
         .filter(key => this.serviceSelections.included[key]),

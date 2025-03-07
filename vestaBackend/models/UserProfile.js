@@ -127,16 +127,55 @@ const userProfileSchema = new mongoose.Schema({
     }
   },
   physicalAttributes: {
-    gender: { type: String, trim: true },
-    // Note: birthdate is already included above.
-    height: { type: Number, min: 0 }, // in cm
-    weight: { type: Number, min: 0 }, // in kg
-    ethnicity: { type: String, trim: true },
-    bustSize: { type: String, trim: true },
-    bustType: { type: String, trim: true },
-    pubicHair: { type: String, trim: true },
-    tattoos: { type: Boolean, default: false },
-    piercings: { type: Boolean, default: false },
+    gender: { 
+      type: String, 
+      trim: true,
+      enum: ['female', 'male', 'other'],
+      default: 'female'
+    },
+    height: { 
+      type: Number, 
+      min: 140, // Minimum realistic height in cm
+      max: 220, // Maximum realistic height in cm
+      default: 165
+    },
+    weight: { 
+      type: Number, 
+      min: 35, // Minimum realistic weight in kg
+      max: 150, // Maximum realistic weight in kg
+      default: 55
+    },
+    ethnicity: { 
+      type: String, 
+      trim: true,
+      enum: ['Asian', 'Black', 'Caucasian', 'Hispanic', 'Indian', 'Middle Eastern', 'Mixed', 'Other'],
+      default: 'Other'
+    },
+    bustSize: { 
+      type: String, 
+      trim: true,
+      match: [/^[0-9]{2}[A-K]$/, 'Please enter a valid bust size (e.g., 34C)']
+    },
+    bustType: { 
+      type: String, 
+      trim: true,
+      enum: ['Natural', 'Enhanced'],
+      default: 'Natural'
+    },
+    pubicHair: { 
+      type: String, 
+      trim: true,
+      enum: ['Shaved', 'Trimmed', 'Natural'],
+      default: 'Shaved'
+    },
+    tattoos: { 
+      type: Boolean, 
+      default: false 
+    },
+    piercings: { 
+      type: Boolean, 
+      default: false 
+    }
   },
   availableToMeet: {
     meetingWith: { type: [String], default: [] },

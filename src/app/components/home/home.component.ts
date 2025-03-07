@@ -33,8 +33,15 @@ export class HomeComponent implements OnInit, OnDestroy {
   locationError: string | null = null;
   private queryParamsSub?: Subscription;
   userLocation: [number, number] | null = null;
-
   currentFilter: LocationFilter = {};
+  
+  // Add missing properties
+  selectedAge?: number;
+  selectedServices?: string[];
+  location?: {
+    latitude: number;
+    longitude: number;
+  };
 
   constructor(
     private profileService: ProfileService,
@@ -88,40 +95,31 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.locationError = null;
 
     if (useLocation) {
-      // Get user's geolocation
       if ('geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
-            // Clear any existing filters when using location
             this.currentFilter = {};
-            
             this.userLocation = [position.coords.longitude, position.coords.latitude];
-            
-            const params: ProfileQueryParams = {
-              coordinates: this.userLocation
+            this.location = {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude
             };
             
-            // Update URL to reflect we're using location-based search
+            const params: ProfileQueryParams = {
+              coordinates: this.userLocation,
+              age: this.selectedAge,
+              services: this.selectedServices?.join(',')
+            };
+
             this.router.navigate([], {
               relativeTo: this.route,
               queryParams: { useLocation: 'true' },
               queryParamsHandling: 'merge'
             });
 
-            // Get profiles based on location
-            this.profileService.getAllProfiles(params).subscribe({
-              next: (profiles) => {
-                // Sort profiles by distance and VIP status
-                this.userProfiles = this.sortProfilesByDistanceAndStatus(
-                  profiles,
-                  this.userLocation!
-                );
-                this.isLoading = false;
-              },
-              error: (error) => this.handleError(error)
-            });
+            this.fetchProfiles(params);
           },
-          (error) => {
+          (error: GeolocationPositionError) => {
             this.locationError = 'Could not get your location. Please check your browser settings and try again.';
             this.isLoading = false;
             console.error('Geolocation error:', error);
@@ -137,15 +135,8 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.isLoading = false;
       }
     } else {
-      // Existing filter-based search logic
       if (!this.currentFilter.country && !this.currentFilter.city) {
-        this.profileService.getAllProfiles().subscribe({
-          next: (profiles) => {
-            this.userProfiles = profiles;
-            this.isLoading = false;
-          },
-          error: (error) => this.handleError(error)
-        });
+        this.fetchProfiles();
       } else {
         this.profileService.filterByLocation(this.currentFilter).subscribe({
           next: (profiles) => {
@@ -156,6 +147,19 @@ export class HomeComponent implements OnInit, OnDestroy {
         });
       }
     }
+  }
+
+  // Add new helper method
+  private fetchProfiles(params?: ProfileQueryParams): void {
+    this.profileService.getAllProfiles(params).subscribe({
+      next: (profiles: UserProfile[]) => {
+        this.userProfiles = params?.coordinates ? 
+          this.sortProfilesByDistanceAndStatus(profiles, params.coordinates as [number, number]) :
+          profiles;
+        this.isLoading = false;
+      },
+      error: (error) => this.handleError(error)
+    });
   }
 
   private sortProfilesByDistanceAndStatus(
