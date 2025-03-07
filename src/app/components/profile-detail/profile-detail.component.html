@@ -19,13 +19,13 @@
 
         <!-- Header Section -->
         <div class="profile-header">
-          <div class="editable-field" (click)="startEditing('fullName', profile.fullName || '')" *ngIf="profile">
-            <h1 *ngIf="editingField !== 'fullName'">{{profile.fullName || 'No name provided'}}</h1>
-            <div *ngIf="editingField === 'fullName'" class="edit-controls">
-              <input type="text" [(ngModel)]="tempEditValue" (keyup.enter)="saveField('fullName')" (keyup.escape)="cancelEditing()">
+          <div class="editable-field" (click)="startEditing('fullName')" *ngIf="profile">
+            <h1 *ngIf="editingState.fieldName !== 'fullName'">{{profile.fullName || 'Enter your full name'}}</h1>
+            <div *ngIf="editingState.fieldName === 'fullName'" class="edit-controls">
+              <input type="text" [(ngModel)]="editingState.currentValue" placeholder="Enter your full name" (keyup.enter)="saveField('fullName')" (keyup.escape)="cancelEditing()">
               <div class="edit-buttons">
                 <button (click)="saveField('fullName')" class="save-btn">Save</button>
-                <button (click)="cancelEditing()" class="cancel-btn">Cancel</button>
+                <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
               </div>
             </div>
           </div>
@@ -35,13 +35,13 @@
             <i *ngIf="profile.verified" class="fas fa-gem verified-badge"><i class="fas fa-check verified-badge"></i></i>
           </p>
           <p class="birthday" *ngIf="profile.birthdate">Age: {{formatBirthday(profile.birthdate)}}</p>
-            <div class="bio" (click)="startEditing('bio', profile.bio || '')" *ngIf="profile">
-              <p *ngIf="editingField !== 'bio'">Bio: <span>{{profile.bio || 'No bio provided'}}</span></p>
-              <div *ngIf="editingField === 'bio'" class="edit-controls">
-                <textarea [(ngModel)]="tempEditValue" (keyup.enter)="saveField('bio')" (keyup.escape)="cancelEditing()"></textarea>
+            <div class="bio" (click)="startEditing('bio')" *ngIf="profile">
+              <p *ngIf="editingState.fieldName !== 'bio'">Bio: <span>{{profile.bio || 'Add a bio to tell people about yourself'}}</span></p>
+              <div *ngIf="editingState.fieldName === 'bio'" class="edit-controls">
+                <textarea [(ngModel)]="editingState.currentValue" (keyup.enter)="saveField('bio')" (keyup.escape)="cancelEditing()"></textarea>
                 <div class="edit-buttons">
                   <button (click)="saveField('bio')" class="save-btn">Save</button>
-                  <button (click)="cancelEditing()" class="cancel-btn">Cancel</button>
+                  <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
                 </div>
               </div>
             </div>
@@ -82,12 +82,12 @@
 
     <!-- Image Gallery -->
     <div class="image-gallery">
-      <div class="main-images" *ngIf="profile.images?.length">
+      <div class="main-images" *ngIf="profile.images.length">
         <div class="gallery-item" *ngFor="let image of profile.images">
           <img [src]="image" [alt]="profile.fullName" (click)="openImageModal(image)">
         </div>
       </div>
-      <div class="videos" *ngIf="profile.videos?.length">
+      <div class="videos" *ngIf="profile.videos.length">
         <div class="gallery-item" *ngFor="let video of profile.videos">
           <video controls>
             <source [src]="video" type="video/mp4">
@@ -98,48 +98,191 @@
 
     <!-- Bio Section -->
     <div class="bio-section">
-      <h2>Role</h2>
-      <p class="role">{{profile.role}}</p>
+      <h2>Roles</h2>
+      <div class="editable-field" (click)="startEditing('role')">
+        <span class="label">Current Roles:</span>
+        <span *ngIf="editingState.fieldName !== 'role'" class="role-tags">
+          <span class="role-tag" *ngFor="let r of (profile.role || [])">{{r}}</span>
+        </span>
+        <div *ngIf="editingState.fieldName === 'role'" class="edit-controls checkbox-grid">
+          <label *ngFor="let roleOption of availableRoles">
+            <input type="checkbox" 
+                   [ngModel]="roleSelections[roleOption.value]"
+                   (ngModelChange)="roleSelections[roleOption.value] = $event; updateRoleSelections()">
+            {{roleOption.label}}
+          </label>
+          <div class="edit-buttons">
+            <button (click)="saveField('role')" class="save-btn">Save</button>
+            <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Services Section -->
-    <div class="services-section" *ngIf="profile.services?.length">
+    <div class="services-section">
       <h2>Services</h2>
-      <ul class="services-list">
-        <li *ngFor="let service of profile.services">{{service}}</li>
-      </ul>
+      <div class="editable-field" (click)="startEditingServices()">
+        <div *ngIf="editingState.fieldName !== 'services'" class="services-table-container">
+          <table class="services-table">
+            <thead>
+              <tr>
+                <th>Services</th>
+                <th>Included</th>
+                <th>Extra</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let service of availableServices">
+                <td>{{service}}</td>
+                <td>
+                  <i class="fas fa-check" *ngIf="profile?.services?.included?.includes(service)"></i>
+                </td>
+                <td>
+                  {{profile.services.extra && profile.services.extra[service] ? profile.services.extra[service] + ' ' + rates.currency : ''}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div *ngIf="editingState.fieldName === 'services'" class="edit-controls services-edit-grid">
+          <table class="services-table">
+            <thead>
+              <tr>
+                <th>Services</th>
+                <th>Included</th>
+                <th>Extra Price ({{rates.currency}})</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let service of availableServices">
+                <td>{{service}}</td>
+                <td>
+                  <input type="checkbox" 
+                         [ngModel]="serviceSelections.included[service]"
+                         (change)="handleServiceSelection(service, $event)">
+                </td>
+                <td>
+                  <input type="number" 
+                         [(ngModel)]="serviceSelections.extra[service]"
+                         [value]="serviceSelections.extra[service]"
+                         [placeholder]="'Price in ' + rates.currency"
+                         min="0">
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="edit-buttons">
+            <button (click)="saveField('services')" class="save-btn">Save</button>
+            <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Physical Attributes -->
     <div class="attributes-section" *ngIf="profile.physicalAttributes">
       <h2>Physical Attributes</h2>
       <div class="attributes-grid">
-        <div *ngIf="profile.physicalAttributes.gender" class="attribute">
-          <span class="label">Gender:</span> {{profile.physicalAttributes.gender}}
+        <div *ngIf="profile.physicalAttributes.gender" class="attribute editable-field" (click)="startEditing('physicalAttributes.gender')">
+          <span class="label">Gender:</span>
+          <span *ngIf="editingState.fieldName !== 'physicalAttributes.gender'">{{profile.physicalAttributes.gender || 'Select your gender'}}</span>
+          <div *ngIf="editingState.fieldName === 'physicalAttributes.gender'" class="edit-controls">
+            <select [(ngModel)]="editingState.currentValue">
+              <option value="female">Female</option>
+              <option value="male">Male</option>
+              <option value="other">Other</option>
+            </select>
+            <div class="edit-buttons">
+              <button (click)="saveField('physicalAttributes.gender')" class="save-btn">Save</button>
+              <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
+            </div>
+          </div>
         </div>
-        <div *ngIf="profile.physicalAttributes.height" class="attribute">
-          <span class="label">Height:</span> {{profile.physicalAttributes.height}}cm
+
+        <div *ngIf="profile.physicalAttributes.height" class="attribute editable-field" (click)="startEditing('physicalAttributes.height')">
+          <span class="label">Height:</span>
+          <span *ngIf="editingState.fieldName !== 'physicalAttributes.height'">{{profile.physicalAttributes.height ? profile.physicalAttributes.height + 'cm' : 'Enter height in cm'}}</span>
+          <div *ngIf="editingState.fieldName === 'physicalAttributes.height'" class="edit-controls">
+            <input type="number" [(ngModel)]="editingState.currentValue" placeholder="Height in cm">
+            <div class="edit-buttons">
+              <button (click)="saveField('physicalAttributes.height')" class="save-btn">Save</button>
+              <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
+            </div>
+          </div>
         </div>
-        <div *ngIf="profile.physicalAttributes.weight" class="attribute">
-          <span class="label">Weight:</span> {{profile.physicalAttributes.weight}}kg
+
+        <!-- Repeat similar pattern for other attributes -->
+        <div *ngIf="profile.physicalAttributes.weight" class="attribute editable-field" (click)="startEditing('physicalAttributes.weight')">
+          <span class="label">Weight:</span>
+          <span *ngIf="editingState.fieldName !== 'physicalAttributes.weight'">{{profile.physicalAttributes.weight ? profile.physicalAttributes.weight + 'kg' : 'Enter weight in kg'}}</span>
+          <div *ngIf="editingState.fieldName === 'physicalAttributes.weight'" class="edit-controls">
+            <input type="number" [(ngModel)]="editingState.currentValue" placeholder="Weight in kg">
+            <div class="edit-buttons">
+              <button (click)="saveField('physicalAttributes.weight')" class="save-btn">Save</button>
+              <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
+            </div>
+          </div>
         </div>
-        <div *ngIf="profile.physicalAttributes.ethnicity" class="attribute">
-          <span class="label">Ethnicity:</span> {{profile.physicalAttributes.ethnicity}}
+
+        <!-- Continue for other attributes -->
+        <div *ngIf="profile.physicalAttributes.ethnicity" class="attribute editable-field" (click)="startEditing('physicalAttributes.ethnicity')">
+          <span class="label">Ethnicity:</span>
+          <span *ngIf="editingState.fieldName !== 'physicalAttributes.ethnicity'">{{profile.physicalAttributes.ethnicity || 'Enter your ethnicity'}}</span>
+          <div *ngIf="editingState.fieldName === 'physicalAttributes.ethnicity'" class="edit-controls">
+            <input type="text" 
+                   [(ngModel)]="editingState.currentValue" 
+                   list="ethnicityList"
+                   placeholder="Type or select your ethnicity">
+            <datalist id="ethnicityList">
+              <option value="asian">Asian</option>
+              <option value="black">Black</option>
+              <option value="caucasian">Caucasian</option>
+              <option value="hispanic">Hispanic</option>
+              <option value="indian">Indian</option>
+              <option value="middle-eastern">Middle Eastern</option>
+              <option value="mixed">Mixed</option>
+              <option value="white">White</option>
+              <option value="other">Other</option>
+            </datalist>
+            <small class="hint-text">Suggested: Asian, Black, Caucasian, Hispanic, Indian, Middle Eastern, Mixed, White, Other</small>
+            <div class="edit-buttons">
+              <button (click)="saveField('physicalAttributes.ethnicity')" class="save-btn">Save</button>
+              <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
+            </div>
+          </div>
         </div>
-        <div *ngIf="profile.physicalAttributes.bustSize" class="attribute">
-          <span class="label">Bust Size:</span> {{profile.physicalAttributes.bustSize}}
+
+        <!-- Add similar blocks for bustSize, bustType, pubicHair -->
+
+        <div class="attribute editable-field" (click)="startEditing('physicalAttributes.tattoos')">
+          <span class="label">Tattoos:</span>
+          <span *ngIf="editingState.fieldName !== 'physicalAttributes.tattoos'">{{profile.physicalAttributes.tattoos ? 'Yes' : 'No'}}</span>
+          <div *ngIf="editingState.fieldName === 'physicalAttributes.tattoos'" class="edit-controls">
+            <select [(ngModel)]="editingState.currentValue">
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </select>
+            <div class="edit-buttons">
+              <button (click)="saveField('physicalAttributes.tattoos')" class="save-btn">Save</button>
+              <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
+            </div>
+          </div>
         </div>
-        <div *ngIf="profile.physicalAttributes.bustType" class="attribute">
-          <span class="label">Bust Type:</span> {{profile.physicalAttributes.bustType}}
-        </div>
-        <div *ngIf="profile.physicalAttributes.pubicHair" class="attribute">
-          <span class="label">Pubic Hair:</span> {{profile.physicalAttributes.pubicHair}}
-        </div>
-        <div class="attribute">
-          <span class="label">Tattoos:</span> {{profile.physicalAttributes.tattoos ? 'Yes' : 'No'}}
-        </div>
-        <div class="attribute">
-          <span class="label">Piercings:</span> {{profile.physicalAttributes.piercings ? 'Yes' : 'No'}}
+
+        <div class="attribute editable-field" (click)="startEditing('physicalAttributes.piercings')">
+          <span class="label">Piercings:</span>
+          <span *ngIf="editingState.fieldName !== 'physicalAttributes.piercings'">{{profile.physicalAttributes.piercings ? 'Yes' : 'No'}}</span>
+          <div *ngIf="editingState.fieldName === 'physicalAttributes.piercings'" class="edit-controls">
+            <select [(ngModel)]="editingState.currentValue">
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </select>
+            <div class="edit-buttons">
+              <button (click)="saveField('physicalAttributes.piercings')" class="save-btn">Save</button>
+              <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -150,7 +293,7 @@
       <div class="availability-details">
         <p *ngIf="profile.availableToMeet.available24_7">Available 24/7</p>
         <p *ngIf="profile.availableToMeet.advanceBooking">Advance Booking Available</p>
-        <div *ngIf="profile.availableToMeet.meetingWith?.length">
+        <div *ngIf="profile.availableToMeet.meetingWith.length">
           <h3>Meeting With:</h3>
           <ul>
             <li *ngFor="let meetWith of profile.availableToMeet.meetingWith">{{meetWith}}</li>
@@ -161,41 +304,119 @@
     </div>
 
     <!-- Contact Information -->
-    <div class="contact-section" *ngIf="profile.contact">
+    <div class="contact-section">
       <h2>Contact Information</h2>
       <div class="contact-details">
-        <p *ngIf="profile.contact.phone">Phone: {{profile.contact.phone}}</p>
-        <p *ngIf="profile.contact.country">Country: {{profile.contact.country}}</p>
-        <p *ngIf="profile.contact.city">City: {{profile.contact.city}}</p>
-        <p *ngIf="profile.contact.city">Email: {{profile.email}}</p>
+        <div class="contact-item editable-field" (click)="startEditing('contact.phone')">
+          <i class="fas fa-phone contact-icon"></i>
+          <span class="label">Phone:</span>
+          <span *ngIf="editingState.fieldName !== 'contact.phone'" class="value">
+            {{profile.contact?.phone || 'Add your phone number'}}
+          </span>
+          <div *ngIf="editingState.fieldName === 'contact.phone'" class="edit-controls">
+            <input type="tel" [(ngModel)]="editingState.currentValue" placeholder="Enter phone number">
+            <div class="edit-buttons">
+              <button (click)="saveField('contact.phone')" class="save-btn">Save</button>
+              <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-item editable-field" (click)="startEditing('contact.country')">
+          <i class="fas fa-globe contact-icon"></i>
+          <span class="label">Country:</span>
+          <span *ngIf="editingState.fieldName !== 'contact.country'" class="value">
+            {{profile.contact?.country || 'Add your country'}}
+          </span>
+          <div *ngIf="editingState.fieldName === 'contact.country'" class="edit-controls">
+            <input type="text" [(ngModel)]="editingState.currentValue" placeholder="Enter country">
+            <div class="edit-buttons">
+              <button (click)="saveField('contact.country')" class="save-btn">Save</button>
+              <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-item editable-field" (click)="startEditing('contact.city')">
+          <i class="fas fa-city contact-icon"></i>
+          <span class="label">City:</span>
+          <span *ngIf="editingState.fieldName !== 'contact.city'" class="value">
+            {{profile.contact?.city || 'Add your city'}}
+          </span>
+          <div *ngIf="editingState.fieldName === 'contact.city'" class="edit-controls">
+            <input type="text" [(ngModel)]="editingState.currentValue" placeholder="Enter city">
+            <div class="edit-buttons">
+              <button (click)="saveField('contact.city')" class="save-btn">Save</button>
+              <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-item">
+          <i class="fas fa-envelope contact-icon"></i>
+          <span class="label">Email:</span>
+          <span class="value">{{profile.email || 'No email provided'}}</span>
+        </div>
       </div>
     </div>
 
     <!-- Additional Information -->
     <div class="additional-info">
-      <div class="rates" *ngIf="rates.incall || rates.outcall">
+      <div class="rates" *ngIf="rates">
         <h2>Rates</h2>
+        <div class="rates-header">
+          <select [(ngModel)]="selectedCurrency" (change)="updateCurrency()" *ngIf="isCurrentUser">
+            <option value="EUR">EUR</option>
+            <option value="USD">USD</option>
+            <option value="GBP">GBP</option>
+          </select>
+        </div>
         <table class="rates-table">
           <thead>
             <tr>
               <th>Duration</th>
               <th>Incall</th>
               <th>Outcall</th>
+              <th *ngIf="isCurrentUser">Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>30 minutes</td>
-              <td>{{ rates.incall?.['30 minutes'] ? '$' + rates.incall['30 minutes'] : 'N/A' }}</td>
-              <td>{{ rates.outcall?.['30 minutes'] ? '$' + rates.outcall['30 minutes'] : 'N/A' }}</td>
-            </tr>
-            <tr>
-              <td>1 hour</td>
-              <td>{{ rates.incall?.['1 hour'] ? '$' + rates.incall['1 hour'] : 'N/A' }}</td>
-              <td>{{ rates.outcall?.['1 hour'] ? '$' + rates.outcall['1 hour'] : 'N/A' }}</td>
+            <tr *ngFor="let duration of getRateDurations()">
+              <td>{{duration}}</td>
+              <td class="editable-field" (click)="startEditing('rates.incall.' + duration)">
+                <span *ngIf="editingState.fieldName !== 'rates.incall.' + duration">
+                  {{ rates.incall[duration] ? rates.incall[duration] + ' ' + (rates.currency || 'EUR') : 'N/A' }}
+                </span>
+                <div *ngIf="editingState.fieldName === 'rates.incall.' + duration" class="edit-controls">
+                  <input type="number" [(ngModel)]="editingState.currentValue" placeholder="Enter rate" min="0">
+                  <div class="edit-buttons">
+                    <button (click)="saveField('rates.incall.' + duration)" class="save-btn">Save</button>
+                    <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
+                  </div>
+                </div>
+              </td>
+              <td class="editable-field" (click)="startEditing('rates.outcall.' + duration)">
+                <span *ngIf="editingState.fieldName !== 'rates.outcall.' + duration">
+                  {{ rates.outcall[duration] ? rates.outcall[duration] + ' ' + (rates.currency || 'EUR') : 'N/A' }}
+                </span>
+                <div *ngIf="editingState.fieldName === 'rates.outcall.' + duration" class="edit-controls">
+                  <input type="number" [(ngModel)]="editingState.currentValue" placeholder="Enter rate" min="0">
+                  <div class="edit-buttons">
+                    <button (click)="saveField('rates.outcall.' + duration)" class="save-btn">Save</button>
+                    <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
+                  </div>
+                </div>
+              </td>
+              <td *ngIf="isCurrentUser">
+                <button class="delete-btn" (click)="deleteRate(duration)"><i class="fas fa-trash"></i></button>
+              </td>
             </tr>
           </tbody>
         </table>
+        <div *ngIf="isCurrentUser" class="add-rate-section">
+          <input type="text" [(ngModel)]="newDuration" placeholder="Duration (e.g., '2 Hours')">
+          <button (click)="addNewRate()" class="add-btn">Add Rate</button>
+        </div>
       </div>
     </div>
   </div>

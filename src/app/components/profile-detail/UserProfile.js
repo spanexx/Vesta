@@ -83,48 +83,19 @@ const userProfileSchema = new mongoose.Schema({
     default: 0,
   },
   services: {
-    included: {
-      type: [String],
-      enum: [
-        // Basic Services
-        'Classic vaginal sex', 'Sex Toys', 'Striptease', 'Uniforms', '69 position', 
-        'Cum in face', 'Cum in mouth', 'Cum on body', 'Deepthroat', 'Domination', 
-        'Erotic massage', 'Erotic Photos', 'Foot fetish', 'French kissing', 
-        'Golden shower give', 'Group sex', 'Oral without condom', 'With 2 men',
-        // Pornstar Services
-        'Video Recording', 'Photo Shooting', 'Live Cam Show', 'Adult Film Production',
-        'Private Show', 'Professional Photos', 'Explicit Content Creation',
-        // Mistress Services
-        'BDSM', 'Role Play', 'Spanking', 'Bondage', 'Fetish', 'Slave Training',
-        'Discipline', 'Humiliation', 'Rope Play', 'Wax Play',
-        // Girlfriend Experience
-        'Dinner Date', 'Overnight Stay', 'Weekend Trip', 'Social Events',
-        'Romantic Evening', 'Cuddling', 'Dating', 'Travel Companion',
-        'Dancing', 'Shopping Together'
-      ],
-      default: []
-    },
-    extra: {
-      type: Map,
-      of: Number,
-      default: new Map()
-    }
+    type: [String],
+    enum: ['Classic vaginal sex', 'Sex Toys', 'Striptease', 'Uniforms', '69 position', 'Cum in face', 'Cum in mouth', 'Cum on body', 'Deepthroat', 'Domination', 'Erotic massage', 'Erotic Photos', 'Foot fetish', 'French kissing', 'Golden shower give', 'Group sex', 'Oral without condom', 'With 2 men'],
+    default: [],
   },
   rates: {
     incall: {
-      type: Map,
-      of: Number,
-      default: new Map()
+      '30 minutes': { type: Number, min: 0 },
+      '1 hour': { type: Number, min: 0 },
     },
     outcall: {
-      type: Map,
-      of: Number,
-      default: new Map()
+      '30 minutes': { type: Number, min: 0 },
+      '1 hour': { type: Number, min: 0 },
     },
-    currency: {
-      type: String,
-      default: 'EUR'
-    }
   },
   physicalAttributes: {
     gender: { type: String, trim: true },
@@ -224,32 +195,10 @@ userProfileSchema.statics.updateProfile = async function (userId, profileData) {
 
 userProfileSchema.statics.updateField = async function(userId, fieldName, value) {
   // Create the update object dynamically
-  let updateObj = {};
+  const updateObj = {};
   updateObj[fieldName] = value;
 
-  console.log('Updating profile:', { userId, fieldName, value }); // Debug log
-
-  // Special handling for arrays
-  if (Array.isArray(value)) {
-    return this.findByIdAndUpdate(
-      userId,
-      { $set: updateObj },
-      { 
-        new: true, 
-        runValidators: true,
-        arrayFilters: [] // Ensure array updates are handled properly
-      }
-    );
-  }
-
-  // Special handling for services
-  if (fieldName === 'services') {
-    updateObj = {
-      'services.included': value.included,
-      'services.extra': value.extra
-    };
-  }
-
+  // Perform the update
   const updatedProfile = await this.findByIdAndUpdate(
     userId,
     { $set: updateObj },

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AuthenticationService } from './authentication.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, catchError } from 'rxjs';
+import { Observable, catchError, throwError } from 'rxjs';
 import { UserProfile } from '../models/userProfile.model';
 import { profileRoutes } from '../../environments/apiRoutes';
 
@@ -87,6 +87,35 @@ export class ProfileService {
   }
 
   updateField(fieldName: string, value: any): Observable<UserProfile> {
+    console.log(`Updating field ${fieldName} with value:`, value);
+    
+    // Special handling for rates field
+    if (fieldName === 'rates') {
+      // Ensure we're sending a complete rates object
+      const ratesUpdate = {
+        incall: value.incall || {},
+        outcall: value.outcall || {},
+        currency: value.currency || 'EUR'
+      };
+      console.log('Formatted rates update:', ratesUpdate);
+      return this.http.patch<UserProfile>(`${profileRoutes}/field/${fieldName}`, { value: ratesUpdate });
+    }
+
+    // Special handling for services field
+    if (fieldName === 'services') {
+      console.log('Processing services update:', value);
+      const servicesUpdate = {
+        included: Array.isArray(value.included) ? value.included : [],
+        extra: value.extra && typeof value.extra === 'object' ? value.extra : {}
+      };
+      
+      console.log('Formatted services update:', servicesUpdate);
+      return this.http.patch<UserProfile>(
+        `${profileRoutes}/field/${fieldName}`, 
+        { value: servicesUpdate }
+      );
+    }
+    
     return this.http.patch<UserProfile>(`${profileRoutes}/field/${fieldName}`, { value });
   }
 }

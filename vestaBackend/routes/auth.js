@@ -199,7 +199,6 @@ router.get('/profiles', async (req, res) => {
 router.get('/me', authMiddleware, async (req, res) => {
   try {
     const user = await UserProfile.findById(req.userId);
-    console.log('User found:', user);
     if (!user) {
       return createErrorResponse(res, 404, 'USER_NOT_FOUND', 'User not found');
     }

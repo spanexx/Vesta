@@ -311,6 +311,73 @@
   position: relative;
 }
 
+.contact-item {
+  padding: 1rem 1.5rem;
+  background: #fff;
+  border-radius: 15px;
+  margin: 0;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(234, 100, 184, 0.1);
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.contact-icon {
+  color: #ea64b8;
+  margin-right: 1rem;
+  font-size: 1.2rem;
+  width: 20px;
+  text-align: center;
+}
+
+.contact-item .label {
+  font-weight: 500;
+  margin-right: 0.5rem;
+  color: #333;
+  min-width: 70px;
+}
+
+.contact-item .value {
+  color: #666;
+  flex: 1;
+}
+
+.contact-item:hover {
+  transform: translateX(5px);
+  background: #fdf4fa;
+  border-color: rgba(234, 100, 184, 0.2);
+  box-shadow: 0 5px 15px rgba(234, 100, 184, 0.1);
+}
+
+/* Style for empty values */
+.contact-item .value:empty::before,
+.contact-item .value:only-child::before {
+  content: 'Not provided';
+  color: #999;
+  font-style: italic;
+}
+
+/* Editing state */
+.contact-item.editable-field:hover::after {
+  right: 10px;
+}
+
+.contact-item .edit-controls {
+  width: 100%;
+  margin: 0;
+}
+
+.contact-item .edit-controls input {
+  background: #fff;
+  border: 1px solid #ea64b8;
+  border-radius: 8px;
+  padding: 0.5rem;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
 .contact-details p {
   padding: 1rem 1.5rem;
   background: #fff;
@@ -438,6 +505,34 @@
 
 .rates-table tr:hover {
   background: #fdf4fa;
+}
+
+.rates-table td.editable-field {
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.rates-table td.editable-field:hover {
+  background-color: #fdf4fa;
+}
+
+.rates-table .edit-controls {
+  padding: 5px;
+}
+
+.rates-table .edit-controls input {
+  width: 80px;
+  padding: 4px 8px;
+  border: 1px solid #ea64b8;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.rates-table .edit-buttons {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  margin-top: 5px;
 }
 
 @media (max-width: 768px) {
@@ -784,4 +879,267 @@ h2 {
 
 :not(.isCurrentUser) .editable-field {
   cursor: default;
+}
+
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: #fdf4fa;
+  border-radius: 10px;
+}
+
+.checkbox-grid label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.checkbox-grid label:hover {
+  background-color: rgba(234, 100, 184, 0.1);
+}
+
+.checkbox-grid input[type="radio"] {
+  accent-color: #ea64b8;
+}
+
+.checkbox-grid input[type="checkbox"] {
+  accent-color: #ea64b8;
+  width: 16px;
+  height: 16px;
+}
+
+.checkbox-grid .edit-buttons {
+  grid-column: 1 / -1;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.role-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.role-tag {
+  background: #fdf4fa;
+  padding: 0.4rem 0.8rem;
+  border-radius: 15px;
+  color: #ea64b8;
+  font-size: 0.9rem;
+  border: 1px solid rgba(234, 100, 184, 0.2);
+}
+
+.hint-text {
+  display: block;
+  color: #666;
+  font-size: 0.8rem;
+  margin: 5px 0;
+  font-style: italic;
+}
+
+.edit-controls input[list] {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ea64b8;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-bottom: 5px;
+  background: #fff;
+}
+
+.edit-controls input[list]:focus {
+  outline: none;
+  border-color: #ea64b8;
+  box-shadow: 0 0 0 2px rgba(234, 100, 184, 0.1);
+}
+
+.add-rate-section {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  background: #fdf4fa;
+  border-radius: 8px;
+}
+
+.add-rate-section input {
+  padding: 8px;
+  border: 1px solid #ea64b8;
+  border-radius: 4px;
+  flex: 1;
+}
+
+.add-btn, .delete-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.add-btn {
+  background: #ea64b8;
+  color: white;
+}
+
+.delete-btn {
+  background: #ff4444;
+  color: white;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+}
+
+.rates-header {
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.rates-header select {
+  padding: 5px 10px;
+  border: 1px solid #ea64b8;
+  border-radius: 4px;
+  background: white;
+}
+
+.services-section {
+  margin: 2rem 0;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.services-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  padding: 1rem 0;
+}
+
+.service-tag {
+  background: #fdf4fa;
+  color: #ea64b8;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  border: 1px solid rgba(234, 100, 184, 0.2);
+  transition: all 0.3s ease;
+}
+
+.service-tag:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(234, 100, 184, 0.15);
+}
+
+.services-grid {
+  display: grid;
+  gap: 2rem;
+  padding: 1rem;
+  background: #fdf4fa;
+  border-radius: 12px;
+}
+
+.service-category h3 {
+  color: #ea64b8;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.service-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.8rem;
+}
+
+.service-options label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.service-options label:hover {
+  background-color: rgba(234, 100, 184, 0.1);
+}
+
+.service-options input[type="checkbox"] {
+  accent-color: #ea64b8;
+  width: 16px;
+  height: 16px;
+}
+
+.services-table-container {
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.services-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(234, 100, 184, 0.1);
+}
+
+.services-table th,
+.services-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(234, 100, 184, 0.1);
+}
+
+.services-table th {
+  background: #fdf4fa;
+  color: #ea64b8;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+
+.services-table td {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.services-table tr:hover {
+  background: #fdf4fa;
+}
+
+.services-table input[type="number"] {
+  width: 100px;
+  padding: 4px 8px;
+  border: 1px solid #ea64b8;
+  border-radius: 4px;
+  text-align: right;
+}
+
+.services-table input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #ea64b8;
+}
+
+.services-table .fa-check {
+  color: #ea64b8;
+}
+
+.services-edit-grid {
+  background: #fdf4fa;
+  padding: 1rem;
+  border-radius: 12px;
 }

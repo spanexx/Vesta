@@ -7,7 +7,7 @@ export interface UserProfile {
     birthdate: Date;
     verified: boolean;
     status: 'active' | 'suspended' | 'pending';
-    role: 'girlfriend' | 'wife' | 'mistress' | 'pornstar' | 'onenight';
+    role: ('girlfriend' | 'wife' | 'mistress' | 'pornstar' | 'onenight')[];
     accountLevel?: 'vip' | 'regular';
     lastLogin?: Date;
     verificationDocuments: string[];
@@ -20,16 +20,16 @@ export interface UserProfile {
     // Profile Fields
     fullName?: string;
     bio?: string;
-    services: string[];
+    services: {
+      included: string[];
+      extra: {
+        [key: string]: number;
+      };
+    };
     rates: {
-      incall: {
-        '30 minutes': number;
-        '1 hour': number;
-      };
-      outcall: {
-        '30 minutes': number;
-        '1 hour': number;
-      };
+      incall: { [duration: string]: number };
+      outcall: { [duration: string]: number };
+      currency?: string;
     };
     level: 'vip' | 'premium' | 'standard';
     physicalAttributes?: {

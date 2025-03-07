@@ -46,7 +46,10 @@ router.post('/update', auth, async (req, res) => {
       fullName: req.body.fullName,      // Added fullName
       username: req.body.username,      // Added username
       bio: req.body.bio,
-      services: req.body.services,
+      services: {
+        included: req.body.services.included || [],
+        extra: req.body.services.extra || {}
+      },
       rates: {
         incall: req.body.rates.incall,
         outcall: req.body.rates.outcall
@@ -349,7 +352,6 @@ router.get('/:id', async (req, res) => {
     const profile = await UserProfile.findById(req.params.id)
       .select('-__v')
       .lean();
-      console.log("Profile", profile);
     if (!profile) {
       return createErrorResponse(
         res,
@@ -427,6 +429,9 @@ router.patch('/field/:fieldName', auth, async (req, res) => {
     const { value } = req.body;
     console.log('Updating field:', fieldName, 'with value:', value);
 
+    // Create update object before validation
+    const updateData = {};
+
     // Basic validation
     if (value === undefined) {
       return res.status(400).json({
@@ -435,9 +440,51 @@ router.patch('/field/:fieldName', auth, async (req, res) => {
       });
     }
 
-    // Create update object
-    const updateData = {};
-    updateData[fieldName] = value;
+    // Special handling for role field and physical attributes
+    if (fieldName === 'role') {
+      if (!Array.isArray(value)) {
+        return res.status(400).json({
+          error: 'INVALID_INPUT',
+          message: 'Role must be an array'
+        });
+      }
+      // Validate role values
+      const validRoles = ['girlfriend', 'wife', 'mistress', 'pornstar', 'onenight'];
+      if (!value.every(role => validRoles.includes(role))) {
+        return res.status(400).json({
+          error: 'INVALID_INPUT',
+          message: 'Invalid role values'
+        });
+      }
+      updateData[fieldName] = value; // Ensure we're setting the entire array
+      console.log('Setting roles to:', value); // Debug log
+    } else if (fieldName === 'physicalAttributes.ethnicity') {
+      const normalizedValue = value.toLowerCase().trim();
+      // Allow any value but suggest preferred values
+      if (normalizedValue.length < 2 || normalizedValue.length > 50) {
+        return res.status(400).json({
+          error: 'INVALID_INPUT',
+          message: 'Ethnicity must be between 2 and 50 characters'
+        });
+      }
+      updateData['physicalAttributes.ethnicity'] = normalizedValue;
+    } else if (fieldName === 'services') {
+      if (!value.included || !Array.isArray(value.included)) {
+        return res.status(400).json({
+          error: 'INVALID_INPUT',
+          message: 'Services included must be an array'
+        });
+      }
+      if (!value.extra || typeof value.extra !== 'object') {
+        return res.status(400).json({
+          error: 'INVALID_INPUT',
+          message: 'Services extra must be an object'
+        });
+      }
+      updateData[fieldName] = value;
+    } else {
+      updateData[fieldName] = value;
+    }
 
     const updatedProfile = await UserProfile.findByIdAndUpdate(
       req.userId,
