@@ -1,0 +1,35 @@
+<div class="icon-menu">
+  <div class="main-icon" (click)="toggleDropdown($event)">
+    <i class="fas" [class.fa-bars]="userId" [class.fa-user-plus]="!userId"></i>
+  </div>
+  
+  <div class="dropdown-menu" [class.show]="isDropdownOpen">
+    <ng-container *ngIf="userId; else notLoggedIn">
+      <a routerLink="/" class="menu-item" (click)="closeMenu()">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+      </a>
+      
+      <a [routerLink]="['/profile', userId]" class="menu-item" (click)="closeMenu()">
+        <i class="fas fa-user"></i>
+        <span>Profile</span>
+      </a>
+      
+      <a routerLink="/settings" class="menu-item" (click)="closeMenu()">
+        <i class="fas fa-cog"></i>
+        <span>Settings</span>
+      </a>
+    </ng-container>
+
+    <ng-template #notLoggedIn>
+      <a routerLink="/register" class="menu-item" (click)="closeMenu()">
+        <i class="fas fa-user-plus"></i>
+        <span>Create Account</span>
+      </a>
+      <a routerLink="/login" class="menu-item" (click)="closeMenu()">
+        <i class="fas fa-sign-in-alt"></i>
+        <span>Login</span>
+      </a>
+    </ng-template>
+  </div>
+</div>

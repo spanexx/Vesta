@@ -7,3 +7,57 @@
   box-sizing: border-box;
   font-family: 'Playfair', sans-serif;
 }
+
+:root {
+  --primary: #ea64b8;
+  --surface: #ffffff;
+  --background: #f5f5f5;
+  --text: #333333;
+  --text-secondary: #666666;
+  --accent: #c864ea;
+}
+
+body.dark-mode {
+  --surface: #1a1a1a;
+  --background: #121212;
+  --text: #ffffff;
+  --text-secondary: #cccccc;
+  
+  background-color: var(--background);
+  color: var(--text);
+}
+
+body.dark-mode .profile-detail-container,
+body.dark-mode .profile-settings-container,
+body.dark-mode .registration-container {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+  background: var(--surface);
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .badge,
+body.dark-mode .card {
+  background: var(--surface);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .header {
+  background: var(--surface);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .role-menu a {
+  color: var(--text);
+}
+
+body.dark-mode .role-menu a:hover {
+  background: rgba(234, 100, 184, 0.1);
+}

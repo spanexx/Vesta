@@ -1,0 +1,41 @@
+<header class="header">
+  <div class="header-left">
+    <a routerLink="/" class="logo">
+      <img src="assets/logo.png" alt="Vesta Logo">
+    </a>
+    
+    <nav class="role-nav">
+      <button class="menu-button" (click)="toggleMenu()">
+        <i class="fas fa-bars"></i>
+      </button>
+      <ul class="role-menu" [class.show]="isMenuOpen">
+        <li *ngFor="let role of roles">
+          <a [routerLink]="['/browse', role.value]">{{role.label}}</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="header-right">
+    <button class="theme-toggle" (click)="toggleDarkMode()">
+      <i class="fas" [class.fa-moon]="!isDarkMode" [class.fa-sun]="isDarkMode"></i>
+    </button>
+
+    <ng-container *ngIf="currentUser$ | async as user; else loginButton">
+      <a [routerLink]="['/profile', user._id]" class="profile-link">
+        <i class="fas fa-user"></i>
+      </a>
+      <button class="logout-button" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+      </button>
+    </ng-container>
+
+    <ng-template #loginButton>
+      <a routerLink="/login" class="login-button">
+        <i class="fas fa-user"></i>
+        <span>Login</span>
+      </a>
+    </ng-template>
+  </div>
+</header>

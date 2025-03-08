@@ -1,73 +1,271 @@
-<div class="settings-container">
-    <div *ngIf="error" class="error-message">
-      {{ error }}
+<div class="profile-settings-container" *ngIf="profile">
+  <div *ngIf="error" class="error-message">{{ error }}</div>
+
+  <!-- Profile Picture Section -->
+  <section class="settings-section">
+    <h2>Profile Picture</h2>
+    <div class="profile-picture-container">
+      <img [src]="profile.profilePicture || 'assets/default-avatar.png'" alt="Profile Picture">
+      <input type="file" 
+             accept="image/*" 
+             (change)="onProfilePictureSelected($event)"
+             #profilePictureInput>
+      <button (click)="profilePictureInput.click()">Change Profile Picture</button>
     </div>
-  
-    <!-- Profile Picture Section -->
-    <section class="profile-picture-section">
-      <h2>Profile Picture</h2>
-      <div class="preview-container">
-        <img [src]="profilePicturePreview" *ngIf="profilePicturePreview" alt="Profile Picture Preview">
+  </section>
+
+  <!-- Basic Info Section -->
+  <section class="settings-section">
+    <h2>Basic Information</h2>
+    <div class="basic-info-grid">
+      <div class="info-item">
+        <label>Full Name</label>
+        <input type="text" 
+               [(ngModel)]="profile!.fullName"
+               (ngModelChange)="updateBasicInfo('fullName', $event)"
+               placeholder="Enter your full name">
       </div>
-      <input 
-        type="file" 
-        (change)="onProfilePictureSelected($event)" 
-        accept="image/*" 
-        id="profile-picture-input"
-        hidden>
-      <label for="profile-picture-input" class="upload-button">
-        <i class="fas fa-camera"></i>
-        Change Profile Picture
-      </label>
-    </section>
-  
-    <!-- Gallery Section -->
-    <section class="gallery-section">
-      <h2>Gallery</h2>
-      <div class="upload-buttons">
-        <input 
-          type="file" 
-          (change)="onImagesSelected($event)" 
-          accept="image/*" 
-          multiple 
-          id="images-input"
-          hidden>
-        <label for="images-input" class="upload-button">
-          <i class="fas fa-images"></i>
-          Add Images
+      <div class="info-item">
+        <label>Bio</label>
+        <textarea
+               [(ngModel)]="profile!.bio"
+               (ngModelChange)="updateBasicInfo('bio', $event)"
+               placeholder="Write something about yourself..."
+               rows="4"></textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- Images Section -->
+  <section class="settings-section">
+    <h2>Gallery Images</h2>
+    <div class="images-container">
+      <div class="image-grid">
+        <div class="image-item" *ngFor="let image of profile.images">
+          <img [src]="image" alt="Gallery image">
+        </div>
+      </div>
+      <input type="file" 
+             multiple 
+             accept="image/*" 
+             (change)="onImagesSelected($event)"
+             #imagesInput>
+      <button (click)="imagesInput.click()">Add Images</button>
+    </div>
+  </section>
+
+  <!-- Videos Section -->
+  <section class="settings-section">
+    <h2>Videos</h2>
+    <div class="videos-container">
+      <div class="video-grid">
+        <div class="video-item" *ngFor="let video of profile.videos">
+          <video controls>
+            <source [src]="video" type="video/mp4">
+          </video>
+        </div>
+      </div>
+      <input type="file" 
+             multiple 
+             accept="video/*" 
+             (change)="onVideosSelected($event)"
+             #videosInput>
+      <button (click)="videosInput.click()">Add Videos</button>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section class="settings-section">
+    <h2>Services</h2>
+    <div class="services-container">
+      <div class="services-grid">
+        <div *ngFor="let service of availableServices" class="service-item">
+          <label>
+            <input type="checkbox" 
+                   [checked]="profile.services.included.includes(service)"
+                   [disabled]="!!profile.services.extra[service]"
+                   (change)="handleServiceChange(service, $event)">
+            {{ service }}
+          </label>
+          <input type="number" 
+                 [value]="profile.services.extra[service] || ''"
+                 [disabled]="profile.services.included.includes(service)"
+                 (change)="handleExtraPriceChange(service, $event)"
+                 placeholder="Extra price">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Role Section -->
+  <section class="settings-section">
+    <h2>Roles</h2>
+    <div class="roles-container">
+      <div class="checkbox-group">
+        <label *ngFor="let role of availableRoles">
+          <input type="checkbox" 
+                 [checked]="profile.role.includes(role.value)"
+                 (change)="updateRole(role.value, $event)">
+          {{role.label}}
         </label>
-  
-        <input 
-          type="file" 
-          (change)="onVideosSelected($event)" 
-          accept="video/*" 
-          multiple 
-          id="videos-input"
-          hidden>
-        <label for="videos-input" class="upload-button">
-          <i class="fas fa-video"></i>
-          Add Videos
+      </div>
+    </div>
+  </section>
+
+  <!-- Physical Attributes Section -->
+  <section class="form-section" *ngIf="profile">
+    <h2>Physical Attributes</h2>
+    <div class="physical-attributes-grid">
+      <!-- Gender -->
+      <div class="attribute-item">
+        <label>Gender</label>
+        <select [(ngModel)]="profile!.physicalAttributes!.gender"
+                (ngModelChange)="updatePhysicalAttribute('gender', $event)">
+          <option value="female">Female</option>
+          <option value="male">Male</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <!-- Height -->
+      <div class="attribute-item">
+        <label>Height (cm)</label>
+        <input type="number" 
+               [(ngModel)]="profile!.physicalAttributes!.height"
+               (ngModelChange)="updatePhysicalAttribute('height', $event)"
+               min="140" max="220" 
+               placeholder="140-220 cm">
+      </div>
+
+      <!-- Weight -->
+      <div class="attribute-item">
+        <label>Weight (kg)</label>
+        <input type="number" 
+               [(ngModel)]="profile!.physicalAttributes!.weight"
+               (ngModelChange)="updatePhysicalAttribute('weight', $event)"
+               min="35" max="150" 
+               placeholder="35-150 kg">
+      </div>
+
+      <!-- Ethnicity -->
+      <div class="attribute-item">
+        <label>Ethnicity</label>
+        <select [(ngModel)]="profile!.physicalAttributes!.ethnicity"
+                (ngModelChange)="updatePhysicalAttribute('ethnicity', $event)">
+          <option value="Asian">Asian</option>
+          <option value="Black">Black</option>
+          <option value="Caucasian">Caucasian</option>
+          <option value="Hispanic">Hispanic</option>
+          <option value="Indian">Indian</option>
+          <option value="Middle Eastern">Middle Eastern</option>
+          <option value="Mixed">Mixed</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <!-- Bust Size -->
+      <div class="attribute-item">
+        <label>Bust Size</label>
+        <input type="text" 
+               [(ngModel)]="profile!.physicalAttributes!.bustSize"
+               (ngModelChange)="updatePhysicalAttribute('bustSize', $event)"
+               pattern="[0-9]{2}[A-K]"
+               placeholder="e.g., 34C"
+               #bustSize="ngModel">
+        <div class="hint-text" [class.error]="bustSize.errors?.['pattern']">
+          Format: two digits (32-42) followed by a letter (A-K)
+        </div>
+        <div *ngIf="bustSize.errors?.['pattern']" class="error-message">
+          Invalid bust size format. Example: 34C
+        </div>
+      </div>
+
+      <!-- Bust Type -->
+      <div class="attribute-item">
+        <label>Bust Type</label>
+        <select [(ngModel)]="profile!.physicalAttributes!.bustType"
+                (ngModelChange)="updatePhysicalAttribute('bustType', $event)">
+          <option value="Natural">Natural</option>
+          <option value="Enhanced">Enhanced</option>
+        </select>
+      </div>
+
+      <!-- Pubic Hair -->
+      <div class="attribute-item">
+        <label>Pubic Hair</label>
+        <select [(ngModel)]="profile!.physicalAttributes!.pubicHair"
+                (ngModelChange)="updatePhysicalAttribute('pubicHair', $event)">
+          <option value="Shaved">Shaved</option>
+          <option value="Trimmed">Trimmed</option>
+          <option value="Natural">Natural</option>
+        </select>
+      </div>
+
+      <!-- Tattoos & Piercings -->
+      <div class="attribute-item checkboxes">
+        <label>
+          <input type="checkbox" 
+                 [(ngModel)]="profile!.physicalAttributes!.tattoos"
+                 (ngModelChange)="updatePhysicalAttribute('tattoos', $event)">
+          Has Tattoos
+        </label>
+        <label>
+          <input type="checkbox" 
+                 [(ngModel)]="profile!.physicalAttributes!.piercings"
+                 (ngModelChange)="updatePhysicalAttribute('piercings', $event)">
+          Has Piercings
         </label>
       </div>
-    </section>
-  
-    <!-- Profile Form -->
-    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-form">
-      <div class="form-group">
-        <label for="fullName">Full Name</label>
-        <input type="text" id="fullName" formControlName="fullName">
+    </div>
+  </section><br>
+
+  <!-- Availability Section -->
+  <section class="form-section" *ngIf="profile">
+    <h2>Meeting Availability</h2>
+    <div class="availability-grid">
+      <!-- Meeting With Options -->
+      <div class="attribute-item">
+        <label>Meeting With</label>
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" 
+                   [checked]="profile.availableToMeet?.meetingWith?.includes('men')"
+                   (change)="updateMeetingWith('men', $event)">
+            Men
+          </label>
+          <label>
+            <input type="checkbox" 
+                   [checked]="profile.availableToMeet?.meetingWith?.includes('women')"
+                   (change)="updateMeetingWith('women', $event)">
+            Women
+          </label>
+          <label>
+            <input type="checkbox" 
+                   [checked]="profile.availableToMeet?.meetingWith?.includes('couples')"
+                   (change)="updateMeetingWith('couples', $event)">
+            Couples
+          </label>
+        </div>
       </div>
-  
-      <div class="form-group">
-        <label for="bio">Bio</label>
-        <textarea id="bio" formControlName="bio" rows="4"></textarea>
-        <small *ngIf="profileForm.get('bio')?.errors?.['minlength']">
-          Bio must be at least 50 characters long.
-        </small>
+
+      <!-- Availability Options -->
+      <div class="attribute-item">
+        <label>Availability</label>
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" 
+                   [(ngModel)]="profile.availableToMeet!.available24_7"
+                   (ngModelChange)="updateAvailability('available24_7', $event)">
+            Available 24/7
+          </label>
+          <label>
+            <input type="checkbox" 
+                   [(ngModel)]="profile.availableToMeet!.advanceBooking"
+                   (ngModelChange)="updateAvailability('advanceBooking', $event)">
+            Accept Advance Booking
+          </label>
+        </div>
       </div>
-  
-      <button type="submit" [disabled]="!profileForm.valid || isLoading" class="submit-button">
-        {{ isLoading ? 'Updating...' : 'Update Profile' }}
-      </button>
-    </form>
-  </div>
+    </div>
+  </section>
+</div>

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -8,7 +8,7 @@ import { LocationService } from '../../services/location.service';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
@@ -18,6 +18,7 @@ export class RegisterComponent implements OnInit {
   errorMessage = '';
   successMessage = '';
   isLoadingLocation = false;
+  showPassword = false;
 
   constructor(
     private fb: FormBuilder,
@@ -31,7 +32,8 @@ export class RegisterComponent implements OnInit {
       username: ['', [Validators.required, Validators.minLength(4)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      birthdate: ['', Validators.required]
+      birthdate: ['', Validators.required],
+      termsAccepted: [false, Validators.requiredTrue]  // Add this line
     });
   }
 
@@ -55,6 +57,7 @@ export class RegisterComponent implements OnInit {
         email: formValue.email,
         password: formValue.password,
         birthdate: formValue.birthdate,
+        termsAccepted: formValue.termsAccepted,  // Add this line
         currentLocation: {
           latitude: locationResult.location.latitude,
           longitude: locationResult.location.longitude,
@@ -71,7 +74,7 @@ export class RegisterComponent implements OnInit {
           this.registerForm.reset();
           // Redirect to update-profile instead of login
           setTimeout(() => {
-            this.router.navigate(['/update-profile']);
+            this.router.navigate(['/settings']);
           }, 1500);
         },
         (error) => {
@@ -85,5 +88,32 @@ export class RegisterComponent implements OnInit {
       console.error('Error obtaining location:', error);
     }
   }
-  
+
+  showError(fieldName: string): boolean {
+    const field = this.registerForm.get(fieldName);
+    return field ? (field.invalid && field.touched) || (field.invalid && field.dirty) : false;
+  }
+
+  getErrorMessage(fieldName: string): string {
+    const field = this.registerForm.get(fieldName);
+    if (!field || !field.errors) return '';
+
+    if (field.errors['required']) {
+      return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} is required`;
+    }
+    if (field.errors['email']) {
+      return 'Please enter a valid email address';
+    }
+    if (field.errors['minlength']) {
+      return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} must be at least ${field.errors['minlength'].requiredLength} characters`;
+    }
+    if (field.errors['underage']) {
+      return 'You must be at least 18 years old';
+    }
+    return '';
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
 }

@@ -1,5 +1,75 @@
-<form [formGroup]="loginForm">
-  <input formControlName="email" type="email" autocomplete="email">
-  <input formControlName="password" type="password" autocomplete="current-password">
-  <button (click)="login()">Login</button>
-</form>
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h2>Welcome Back</h2>
+      <p>Please login to continue</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="login()" class="login-form">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <div class="input-wrapper">
+          <i class="fas fa-envelope"></i>
+          <input 
+            id="email"
+            type="email" 
+            formControlName="email"
+            placeholder="Enter your email"
+            [class.error]="isFieldInvalid('email')"
+            autocomplete="email">
+        </div>
+        <div class="error-message" *ngIf="showError('email')">
+          {{ getErrorMessage('email') }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+          <i class="fas fa-lock"></i>
+          <input 
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            placeholder="Enter your password"
+            [class.error]="isFieldInvalid('password')"
+            autocomplete="current-password">
+          <i 
+            class="fas" 
+            [class.fa-eye]="!showPassword"
+            [class.fa-eye-slash]="showPassword"
+            (click)="togglePasswordVisibility()"
+          ></i>
+        </div>
+        <div class="error-message" *ngIf="showError('password')">
+          {{ getErrorMessage('password') }}
+        </div>
+      </div>
+
+      <div class="form-footer">
+        <label class="remember-me">
+          <input type="checkbox" formControlName="rememberMe">
+          <span>Remember me</span>
+        </label>
+        <a routerLink="/forgot-password" class="forgot-password">Forgot Password?</a>
+      </div>
+
+      <button 
+        type="submit" 
+        class="login-button"
+        [disabled]="loginForm.invalid || isLoading"
+        [class.loading]="isLoading">
+        <span *ngIf="!isLoading">Login</span>
+        <div class="spinner" *ngIf="isLoading"></div>
+      </button>
+
+      <div class="error-alert" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+    </form>
+
+    <div class="register-prompt">
+      <p>Don't have an account? <a routerLink="/register">Register</a></p>
+    </div>
+  </div>
+</div>

@@ -1,69 +1,118 @@
-<div class="registration-container">
-  <h2>Create Account</h2>
-  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-
-    <div class="form-group">
-      <label for="username">Username</label>
-      <input type="text" id="username" formControlName="username" class="form-control">
-      <div *ngIf="registerForm.get('username')?.errors?.['required'] && registerForm.get('username')?.touched"
-           class="error-message">
-        Username is required
-      </div>
-      <div *ngIf="registerForm.get('username')?.errors?.['minlength'] && registerForm.get('username')?.touched"
-           class="error-message">
-        Username must be at least 4 characters
-      </div>
+<div class="register-container">
+  <div class="register-card">
+    <div class="register-header">
+      <h2>Create Account</h2>
+      <p>Join our community today</p>
     </div>
 
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input type="email" id="email" formControlName="email" class="form-control">
-      <div *ngIf="registerForm.get('email')?.errors?.['required'] && registerForm.get('email')?.touched"
-           class="error-message">
-        Email is required
-      </div>
-      <div *ngIf="registerForm.get('email')?.errors?.['email'] && registerForm.get('email')?.touched"
-           class="error-message">
-        Please enter a valid email
-      </div>
-    </div>
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <div class="input-wrapper">
+          <i class="fas  fa-user fasa"></i>
 
-    <div class="form-group">
-      <label for="password">Password</label>
-      <input type="password" id="password" formControlName="password" class="form-control">
-      <div *ngIf="registerForm.get('password')?.errors?.['required'] && registerForm.get('password')?.touched"
-           class="error-message">
-        Password is required
+          <input 
+            id="username"
+            type="text" 
+            formControlName="username"
+            placeholder="Choose a username"
+            [class.error]="showError('username')"
+            autocomplete="username">
+        </div>
+        <div class="error-message" *ngIf="showError('username')">
+          {{ getErrorMessage('username') }}
+        </div>
       </div>
-      <div *ngIf="registerForm.get('password')?.errors?.['minlength'] && registerForm.get('password')?.touched"
-           class="error-message">
-        Password must be at least 6 characters
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <div class="input-wrapper">
+          <i class="fas fa-envelope fasa"></i>
+          <input 
+            id="email"
+            type="email" 
+            formControlName="email"
+            placeholder="Enter your email"
+            [class.error]="showError('email')"
+            autocomplete="email">
+        </div>
+        <div class="error-message" *ngIf="showError('email')">
+          {{ getErrorMessage('email') }}
+        </div>
       </div>
-    </div>
 
-    <div class="form-group">
-      <label for="birthdate">Birthdate</label>
-      <input type="date" id="birthdate" formControlName="birthdate" class="form-control">
-      <div *ngIf="registerForm.get('birthdate')?.errors?.['required'] && registerForm.get('birthdate')?.touched"
-           class="error-message">
-        Birthdate is required
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+          <input 
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            placeholder="Create a password"
+            [class.error]="showError('password')"
+            autocomplete="new-password">
+          <div class="password-visuals">
+            <i class="fas fa-lock"></i>
+
+            <i 
+            class="fas toggle-password" 
+            [class.fa-eye]="!showPassword"
+            [class.fa-eye-slash]="showPassword"
+            (click)="togglePasswordVisibility()">
+          </i>
+          </div>
+        </div>
+       
+        <div class="error-message" *ngIf="showError('password')">
+          {{ getErrorMessage('password') }}
+        </div>
       </div>
-      <div *ngIf="registerForm.get('birthdate')?.errors?.['underage'] && registerForm.get('birthdate')?.touched"
-           class="error-message">
-        You must be at least 13 years old
+
+      <div class="form-group">
+        <label for="birthdate">Birthdate</label>
+        <div class="input-wrapper">
+          <i class="fas fa-calendar fasa"></i>
+          <input 
+            id="birthdate"
+            type="date" 
+            formControlName="birthdate"
+            [class.error]="showError('birthdate')">
+        </div>
+        <div class="error-message" *ngIf="showError('birthdate')">
+          {{ getErrorMessage('birthdate') }}
+        </div>
       </div>
-    </div>
 
-    <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid">
-      Register
-    </button>
+      <div class="form-group terms-group">
+        <label class="terms-label">
+          <input type="checkbox" formControlName="termsAccepted">
+          <span class="terms">I accept the Terms and Conditions</span>
+        </label>
+        <div class="error-message" *ngIf="showError('termsAccepted')">
+          {{ getErrorMessage('termsAccepted') }}
+        </div>
+      </div>
 
-    <div *ngIf="errorMessage" class="alert alert-danger mt-3">
-      {{ errorMessage }}
-    </div>
+      <button 
+        type="submit" 
+        class="register-button"
+        [disabled]="registerForm.invalid || isLoadingLocation"
+        [class.loading]="isLoadingLocation">
+        <span *ngIf="!isLoadingLocation">Register</span>
+        <div class="spinner" *ngIf="isLoadingLocation"></div>
+      </button>
 
-    <div *ngIf="successMessage" class="alert alert-success mt-3">
-      {{ successMessage }}
+      <div class="error-alert" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <div class="success-alert" *ngIf="successMessage">
+        {{ successMessage }}
+      </div>
+    </form>
+
+    <div class="login-prompt">
+      <p>Already have an account? <a routerLink="/login">Login</a></p>
     </div>
-  </form>
+  </div>
 </div>

@@ -216,7 +216,7 @@ body {
 /* Profile card */
 .profile-card {
   position: relative;
-  height: 320px;
+  height: 380px;
   border-radius: 16px;
   overflow: hidden;
   transition: all 0.4s ease;
@@ -258,7 +258,7 @@ body {
   background: linear-gradient(to bottom, 
                 rgba(10, 10, 20, 0.3),
                 rgba(10, 10, 20, 0.7));
-  backdrop-filter: blur(1px);
+  backdrop-filter: blur(0px);
   z-index: 2;
 }
 

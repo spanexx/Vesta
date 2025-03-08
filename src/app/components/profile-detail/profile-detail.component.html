@@ -99,90 +99,38 @@
     <!-- Bio Section -->
     <div class="bio-section">
       <h2>Roles</h2>
-      <div class="editable-field" (click)="startEditing('role')">
-        <span class="label">Current Roles:</span>
-        <span *ngIf="editingState.fieldName !== 'role'" class="role-tags">
-          <span class="role-tag" *ngFor="let r of (profile.role || [])">{{r}}</span>
-        </span>
-        <div *ngIf="editingState.fieldName === 'role'" class="edit-controls checkbox-grid">
-          <label *ngFor="let roleOption of availableRoles">
-            <input type="checkbox" 
-                   [ngModel]="roleSelections[roleOption.value]"
-                   (ngModelChange)="roleSelections[roleOption.value] = $event; updateRoleSelections()">
-            {{roleOption.label}}
-          </label>
-          <div class="edit-buttons">
-            <button (click)="saveField('role')" class="save-btn">Save</button>
-            <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
-          </div>
-        </div>
+      <div class="role-tags">
+        <span class="role-tag" *ngFor="let r of (profile.role || ['onenight'])">{{r}}</span>
       </div>
     </div>
 
     <!-- Services Section -->
     <div class="services-section">
       <h2>Services</h2>
-      <div class="editable-field" (click)="startEditingServices()">
-        <div *ngIf="editingState.fieldName !== 'services'" class="services-table-container">
-          <table class="services-table">
-            <thead>
-              <tr>
-                <th>Services</th>
-                <th>Included</th>
-                <th>Extra</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let service of availableServices">
-                <td>{{service}}</td>
-                <td>
-                  <i class="fas fa-check" *ngIf="profile.services.included.includes(service)"></i>
-                </td>
-                <td>
-                  <input type="number" 
-                         [(ngModel)]="serviceSelections.extra[service]"
-                         (ngModelChange)="handleExtraPriceChange(service, $event)"
-                         [value]="serviceSelections.extra[service]"
-                         [placeholder]="'Price in ' + rates.currency"
-                         min="0">
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div *ngIf="editingState.fieldName === 'services'" class="edit-controls services-edit-grid">
-          <table class="services-table">
-            <thead>
-              <tr>
-                <th>Services</th>
-                <th>Included</th>
-                <th>Extra Price ({{rates.currency}})</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let service of availableServices">
-                <td>{{service}}</td>
-                <td>
-                  <input type="checkbox" 
-                         [ngModel]="serviceSelections.included[service]"
-                         (change)="handleServiceSelection(service, $event)">
-                </td>
-                <td>
-                  <input type="number" 
-                         [(ngModel)]="serviceSelections.extra[service]"
-                         (ngModelChange)="handleExtraPriceChange(service, $event)"
-                         [value]="serviceSelections.extra[service]"
-                         [placeholder]="'Price in ' + rates.currency"
-                         min="0">
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="edit-buttons">
-            <button (click)="saveField('services')" class="save-btn">Save</button>
-            <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
-          </div>
-        </div>
+      <div class="services-container">
+        <table class="services-table">
+          <thead>
+            <tr>
+              <th>Services</th>
+              <th>Type</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Show included services -->
+            <tr *ngFor="let service of getIncludedServices()">
+              <td>{{service}}</td>
+              <td>Included</td>
+              <td>-</td>
+            </tr>
+            <!-- Show extra services with prices -->
+            <tr *ngFor="let item of getExtraServices()">
+              <td>{{item.service}}</td>
+              <td>Extra</td>
+              <td>{{item.price}} {{rates.currency}}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -191,184 +139,56 @@
       <h2>Physical Attributes</h2>
       <div class="attributes-grid">
         <!-- Gender -->
-        <div class="attribute editable-field" (click)="startEditing('physicalAttributes.gender')">
+        <div class="attribute">
           <span class="label">Gender:</span>
-          <span *ngIf="editingState.fieldName !== 'physicalAttributes.gender'">
-            {{profile.physicalAttributes?.gender || 'Select gender'}}
-          </span>
-          <div *ngIf="editingState.fieldName === 'physicalAttributes.gender'" class="edit-controls">
-            <select [(ngModel)]="editingState.currentValue" required>
-              <option value="" disabled selected>Select Gender</option>
-              <option value="female">Female</option>
-              <option value="male">Male</option>
-              <option value="other">Other</option>
-            </select>
-            <div class="edit-buttons">
-              <button [disabled]="!editingState.currentValue" (click)="saveField('physicalAttributes.gender')" class="save-btn">Save</button>
-              <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
-            </div>
-            <small class="error-text" *ngIf="error">{{error}}</small>
-          </div>
+          <span class="value">{{profile.physicalAttributes.gender || 'Not specified'}}</span>
         </div>
 
         <!-- Height -->
-        <div class="attribute editable-field" (click)="startEditing('physicalAttributes.height')">
+        <div class="attribute">
           <span class="label">Height:</span>
-          <span *ngIf="editingState.fieldName !== 'physicalAttributes.height'">
-            {{profile.physicalAttributes.height ? profile.physicalAttributes.height + ' cm' : 'Enter height (140-220 cm)'}}
-          </span>
-          <div *ngIf="editingState.fieldName === 'physicalAttributes.height'" class="edit-controls">
-            <input type="number" 
-                   [(ngModel)]="editingState.currentValue" 
-                   min="140" 
-                   max="220"
-                   placeholder="Height in cm">
-            <small class="hint-text">Range: 140-220 cm</small>
-            <div class="edit-buttons">
-              <button (click)="saveField('physicalAttributes.height')" class="save-btn">Save</button>
-              <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
-            </div>
-          </div>
+          <span class="value">{{profile.physicalAttributes.height ? profile.physicalAttributes.height + ' cm' : 'Not specified'}}</span>
         </div>
 
         <!-- Weight -->
-        <div class="attribute editable-field" (click)="startEditing('physicalAttributes.weight')">
+        <div class="attribute">
           <span class="label">Weight:</span>
-          <span *ngIf="editingState.fieldName !== 'physicalAttributes.weight'">
-            {{profile.physicalAttributes.weight ? profile.physicalAttributes.weight + ' kg' : 'Enter weight (35-150 kg)'}}
-          </span>
-          <div *ngIf="editingState.fieldName === 'physicalAttributes.weight'" class="edit-controls">
-            <input type="number" 
-                   [(ngModel)]="editingState.currentValue" 
-                   min="35" 
-                   max="150"
-                   placeholder="Weight in kg">
-            <small class="hint-text">Range: 35-150 kg</small>
-            <div class="edit-buttons">
-              <button (click)="saveField('physicalAttributes.weight')" class="save-btn">Save</button>
-              <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
-            </div>
-          </div>
+          <span class="value">{{profile.physicalAttributes.weight ? profile.physicalAttributes.weight + ' kg' : 'Not specified'}}</span>
         </div>
 
         <!-- Ethnicity -->
-        <div class="attribute editable-field" (click)="startEditing('physicalAttributes.ethnicity')">
+        <div class="attribute">
           <span class="label">Ethnicity:</span>
-          <span *ngIf="editingState.fieldName !== 'physicalAttributes.ethnicity'">
-            {{profile.physicalAttributes.ethnicity || 'Select ethnicity'}}
-          </span>
-          <div *ngIf="editingState.fieldName === 'physicalAttributes.ethnicity'" class="edit-controls">
-            <select [(ngModel)]="editingState.currentValue">
-              <option value="">Select Ethnicity</option>
-              <option value="Asian">Asian</option>
-              <option value="Black">Black</option>
-              <option value="Caucasian">Caucasian</option>
-              <option value="Hispanic">Hispanic</option>
-              <option value="Indian">Indian</option>
-              <option value="Middle Eastern">Middle Eastern</option>
-              <option value="Mixed">Mixed</option>
-              <option value="Other">Other</option>
-            </select>
-            <div class="edit-buttons">
-              <button (click)="saveField('physicalAttributes.ethnicity')" class="save-btn">Save</button>
-              <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
-            </div>
-          </div>
+          <span class="value">{{profile.physicalAttributes.ethnicity || 'Not specified'}}</span>
         </div>
 
         <!-- Bust Size -->
-        <div class="attribute editable-field" (click)="startEditing('physicalAttributes.bustSize')">
+        <div class="attribute">
           <span class="label">Bust Size:</span>
-          <span *ngIf="editingState.fieldName !== 'physicalAttributes.bustSize'">
-            {{profile.physicalAttributes.bustSize || 'Enter bust size (e.g., 34C)'}}
-          </span>
-          <div *ngIf="editingState.fieldName === 'physicalAttributes.bustSize'" class="edit-controls">
-            <input type="text" 
-                   [(ngModel)]="editingState.currentValue" 
-                   pattern="[0-9]{2}[A-K]"
-                   placeholder="e.g., 34C">
-            <small class="hint-text">Format: number + cup size (A-K)</small>
-            <div class="edit-buttons">
-              <button (click)="saveField('physicalAttributes.bustSize')" class="save-btn">Save</button>
-              <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
-            </div>
-          </div>
+          <span class="value">{{profile.physicalAttributes.bustSize || 'Not specified'}}</span>
         </div>
 
         <!-- Bust Type -->
-        <div class="attribute editable-field" (click)="startEditing('physicalAttributes.bustType')">
+        <div class="attribute">
           <span class="label">Bust Type:</span>
-          <span *ngIf="editingState.fieldName !== 'physicalAttributes.bustType'">
-            {{profile.physicalAttributes.bustType || 'Select bust type'}}
-          </span>
-          <div *ngIf="editingState.fieldName === 'physicalAttributes.bustType'" class="edit-controls">
-            <select [(ngModel)]="editingState.currentValue">
-              <option value="">Select Bust Type</option>
-              <option value="Natural">Natural</option>
-              <option value="Enhanced">Enhanced</option>
-            </select>
-            <div class="edit-buttons">
-              <button (click)="saveField('physicalAttributes.bustType')" class="save-btn">Save</button>
-              <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
-            </div>
-          </div>
+          <span class="value">{{profile.physicalAttributes.bustType || 'Not specified'}}</span>
         </div>
 
         <!-- Pubic Hair -->
-        <div class="attribute editable-field" (click)="startEditing('physicalAttributes.pubicHair')">
+        <div class="attribute">
           <span class="label">Pubic Hair:</span>
-          <span *ngIf="editingState.fieldName !== 'physicalAttributes.pubicHair'">
-            {{profile.physicalAttributes?.pubicHair || 'Select style'}}
-          </span>
-          <div *ngIf="editingState.fieldName === 'physicalAttributes.pubicHair'" class="edit-controls">
-            <select [(ngModel)]="editingState.currentValue" required>
-              <option value="" disabled selected>Select Style</option>
-              <option value="Shaved">Shaved</option>
-              <option value="Trimmed">Trimmed</option>
-              <option value="Natural">Natural</option>
-            </select>
-            <div class="edit-buttons">
-              <button [disabled]="!editingState.currentValue" (click)="saveField('physicalAttributes.pubicHair')" class="save-btn">Save</button>
-              <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
-            </div>
-            <small class="error-text" *ngIf="error">{{error}}</small>
-          </div>
+          <span class="value">{{profile.physicalAttributes.pubicHair || 'Not specified'}}</span>
         </div>
 
-        <!-- Tattoos -->
-        <div class="attribute editable-field" (click)="startEditing('physicalAttributes.tattoos')">
-          <span class="label">Tattoos:</span>
-          <span *ngIf="editingState.fieldName !== 'physicalAttributes.tattoos'">
-            {{profile.physicalAttributes.tattoos ? 'Yes' : 'No'}}
+        <!-- Tattoos & Piercings -->
+        <div class="attribute features">
+          <span class="label">Features:</span>
+          <span class="value">
+            <span *ngIf="profile.physicalAttributes.tattoos">Has Tattoos</span>
+            <span *ngIf="profile.physicalAttributes.tattoos && profile.physicalAttributes.piercings"> & </span>
+            <span *ngIf="profile.physicalAttributes.piercings">Has Piercings</span>
+            <span *ngIf="!profile.physicalAttributes.tattoos && !profile.physicalAttributes.piercings">None</span>
           </span>
-          <div *ngIf="editingState.fieldName === 'physicalAttributes.tattoos'" class="edit-controls">
-            <select [(ngModel)]="editingState.currentValue">
-              <option [ngValue]="false">No</option>
-              <option [ngValue]="true">Yes</option>
-            </select>
-            <div class="edit-buttons">
-              <button (click)="saveField('physicalAttributes.tattoos')" class="save-btn">Save</button>
-              <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Piercings -->
-        <div class="attribute editable-field" (click)="startEditing('physicalAttributes.piercings')">
-          <span class="label">Piercings:</span>
-          <span *ngIf="editingState.fieldName !== 'physicalAttributes.piercings'">
-            {{profile.physicalAttributes.piercings ? 'Yes' : 'No'}}
-          </span>
-          <div *ngIf="editingState.fieldName === 'physicalAttributes.piercings'" class="edit-controls">
-            <select [(ngModel)]="editingState.currentValue">
-              <option [ngValue]="false">No</option>
-              <option [ngValue]="true">Yes</option>
-            </select>
-            <div class="edit-buttons">
-              <button (click)="saveField('physicalAttributes.piercings')" class="save-btn">Save</button>
-              <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
-            </div>
-          </div>
         </div>
       </div>
     </div>

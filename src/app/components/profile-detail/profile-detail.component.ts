@@ -85,24 +85,21 @@ export class ProfileDetailComponent implements OnInit {
   selectedImageIndex: number | null = null;
 
   availableServices = [
-    'Classic vaginal sex',
-    'Sex Toys',
-    'Striptease',
-    'Uniforms',
-    '69 position',
-    'Cum in face',
-    'Cum in mouth',
-    'Cum on body',
-    'Deepthroat',
-    'Domination',
-    'Erotic massage',
-    'Erotic Photos',
-    'Foot fetish',
-    'French kissing',
-    'Golden shower give',
-    'Group sex',
-    'Oral without condom',
-    'With 2 men'
+    // Basic Services
+    'Classic vaginal sex', 'Sex Toys', 'Striptease', 'Uniforms', '69 position', 
+    'Cum in face', 'Cum in mouth', 'Cum on body', 'Deepthroat', 'Domination', 
+    'Erotic massage', 'Erotic Photos', 'Foot fetish', 'French kissing', 
+    'Golden shower give', 'Group sex', 'Oral without condom', 'With 2 men',
+    // Pornstar Services
+    'Video Recording', 'Photo Shooting', 'Live Cam Show', 'Adult Film Production',
+    'Private Show', 'Professional Photos', 'Explicit Content Creation',
+    // Mistress Services
+    'BDSM', 'Role Play', 'Spanking', 'Bondage', 'Fetish', 'Slave Training',
+    'Discipline', 'Humiliation', 'Rope Play', 'Wax Play',
+    // Girlfriend Experience
+    'Dinner Date', 'Overnight Stay', 'Weekend Trip', 'Social Events',
+    'Romantic Evening', 'Cuddling', 'Dating', 'Travel Companion',
+    'Dancing', 'Shopping Together'
   ];
 
   serviceSelections: ServiceSelections = {
@@ -140,29 +137,24 @@ export class ProfileDetailComponent implements OnInit {
     this.isLoading = true;
     this.profileService.getProfileById(id).subscribe({
       next: (profile) => {
-        // Initialize profile with default values for services
+        console.log('Loaded profile services:', profile.services); // Add logging
         this.profile = {
           ...profile,
+          role: profile.role?.length ? profile.role : ['onenight'],
           services: {
-            included: Array.isArray(profile.services?.included) ? profile.services.included : [],
-            extra: profile.services?.extra || {}
+            included: profile.services?.included || [], // Ensure included is initialized
+            extra: profile.services?.extra || {}  // Ensure extra is initialized
           }
         };
         
-        // Ensure role is always an array
-        if (typeof profile.role === 'string') {
-          profile.role = [profile.role];
-        } else if (!Array.isArray(profile.role)) {
-          profile.role = [];
-        }
-        
-        this.profile = { ...profile };
-        
+        // Log the initialized profile
+        console.log('Initialized profile services:', this.profile.services);
+
         // Initialize rates with default values and proper type checking
         this.rates = {
           incall: { ...(profile.rates?.incall || {}) },
           outcall: { ...(profile.rates?.outcall || {}) },
-          currency: (profile.rates?.currency as SupportedCurrency) ?? 'EUR' // Use nullish coalescing
+          currency: (profile.rates?.currency as SupportedCurrency) ?? 'EUR'
         };
         
         this.selectedCurrency = this.rates.currency;
@@ -464,6 +456,8 @@ export class ProfileDetailComponent implements OnInit {
 
     // Special handling for services
     if (fieldName === 'services') {
+      console.log('Current service selections:', this.serviceSelections); // Add logging
+
       const serviceUpdate = {
         included: Object.keys(this.serviceSelections.included)
           .filter(key => this.serviceSelections.included[key]),
@@ -475,7 +469,10 @@ export class ProfileDetailComponent implements OnInit {
             return acc;
           }, {} as ServiceAccumulator)
       };
+
+      console.log('Service update to send:', serviceUpdate); // Add logging
       valueToSend = serviceUpdate;
+
       if (serviceUpdate.included.length === 0) {
         this.error = 'Please select at least one service';
         return;
@@ -497,7 +494,23 @@ export class ProfileDetailComponent implements OnInit {
 
     this.profileService.updateField(fieldName, valueToSend).subscribe({
       next: (updatedProfile) => {
-        this.profile = { ...updatedProfile };
+        console.log('Profile after update:', updatedProfile); // Add logging
+        
+        if (fieldName === 'services') {
+          // Ensure services are properly updated in the local profile
+          this.profile = {
+            ...this.profile,
+            services: {
+              included: updatedProfile.services?.included || [],
+              extra: updatedProfile.services?.extra || {}
+            }
+          } as UserProfile;
+          
+          console.log('Updated local profile services:', this.profile.services);
+        } else {
+          this.profile = { ...updatedProfile };
+        }
+
         // Ensure role is always an array
         if (!Array.isArray(this.profile.role)) {
           this.profile.role = [this.profile.role];
@@ -517,9 +530,9 @@ export class ProfileDetailComponent implements OnInit {
         };
       },
       error: (error) => {
-        console.error('Error updating field:', error);
+        console.error(`Error updating ${fieldName}:`, error);
         this.cancelEditing();
-        this.error = 'Failed to update field. Please try again.';
+        this.error = `Failed to update ${fieldName}. Please try again.`;
         setTimeout(() => this.error = '', 3000);
       }
     });
@@ -711,5 +724,16 @@ export class ProfileDetailComponent implements OnInit {
         .filter(key => this.serviceSelections.included[key]),
       extra: this.serviceSelections.extra
     } as ServiceUpdate;
+  }
+
+  // Add new helper methods
+  getIncludedServices(): string[] {
+    return this.profile?.services?.included || [];
+  }
+
+  getExtraServices(): { service: string; price: number }[] {
+    if (!this.profile?.services?.extra) return [];
+    return Object.entries(this.profile.services.extra)
+      .map(([service, price]) => ({ service, price }));
   }
 }

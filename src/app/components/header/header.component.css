@@ -1,0 +1,169 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.logo img {
+  height: 40px;
+  width: auto;
+}
+
+.role-nav {
+  position: relative;
+}
+
+.menu-button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #666;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: none;
+}
+
+.role-menu {
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.role-menu a {
+  color: #666;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.role-menu a:hover {
+  background: #fdf4fa;
+  color: #ea64b8;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.theme-toggle {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #666;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+.theme-toggle:hover {
+  color: #ea64b8;
+}
+
+.profile-link, .login-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #666;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.login-button {
+  background: linear-gradient(135deg, #ea64b8, #c864ea);
+  color: white;
+}
+
+.profile-link:hover, .login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 10px rgba(234, 100, 184, 0.2);
+}
+
+.logout-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.logout-button:hover {
+  background: #fdf4fa;
+  color: #ea64b8;
+}
+
+@media (max-width: 768px) {
+  .menu-button {
+    display: block;
+  }
+
+  .role-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    flex-direction: column;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 0.5rem;
+    display: none;
+  }
+
+  .role-menu.show {
+    display: flex;
+  }
+
+  .role-menu a {
+    white-space: nowrap;
+  }
+}
+
+:host-context(.dark-mode) {
+  .header {
+    background: #1a1a1a;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .role-menu a {
+    color: #fff;
+  }
+
+  .role-menu a:hover {
+    background: rgba(234, 100, 184, 0.1);
+  }
+
+  .theme-toggle {
+    color: #fff;
+  }
+
+  .profile-link {
+    color: #fff;
+  }
+}
+
+:host-context(.dark-mode) .logout-button {
+  color: #fff;
+}

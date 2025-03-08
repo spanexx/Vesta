@@ -165,6 +165,7 @@ export class AuthenticationService {
     localStorage.removeItem('token');
     localStorage.removeItem('currentUser');
     this.currentUserSubject.next(null);
-    this.router.navigate(['/login']);
+    // Force page refresh
+    window.location.reload();
   }
 }
