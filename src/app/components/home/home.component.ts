@@ -74,11 +74,32 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     this.queryParamsSub = this.route.queryParams.subscribe(params => {
+      console.log('Received query params:', params);
       this.currentFilter = {
         country: params['country'],
         city: params['city']
       };
-      this.loadProfiles();
+      
+      // Handle role parameter
+      if (params['role']) {
+        this.isLoading = true;
+        this.userProfiles = []; // Clear existing profiles
+        
+        this.profileService.filterByRole(params['role']).subscribe({
+          next: (profiles) => {
+            console.log(`Loaded ${profiles.length} profiles for role ${params['role']}`);
+            this.userProfiles = profiles;
+            this.isLoading = false;
+          },
+          error: (error) => {
+            console.error('Error loading profiles:', error);
+            this.handleError(error);
+            this.isLoading = false;
+          }
+        });
+      } else {
+        this.loadProfiles();
+      }
     });
   }
 

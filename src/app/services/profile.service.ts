@@ -2,7 +2,7 @@ import { authRoutes } from './../../environments/apiRoutes';
 import { Injectable } from '@angular/core';
 import { AuthenticationService } from './authentication.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, catchError, throwError } from 'rxjs';
+import { Observable, catchError, tap, throwError } from 'rxjs';
 import { UserProfile } from '../models/userProfile.model';
 import { profileRoutes } from '../../environments/apiRoutes';
 
@@ -16,6 +16,7 @@ export interface ProfileQueryParams {
   coordinates?: [number, number] | undefined;  // Updated to match possible undefined state
   age?: number;
   services?: string;
+  role?: string;
 }
 
 @Injectable({
@@ -118,6 +119,19 @@ export class ProfileService {
     }
     
     return this.http.patch<UserProfile>(`${profileRoutes}/field/${fieldName}`, { value });
+  }
+
+  filterByRole(role: string): Observable<UserProfile[]> {
+    console.log('Filtering by role:', role);
+    return this.http.get<UserProfile[]>(`${profileRoutes}/filter`, {
+      params: { role }
+    }).pipe(
+      tap(profiles => console.log(`Received ${profiles.length} profiles for role ${role}`)),
+      catchError(error => {
+        console.error('Role filtering failed:', error);
+        return throwError(() => error);
+      })
+    );
   }
 }
 

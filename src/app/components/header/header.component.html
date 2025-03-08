@@ -10,7 +10,7 @@
       </button>
       <ul class="role-menu" [class.show]="isMenuOpen">
         <li *ngFor="let role of roles">
-          <a [routerLink]="['/browse', role.value]">{{role.label}}</a>
+          <a (click)="onRoleSelect(role.value)">{{role.label}}</a>
         </li>
       </ul>
     </nav>

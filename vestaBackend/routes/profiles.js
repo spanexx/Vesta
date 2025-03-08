@@ -246,17 +246,22 @@ router.put('/images', auth, async (req, res) => {
   }
 });
 
-// Filter profiles by service type
+// Filter profiles by role
 router.get('/filter', async (req, res) => {
   try {
-    const serviceType = req.query.serviceType;
-    if (!serviceType) {
+    const role = req.query.role;
+    if (!role) {
       return res.status(400).json({
-        error: 'SERVICE_TYPE_REQUIRED',
-        message: 'Service type is required'
+        error: 'ROLE_REQUIRED',
+        message: 'Role is required'
       });
     }
-    const profiles = await UserProfile.find({ services: { $in: [serviceType] } });
+    console.log('Filtering profiles by role:', role);
+    
+    // Update query to search in the role array
+    const profiles = await UserProfile.find({ role: { $in: [role] } });
+    console.log(`Found ${profiles.length} profiles with role ${role}`);
+    
     res.json(profiles);
   } catch (error) {
     console.error('Error filtering profiles:', error);

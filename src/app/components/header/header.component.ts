@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
 import { ThemeService } from '../../services/theme.service';
 
@@ -26,7 +26,8 @@ export class HeaderComponent {
 
   constructor(
     private authService: AuthenticationService,
-    private themeService: ThemeService
+    private themeService: ThemeService,
+    private router: Router  // Add router
   ) {
     this.themeService.darkMode$.subscribe(
       isDark => this.isDarkMode = isDark
@@ -43,5 +44,12 @@ export class HeaderComponent {
 
   logout() {
     this.authService.logout();
+  }
+
+  onRoleSelect(role: string): void {
+    this.router.navigate(['/'], { 
+      queryParams: { role },
+      queryParamsHandling: 'merge'
+    });
   }
 }
