@@ -10,19 +10,34 @@
 
 :root {
   --primary: #ea64b8;
+  --primary-light: rgba(234, 100, 184, 0.1);
   --surface: #ffffff;
   --background: #f5f5f5;
   --text: #333333;
   --text-secondary: #666666;
   --accent: #c864ea;
+  --error: #ff4444;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --card-shadow: 0 4px 16px var(--shadow);
+  --transition: all 0.3s ease;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text);
+  transition: var(--transition);
 }
 
 body.dark-mode {
-  --surface: #1a1a1a;
+  --surface: #1e1e1e;
   --background: #121212;
   --text: #ffffff;
-  --text-secondary: #cccccc;
-  
+  --text-secondary: #a0a0a0;
+  --shadow: rgba(0, 0, 0, 0.3);
+  --primary-light: rgba(234, 100, 184, 0.05);
+}
+
+body.dark-mode {
   background-color: var(--background);
   color: var(--text);
 }
@@ -60,4 +75,47 @@ body.dark-mode .role-menu a {
 
 body.dark-mode .role-menu a:hover {
   background: rgba(234, 100, 184, 0.1);
+}
+
+/* Dark mode overrides for common elements */
+body.dark-mode input, select, textarea {
+  background: var(--surface);
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .card, 
+body.dark-mode .dialog,
+body.dark-mode .modal,
+body.dark-mode .dropdown-menu {
+  background: var(--surface);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .badge {
+  background: var(--surface);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode button:not(.primary) {
+  background: var(--surface);
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode button:not(.primary):hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode a:not(.primary) {
+  color: var(--text);
+}
+
+body.dark-mode a:not(.primary):hover {
+  color: var(--primary);
+}
+
+body.dark-mode .overlay {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
 }

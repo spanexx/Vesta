@@ -65,6 +65,7 @@ export interface UserProfile {
         type: 'Point';
         coordinates: [number, number];
       };
+      whatsapp?: string;  // Add this line
     };
     profileLevel: 'standard' | 'premium' | 'vip';
     workingTime?: string;

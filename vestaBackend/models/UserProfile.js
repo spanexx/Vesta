@@ -190,6 +190,16 @@ const userProfileSchema = new mongoose.Schema({
       type: { type: String, default: 'Point' },
       coordinates: { type: [Number], default: [0, 0] },
     },
+    whatsapp: {
+      type: String,
+      validate: {
+        validator: function(v) {
+          // Validate phone number format (basic validation)
+          return /^\+?[\d\s-]+$/.test(v);
+        },
+        message: props => `${props.value} is not a valid WhatsApp number!`
+      }
+    },
   },
   // Use a different field name for the profile level to distinguish it
   profileLevel: {

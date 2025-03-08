@@ -9,6 +9,7 @@ import { FileUploadService } from '../../services/file-upload.service';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CurrencyConversionService, SupportedCurrency } from '../../services/currency-conversion.service';
+import { generateWhatsAppLink } from '../../utils/whatsapp.util';
 
 interface EditingState {
   fieldName: string | null;
@@ -106,6 +107,8 @@ export class ProfileDetailComponent implements OnInit {
     included: {} as Record<string, boolean>,
     extra: {} as Record<string, number | null>
   };
+
+  usePhoneForWhatsapp = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -329,22 +332,28 @@ export class ProfileDetailComponent implements OnInit {
     
     let currentValue: any;
     
-    // Handle nested object paths
-    if (fieldName.includes('.')) {
-      const parts = fieldName.split('.');
-      if (parts[0] === 'rates') {
-        const [, type, duration] = parts;
-        const ratesObj = (this.rates[type as keyof Rates] as RateType);
-        currentValue = ratesObj?.[duration] || '';
-      } else {
-        let obj = this.profile;
-        for (const part of parts) {
-          obj = obj?.[part];
-        }
-        currentValue = obj;
-      }
+    if (fieldName === 'contact.whatsapp') {
+      currentValue = this.profile?.contact?.whatsapp || '';
+      // Reset checkbox when starting edit
+      this.usePhoneForWhatsapp = false;
     } else {
-      currentValue = this.profile?.[fieldName];
+      // Existing logic for other fields
+      if (fieldName.includes('.')) {
+        const parts = fieldName.split('.');
+        if (parts[0] === 'rates') {
+          const [, type, duration] = parts;
+          const ratesObj = (this.rates[type as keyof Rates] as RateType);
+          currentValue = ratesObj?.[duration] || '';
+        } else {
+          let obj = this.profile;
+          for (const part of parts) {
+            obj = obj?.[part];
+          }
+          currentValue = obj;
+        }
+      } else {
+        currentValue = this.profile?.[fieldName];
+      }
     }
 
     this.editingState = {
@@ -489,6 +498,29 @@ export class ProfileDetailComponent implements OnInit {
         }
       } else if (fieldName.includes('tattoos') || fieldName.includes('piercings')) {
         valueToSend = this.editingState.currentValue === 'true';
+      }
+    }
+
+    // Special handling for WhatsApp
+    if (fieldName === 'contact.whatsapp' && this.usePhoneForWhatsapp) {
+      valueToSend = this.profile.contact?.phone || '';
+    }
+
+    // Email validation
+    if (fieldName === 'email') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(valueToSend)) {
+        this.error = 'Please enter a valid email address';
+        return;
+      }
+    }
+
+    // WhatsApp number validation
+    if (fieldName === 'contact.whatsapp') {
+      const phoneRegex = /^\+?[\d\s-]+$/;
+      if (!phoneRegex.test(valueToSend)) {
+        this.error = 'Please enter a valid phone number';
+        return;
       }
     }
 
@@ -735,5 +767,17 @@ export class ProfileDetailComponent implements OnInit {
     if (!this.profile?.services?.extra) return [];
     return Object.entries(this.profile.services.extra)
       .map(([service, price]) => ({ service, price }));
+  }
+
+  getWhatsAppLink(): string {
+    if (!this.profile || !this.profile.contact || !this.profile.contact.whatsapp) {
+      return '#';
+    }
+    const defaultMessage = `Hi ${this.profile.fullName || ''}, I saw your profile on https://spanexx.com`;
+    return generateWhatsAppLink(this.profile.contact.whatsapp, defaultMessage);
+  }
+
+  isEditing(fieldName: string): boolean {
+    return this.editingState.fieldName === fieldName;
   }
 }

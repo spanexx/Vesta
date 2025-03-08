@@ -258,11 +258,51 @@
           </div>
         </div>
 
-        <div class="contact-item">
+        <div class="contact-item editable-field" (click)="startEditing('email')">
           <i class="fas fa-envelope contact-icon"></i>
           <span class="label">Email:</span>
-          <span class="value">{{profile.email || 'No email provided'}}</span>
+          <span *ngIf="!isEditing('email')" class="value">{{ profile.email }}</span>
+          <div *ngIf="isEditing('email')" class="edit-controls">
+            <input type="email" [(ngModel)]="editingState.currentValue" placeholder="Enter email">
+            <div class="edit-buttons">
+              <button class="save-btn" (click)="saveField('email')">Save</button>
+              <button class="cancel-btn" (click)="cancelEditing()">Cancel</button>
+            </div>
+          </div>
         </div>
+
+        <div class="contact-item editable-field" (click)="startEditing('contact.whatsapp')">
+          <i class="fab fa-whatsapp contact-icon"></i>
+          <span class="label">WhatsApp:</span>
+          <span *ngIf="!isEditing('contact.whatsapp')" class="value">
+            {{ profile.contact?.whatsapp || 'Not provided' }}
+          </span>
+          <div *ngIf="isEditing('contact.whatsapp')" class="edit-controls">
+            <div class="whatsapp-edit-wrapper">
+              <input type="text" 
+                [(ngModel)]="editingState.currentValue" 
+                placeholder="Enter country code first (e.g., +357 for Cyprus)"
+                title="Start with country code: +357 for Cyprus, +1 for US, +44 for UK">
+              <small class="hint-text">Include country code (e.g., +357 12345678)</small>
+              <label class="use-phone-checkbox">
+                <input type="checkbox" [(ngModel)]="usePhoneForWhatsapp"> Use phone number
+              </label>
+            </div>
+            <div class="edit-buttons">
+              <button class="save-btn" (click)="saveField('contact.whatsapp')">Save</button>
+              <button class="cancel-btn" (click)="cancelEditing()">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Show WhatsApp link if number exists -->
+        <div *ngIf="profile.contact?.whatsapp" class="contact-item">
+          <a [href]="getWhatsAppLink()" target="_blank" rel="noopener" class="whatsapp-link">
+            <i class="fab fa-whatsapp"></i>
+            <span>Chat on WhatsApp</span>
+          </a>
+        </div>
+
       </div>
     </div>
 

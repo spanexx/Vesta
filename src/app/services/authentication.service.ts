@@ -123,18 +123,25 @@ export class AuthenticationService {
     filters?: { age?: number; services?: string[] }
   ): Observable<UserProfile[]> {
     // Build query parameters
-    const params: any = {};
-    if (lat && lon) {
-      params.lat = lat.toString();
-      params.lon = lon.toString();
+    const params: { [key: string]: string } = {};
+    
+    if (lat != null && lon != null) {
+      params['coordinates'] = [lon, lat].join(',');
     }
-    if (filters?.age) {
-      params.age = filters.age.toString();
+    
+    if (filters?.age != null && !isNaN(filters.age)) {
+      params['age'] = filters.age.toString();
     }
-    if (filters?.services) {
-      params.services = filters.services.join(',');
+    
+    if (filters?.services?.length) {
+      params['services'] = filters.services.join(',');
     }
-
+  
+    // Remove any undefined values
+    Object.keys(params).forEach(key => 
+      params[key] === undefined && delete params[key]
+    );
+  
     return this.http.get<UserProfile[]>(`${authRoutes}/profiles`, { params }).pipe(
       catchError((error) => {
         console.error('Failed to fetch profiles:', error);

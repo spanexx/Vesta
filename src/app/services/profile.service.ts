@@ -1,3 +1,4 @@
+import { authRoutes } from './../../environments/apiRoutes';
 import { Injectable } from '@angular/core';
 import { AuthenticationService } from './authentication.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
@@ -12,7 +13,7 @@ export interface LocationFilter {
 
 export interface ProfileQueryParams {
   viewerLocation?: string;
-  coordinates?: number[];
+  coordinates?: [number, number] | undefined;  // Updated to match possible undefined state
   age?: number;
   services?: string;
 }
@@ -57,7 +58,7 @@ export class ProfileService {
   }
 
   getAllProfiles(filters?: ProfileQueryParams): Observable<UserProfile[]> {
-    return this.http.get<UserProfile[]>(`${profileRoutes}/profiles`, {
+    return this.http.get<UserProfile[]>(`${authRoutes}/profiles`, {
       params: { ...filters }
     });
   }

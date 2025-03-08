@@ -1193,3 +1193,57 @@ h2 {
   color: #999;
   font-style: italic;
 }
+
+.whatsapp-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #25D366;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.whatsapp-link:hover {
+  background: #128C7E;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
+}
+
+.whatsapp-link i {
+  font-size: 1.2rem;
+}
+
+.whatsapp-edit-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.whatsapp-edit-wrapper input {
+  padding-left: 10px;
+  font-size: 1rem;
+}
+
+.whatsapp-edit-wrapper input::placeholder {
+  font-size: 0.9rem;
+  color: #999;
+}
+
+.use-phone-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
+  cursor: pointer;
+}
+
+.use-phone-checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #25D366;
+}

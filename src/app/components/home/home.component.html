@@ -1,65 +1,86 @@
-<div class="page-container">
-  <app-location-filter
-    [isLoading]="isLoading"
-    [locationError]="locationError"
-    [currentFilter]="currentFilter"
-    (locationRequest)="onLocationRequest()"
-    (filterChange)="onFilterChange($event)"
-    (clearFiltersRequest)="onClearFilters()"
-  ></app-location-filter>
+<!-- Main container -->
+<div class="home-container">
+  <!-- Mobile filter toggle -->
+  <button class="filter-toggle" [class.show-filters]="showFilters" (click)="toggleFilters()">
+    <i class="fas fa-filter"></i>
+    <span>Filters</span>
+  </button>
 
-  <main class="main-content">
-    <div *ngIf="error" class="error-message">
-      {{ error }}
-    </div>
+  <!-- Add overlay -->
+  <div class="filters-overlay" [class.show]="showFilters" (click)="toggleFilters()"></div>
+  
+  <div class="home-layout">
+    <!-- Sidebar -->
+    <aside class="filters-sidebar" [class.show-filters]="showFilters">
+      <button class="close-filters" (click)="toggleFilters()" *ngIf="showFilters">
+        <i class="fas fa-times"></i>
+      </button>
+      <app-location-filter
+        [isLoading]="isLoading"
+        [locationError]="locationError"
+        [currentFilter]="currentFilter"
+        (locationRequest)="onLocationRequest()"
+        (filterChange)="onFilterChange($event)"
+        (clearFiltersRequest)="onClearFilters()">
+      </app-location-filter>
+    </aside>
 
-    <div class="profiles-grid">
+    <!-- Main content -->
+    <main class="main-content">
+      <!-- Error message -->
+      <div *ngIf="error" class="error-message">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ error }}</span>
+      </div>
+
+      <!-- Loading state -->
       <div *ngIf="isLoading && !userProfiles.length" class="loading-state">
         <app-custom-spinner></app-custom-spinner>
         <p>Discovering profiles in your area...</p>
       </div>
-      
-      <div *ngFor="let profile of userProfiles" class="profile-card" [routerLink]="['/profile', profile._id]">
-        <div class="card-background" [style.background-image]="'url(' + profile.images[0] + ')'"></div>
-        <div class="glass-overlay"></div>
-        
-        <div class="card-content-wrapper">
-          <div class="card-header">
-            <div class="profile-meta">
-              <h3 class="profile-name">{{ profile.fullName }}</h3>
-              <p class="profile-username">{{ '@' + profile.username }}</p>
-            </div>
-            
-            <div class="badge-container">
-              <span *ngIf="profile.profileLevel === 'vip'" class="badge vip-badge">
+
+      <!-- Profiles grid -->
+      <div class="profiles-grid">
+        <div class="profile-card" *ngFor="let profile of userProfiles" [routerLink]="['/profile', profile._id]">
+          <div class="card-media">
+            <img [src]="profile.images[0] || 'assets/default-profile.jpg'" [alt]="profile.fullName">
+            <div class="card-badges">
+              <span *ngIf="profile.profileLevel === 'vip'" class="badge vip">
                 <i class="fas fa-star"></i> VIP
               </span>
-              <span *ngIf="profile.profileLevel === 'premium'" class="badge premium-badge">
+              <span *ngIf="profile.profileLevel === 'premium'" class="badge premium">
                 <i class="fas fa-crown"></i> Premium
               </span>
             </div>
           </div>
-          
+
           <div class="card-content">
-            <div class="services-section">
-              <i class="fas fa-briefcase"></i>
-              <span class="services-list">Role: {{profile.role}}</span>
+            <div class="card-header">
+              <h3>{{ profile.fullName }}</h3>
+              <p class="username">{{ profile.username ? '@' + profile.username : '' }}</p>
             </div>
-            <div class="distance-indicator" *ngIf="userLocation && getCoordinates(profile)">
-              <i class="fas fa-map-marker-alt"></i>
-              <span class="distance-value">
-                {{ calculateDistance(userLocation, getCoordinates(profile)) | number:'1.0-1' }}km away
-              </span>
+
+            <div class="card-details">
+              <div class="detail-item" *ngIf="profile.role">
+                <i class="fas fa-briefcase"></i>
+                <span>{{ profile.role }}</span>
+              </div>
+              
+              <div class="detail-item" *ngIf="userLocation && getCoordinates(profile)">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>{{ calculateDistance(userLocation, getCoordinates(profile)) | number:'1.0-1' }} km</span>
+              </div>
             </div>
-          </div>
-          
-          <div class="card-footer">
-            <button class="action-button" [routerLink]="['/profile', profile._id]">
-              <i class="fas fa-eye"></i> View Profile
-            </button>
           </div>
         </div>
       </div>
-    </div>
-  </main>
+
+      <!-- No results message -->
+      <div *ngIf="!isLoading && userProfiles.length === 0" class="no-results">
+        <i class="fas fa-search"></i>
+        <h3>No profiles found</h3>
+        <p>Try adjusting your filters or search criteria</p>
+      </div>
+    </main>
+  </div>
 </div>

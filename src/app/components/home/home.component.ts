@@ -24,7 +24,7 @@ type ProfileLevel = 'vip' | 'premium' | 'standard' | 'basic';
     LocationFilterComponent
   ],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit, OnDestroy {
   userProfiles: UserProfile[] = [];
@@ -32,9 +32,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   error: string | null = null;
   locationError: string | null = null;
   private queryParamsSub?: Subscription;
-  userLocation: [number, number] | null = null;
+  userLocation: [number, number] | undefined = undefined;  // Changed from null to undefined
   currentFilter: LocationFilter = {};
-  
+  isUsingLocation = false;  // Add this property
+  showFilters = false;
+
   // Add missing properties
   selectedAge?: number;
   selectedServices?: string[];
@@ -50,6 +52,27 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    // Check for saved location when component initializes
+    const savedLocation = sessionStorage.getItem('userLocation');
+    if (savedLocation) {
+      const { coordinates, timestamp } = JSON.parse(savedLocation);
+      const fiveMinutes = 5 * 60 * 1000;
+      
+      // Use saved location if it's less than 5 minutes old
+      if (Date.now() - timestamp < fiveMinutes) {
+        this.userLocation = coordinates;
+        const params: ProfileQueryParams = {
+          coordinates: this.userLocation,
+          age: this.selectedAge,
+          services: this.selectedServices?.join(',')
+        };
+        this.fetchProfiles(params);
+        return;
+      } else {
+        sessionStorage.removeItem('userLocation');
+      }
+    }
+
     this.queryParamsSub = this.route.queryParams.subscribe(params => {
       this.currentFilter = {
         country: params['country'],
@@ -69,7 +92,74 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   onLocationRequest(): void {
-    this.loadProfiles(true);
+    // First toggle the flag
+    this.isUsingLocation = !this.isUsingLocation;
+    
+    if (!this.isUsingLocation) {
+      // When disabling location, clear location data
+      this.userLocation = undefined;
+      sessionStorage.removeItem('userLocation');
+      // Update URL to remove location param
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { useLocation: null },
+        queryParamsHandling: 'merge'
+      }).then(() => {
+        // Load profiles without location after URL update
+        this.loadProfiles(false);
+      });
+      return;
+    }
+
+    // When enabling location
+    if ('geolocation' in navigator) {
+      this.isLoading = true;
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const coordinates: [number, number] = [
+            position.coords.longitude,
+            position.coords.latitude
+          ];
+          this.userLocation = coordinates;
+          
+          // Store location in session storage
+          sessionStorage.setItem('userLocation', JSON.stringify({
+            coordinates,
+            timestamp: Date.now()
+          }));
+
+          // Update URL with location flag
+          this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: { useLocation: 'true' },
+            queryParamsHandling: 'merge'
+          }).then(() => {
+            // Load profiles with location after URL update
+            const params: ProfileQueryParams = {
+              coordinates: this.userLocation,
+              age: this.selectedAge,
+              services: this.selectedServices?.join(',')
+            };
+            this.fetchProfiles(params);
+          });
+        },
+        (error) => {
+          console.error('Geolocation error:', error);
+          this.locationError = 'Could not get your location. Please check your browser settings and try again.';
+          this.isLoading = false;
+          this.isUsingLocation = false; // Reset the toggle on error
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 300000
+        }
+      );
+    } else {
+      this.locationError = 'Geolocation is not supported by your browser.';
+      this.isUsingLocation = false; // Reset the toggle if geolocation not supported
+      this.isLoading = false;
+    }
   }
 
   onClearFilters(): void {
@@ -94,23 +184,45 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.error = null;
     this.locationError = null;
 
+    // Check if we already have valid location data
+    const savedLocation = sessionStorage.getItem('userLocation');
+    if (useLocation && savedLocation) {
+      const { coordinates, timestamp } = JSON.parse(savedLocation);
+      const fiveMinutes = 5 * 60 * 1000;
+      
+      if (Date.now() - timestamp < fiveMinutes) {
+        this.userLocation = coordinates;
+        const params: ProfileQueryParams = {
+          coordinates: this.userLocation,
+          age: this.selectedAge,
+          services: this.selectedServices?.join(',')
+        };
+        this.fetchProfiles(params);
+        return;
+      }
+    }
+
     if (useLocation) {
       if ('geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
             this.currentFilter = {};
-            this.userLocation = [position.coords.longitude, position.coords.latitude];
-            this.location = {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude
-            };
+            const coordinates: [number, number] = [position.coords.longitude, position.coords.latitude];
+            this.userLocation = coordinates;
             
             const params: ProfileQueryParams = {
-              coordinates: this.userLocation,
+              coordinates: this.userLocation,  // Now this will match the expected type
               age: this.selectedAge,
               services: this.selectedServices?.join(',')
             };
 
+            // Store location in session storage
+            sessionStorage.setItem('userLocation', JSON.stringify({
+              coordinates,
+              timestamp: Date.now()
+            }));
+
+            // Update URL and fetch profiles
             this.router.navigate([], {
               relativeTo: this.route,
               queryParams: { useLocation: 'true' },
@@ -119,15 +231,15 @@ export class HomeComponent implements OnInit, OnDestroy {
 
             this.fetchProfiles(params);
           },
-          (error: GeolocationPositionError) => {
+          (error) => {
+            console.error('Geolocation error:', error);
             this.locationError = 'Could not get your location. Please check your browser settings and try again.';
             this.isLoading = false;
-            console.error('Geolocation error:', error);
           },
           {
             enableHighAccuracy: true,
-            timeout: 5000,
-            maximumAge: 0
+            timeout: 10000,
+            maximumAge: 300000 // Cache location for 5 minutes
           }
         );
       } else {
@@ -151,14 +263,28 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   // Add new helper method
   private fetchProfiles(params?: ProfileQueryParams): void {
+    this.isLoading = true;
+    this.error = null;
+    
     this.profileService.getAllProfiles(params).subscribe({
       next: (profiles: UserProfile[]) => {
-        this.userProfiles = params?.coordinates ? 
-          this.sortProfilesByDistanceAndStatus(profiles, params.coordinates as [number, number]) :
-          profiles;
+        if (params?.coordinates && profiles.length > 0) {
+          this.userProfiles = this.sortProfilesByDistanceAndStatus(
+            profiles, 
+            params.coordinates as [number, number]
+          );
+        } else {
+          this.userProfiles = profiles;
+        }
         this.isLoading = false;
       },
-      error: (error) => this.handleError(error)
+      error: (error) => {
+        this.handleError(error);
+        this.isLoading = false;
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
     });
   }
 
@@ -215,5 +341,17 @@ export class HomeComponent implements OnInit, OnDestroy {
   calculateDistance(coords1: [number, number] | null, coords2: [number, number] | null): number {
     if (!coords1 || !coords2) return 0;
     return calculateDistance(coords1, coords2);
+  }
+
+  toggleFilters(): void {
+    this.showFilters = !this.showFilters;
+    // Toggle body scroll when filters are shown
+    document.body.style.overflow = this.showFilters ? 'hidden' : '';
+    
+    // Toggle overlay
+    const overlay = document.querySelector('.filters-overlay');
+    if (overlay) {
+      overlay.classList.toggle('show', this.showFilters);
+    }
   }
 }

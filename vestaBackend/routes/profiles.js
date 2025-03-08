@@ -296,53 +296,86 @@ router.get('/location', async (req, res) => {
 router.get('/profiles', async (req, res) => {
   try {
     const query = {};
-    if (req.query.viewerLocation) {
-      query['contact.city'] = req.query.viewerLocation;
+[{
+	"resource": "/c:/Users/shuga/OneDrive/Desktop/Projects/Vesta/Vesta/src/app/components/home/home.component.ts",
+	"owner": "typescript",
+	"code": "2322",
+	"severity": 8,
+	"message": "Type '[number, number] | null' is not assignable to type 'number[] | undefined'.\n  Type 'null' is not assignable to type 'number[] | undefined'.",
+	"source": "ts",
+	"startLineNumber": 63,
+	"startColumn": 11,
+	"endLineNumber": 63,
+	"endColumn": 22,
+	"relatedInformation": [
+		{
+			"startLineNumber": 16,
+			"startColumn": 3,
+			"endLineNumber": 16,
+			"endColumn": 14,
+			"message": "The expected type comes from property 'coordinates' which is declared here on type 'ProfileQueryParams'",
+			"resource": "/c:/Users/shuga/OneDrive/Desktop/Projects/Vesta/Vesta/src/app/services/profile.service.ts"
+		}
+	]
+}]    
+    // Handle location query
+    if (req.query.coordinates) {
+      const [longitude, latitude] = Array.isArray(req.query.coordinates) 
+        ? req.query.coordinates.map(Number)
+        : req.query.coordinates.split(',').map(Number);
+
+      if (!isNaN(latitude) && !isNaN(longitude)) {
+        query['contact.location'] = {
+          $near: {
+            $geometry: {
+              type: 'Point',
+              coordinates: [longitude, latitude]
+            }
+          }
+        };
+      }
     }
-    if (req.query.age) {
-      const minAge = new Date().getFullYear() - req.query.age;
-      const maxAge = new Date().getFullYear() - req.query.age + 1;
+
+    // Handle age query
+    if (req.query.age && !isNaN(req.query.age)) {
+      const age = parseInt(req.query.age);
+      const today = new Date();
+      const minBirthdate = new Date(today.getFullYear() - age - 1, today.getMonth(), today.getDate());
+      const maxBirthdate = new Date(today.getFullYear() - age, today.getMonth(), today.getDate());
+      
       query.birthdate = {
-        $gte: new Date(minAge, 0, 1),
-        $lt: new Date(maxAge, 0, 1)
+        $gte: minBirthdate,
+        $lt: maxBirthdate
       };
     }
-    if (req.query.services) {
-      query.services = { $in: [req.query.services] };
+
+    // Handle services query
+    if (req.query.services && req.query.services !== 'undefined') {
+      const services = Array.isArray(req.query.services) 
+        ? req.query.services 
+        : req.query.services.split(',');
+      query['services.included'] = { $in: services };
     }
+
     const profiles = await UserProfile.find(query);
-    if (req.query.viewerLocation) {
+    
+    // Sort profiles by level and distance if location provided
+    if (req.query.coordinates) {
       profiles.sort((a, b) => {
-        if (a.profileLevel === 'vip' && b.profileLevel !== 'vip') {
-          return -1;
-        } else if (
-          a.profileLevel === 'premium' &&
-          b.profileLevel !== 'premium' &&
-          b.profileLevel !== 'vip'
-        ) {
-          return -1;
-        } else if (
-          a.profileLevel === 'standard' &&
-          b.profileLevel !== 'standard' &&
-          b.profileLevel !== 'premium' &&
-          b.profileLevel !== 'vip'
-        ) {
-          return -1;
-        } else {
-          // Calculate distance between two points (assumes calculateDistance is defined)
-          const distanceA = calculateDistance(a.contact.location.coordinates, req.query.viewerLocation);
-          const distanceB = calculateDistance(b.contact.location.coordinates, req.query.viewerLocation);
-          return distanceA - distanceB;
-        }
+        // First sort by profile level
+        const levels = { vip: 3, premium: 2, standard: 1 };
+        const levelDiff = (levels[b.profileLevel] || 0) - (levels[a.profileLevel] || 0);
+        if (levelDiff !== 0) return levelDiff;
+        
+        // Then by distance if same level
+        return 0; // Distance calculation can be added here if needed
       });
     }
+
     res.json(profiles);
   } catch (error) {
     console.error('Error getting profiles:', error);
-    res.status(500).json({
-      error: 'GET_PROFILES_FAILED',
-      message: 'Failed to get profiles'
-    });
+    res.status(500).json({ error: 'GET_PROFILES_FAILED', message: 'Failed to get profiles' });
   }
 });
 
