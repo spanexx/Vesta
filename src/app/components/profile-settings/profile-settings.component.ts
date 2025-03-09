@@ -274,8 +274,13 @@ export class ProfileSettingsComponent implements OnInit {
       }
     }
 
+    // Handle ethnicity case
+    if (attribute === 'ethnicity') {
+      // Capitalize first letter and lowercase the rest
+      value = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+    }
+
     const fieldName = `physicalAttributes.${attribute}`;
-    
     this.profileService.updateField(fieldName, value).subscribe({
       next: (response) => {
         if (this.profile && this.profile.physicalAttributes) {

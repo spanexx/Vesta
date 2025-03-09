@@ -476,12 +476,15 @@ router.patch('/field/:fieldName', auth, async (req, res) => {
       updateData[fieldName] = value; // Ensure we're setting the entire array
       console.log('Setting roles to:', value); // Debug log
     } else if (fieldName === 'physicalAttributes.ethnicity') {
-      const normalizedValue = value.toLowerCase().trim();
-      // Allow any value but suggest preferred values
-      if (normalizedValue.length < 2 || normalizedValue.length > 50) {
+      // Capitalize first letter and lowercase the rest
+      const normalizedValue = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+      
+      // Validate against allowed values
+      const validEthnicities = ['Asian', 'Black', 'Caucasian', 'Hispanic', 'Indian', 'Middle Eastern', 'Mixed', 'Other'];
+      if (!validEthnicities.includes(normalizedValue)) {
         return res.status(400).json({
           error: 'INVALID_INPUT',
-          message: 'Ethnicity must be between 2 and 50 characters'
+          message: `Invalid ethnicity value. Must be one of: ${validEthnicities.join(', ')}`
         });
       }
       updateData['physicalAttributes.ethnicity'] = normalizedValue;

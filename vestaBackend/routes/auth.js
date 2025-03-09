@@ -190,7 +190,6 @@ router.get('/profiles', async (req, res) => {
     pipeline.push({ $limit: limit });
 
     const profiles = await UserProfile.aggregate(pipeline);
-    console.log(profiles)
     res.json(profiles);
   } catch (error) {
     console.error('Error getting profiles:', error);
