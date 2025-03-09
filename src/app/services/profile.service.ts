@@ -16,7 +16,7 @@ export interface ProfileQueryParams {
   coordinates?: [number, number] | undefined;  // Updated to match possible undefined state
   age?: number;
   services?: string;
-  role?: string;
+  // role?: string;
 }
 
 @Injectable({

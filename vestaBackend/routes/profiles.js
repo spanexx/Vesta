@@ -301,28 +301,7 @@ router.get('/location', async (req, res) => {
 router.get('/profiles', async (req, res) => {
   try {
     const query = {};
-[{
-	"resource": "/c:/Users/shuga/OneDrive/Desktop/Projects/Vesta/Vesta/src/app/components/home/home.component.ts",
-	"owner": "typescript",
-	"code": "2322",
-	"severity": 8,
-	"message": "Type '[number, number] | null' is not assignable to type 'number[] | undefined'.\n  Type 'null' is not assignable to type 'number[] | undefined'.",
-	"source": "ts",
-	"startLineNumber": 63,
-	"startColumn": 11,
-	"endLineNumber": 63,
-	"endColumn": 22,
-	"relatedInformation": [
-		{
-			"startLineNumber": 16,
-			"startColumn": 3,
-			"endLineNumber": 16,
-			"endColumn": 14,
-			"message": "The expected type comes from property 'coordinates' which is declared here on type 'ProfileQueryParams'",
-			"resource": "/c:/Users/shuga/OneDrive/Desktop/Projects/Vesta/Vesta/src/app/services/profile.service.ts"
-		}
-	]
-}]    
+  
     // Handle location query
     if (req.query.coordinates) {
       const [longitude, latitude] = Array.isArray(req.query.coordinates) 

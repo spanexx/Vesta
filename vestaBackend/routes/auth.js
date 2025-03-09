@@ -137,19 +137,19 @@ router.get('/profiles', async (req, res) => {
     const query = {};
 
     // ------ 1. Build Filter Query ------
-    if (age) {
-      const currentYear = new Date().getFullYear();
-      const minBirthYear = currentYear - parseInt(age) - 1;
-      const maxBirthYear = currentYear - parseInt(age);
-      query.birthdate = {
-        $gte: new Date(minBirthYear, 0, 1),
-        $lt: new Date(maxBirthYear, 0, 1),
-      };
-    }
+    // if (age) {
+    //   const currentYear = new Date().getFullYear();
+    //   const minBirthYear = currentYear - parseInt(age) - 1;
+    //   const maxBirthYear = currentYear - parseInt(age);
+    //   query.birthdate = {
+    //     $gte: new Date(minBirthYear, 0, 1),
+    //     $lt: new Date(maxBirthYear, 0, 1),
+    //   };
+    // }
 
-    if (services) {
-      query.services = { $in: services.split(',') };
-    }
+    // if (services) {
+    //   query.services = { $in: services.split(',') };
+    // }
 
     // ------ 2. Geolocation Pipeline ------
     let pipeline = [];
@@ -190,6 +190,7 @@ router.get('/profiles', async (req, res) => {
     pipeline.push({ $limit: limit });
 
     const profiles = await UserProfile.aggregate(pipeline);
+    console.log(profiles)
     res.json(profiles);
   } catch (error) {
     console.error('Error getting profiles:', error);
