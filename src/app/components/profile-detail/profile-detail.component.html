@@ -46,6 +46,17 @@
               </div>
             </div>
 
+          <div class="upgrade-banner" *ngIf="isCurrentUser && profile.profileLevel === 'standard'">
+            <div class="banner-content">
+              <i class="fas fa-crown"></i>
+              <div class="banner-text">
+                <strong>Upgrade to Premium</strong>
+                <span>Get more visibility and features</span>
+              </div>
+              <a routerLink="/pricing" class="upgrade-button">Upgrade Now</a>
+            </div>
+          </div>
+
         </div>
       </div>
       <div>

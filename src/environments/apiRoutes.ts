@@ -7,6 +7,7 @@ const authRoutes = `${apiUrl}/auth`;
 const profileRoutes = `${apiUrl}/profiles`;
 const moderationRoutes = `${apiUrl}/moderation`;
 const meRoute = `${authRoutes}/me`; // Add this new route
+const videoRoutes = `${apiUrl}/videos`;
 
 // Exporting the routes for use in the application
 export {
@@ -14,4 +15,5 @@ export {
   profileRoutes,
   moderationRoutes,
   meRoute,
+  videoRoutes,
 };

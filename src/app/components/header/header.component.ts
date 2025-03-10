@@ -21,7 +21,7 @@ export class HeaderComponent {
     { value: 'wife', label: 'Wife' },
     { value: 'mistress', label: 'Mistress' },
     { value: 'pornstar', label: 'Pornstar' },
-    { value: 'onenight', label: 'One Night' }
+    { value: 'onenight', label: 'OneNight' }
   ];
 
   constructor(

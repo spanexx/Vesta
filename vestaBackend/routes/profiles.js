@@ -38,6 +38,29 @@ const upload = multer({ storage });
 
 const router = express.Router();
 
+// Middleware to check subscription status
+const checkSubscription = async (req, res, next) => {
+  try {
+    const userProfile = await UserProfile.findById(req.userId);
+    if (!userProfile) return next();
+
+    // Check if subscription exists and is expired
+    if (userProfile.subscription?.currentPeriodEnd && 
+        userProfile.subscription.currentPeriodEnd < new Date() &&
+        userProfile.subscription.status === 'active') {
+      
+      // Revert to free tier if subscription expired
+      await UserProfile.findByIdAndUpdate(req.userId, {
+        profileLevel: 'free',
+        'subscription.status': 'expired'
+      });
+    }
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Update profile using the UserProfile static method
 router.post('/update', auth, async (req, res) => {
   try {
@@ -364,7 +387,7 @@ router.get('/profiles', async (req, res) => {
 });
 
 // Get public profile
-router.get('/:id', async (req, res) => {
+router.get('/:id', checkSubscription, async (req, res) => {
   try {
     const profile = await UserProfile.findById(req.params.id)
       .select('-__v')
@@ -440,7 +463,7 @@ router.post('/:id/like/viewer', async (req, res) => {
 });
 
 // Update individual field
-router.patch('/field/:fieldName', auth, async (req, res) => {
+router.patch('/field/:fieldName', auth, checkSubscription, async (req, res) => {
   try {
     const { fieldName } = req.params;
     const { value } = req.body;

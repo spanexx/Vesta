@@ -1,0 +1,63 @@
+<div class="pricing-container">
+  <div class="pricing-header">
+    <h1>Choose Your Plan</h1>
+    <div class="billing-toggle">
+      <span [class.active]="!isYearly">Monthly</span>
+      <label class="switch">
+        <input type="checkbox" 
+               [(ngModel)]="isYearly" 
+               [attr.aria-label]="'Switch to ' + (isYearly ? 'monthly' : 'yearly') + ' billing'">
+        <span class="slider"></span>
+      </label>
+      <span [class.active]="isYearly">Yearly</span>
+      <span class="save-badge" *ngIf="isYearly">Save up to 20%</span>
+    </div>
+  </div>
+
+  <div class="pricing-grid">
+    <div *ngFor="let tier of pricingTiers" 
+         class="pricing-card" 
+         [class.popular]="tier.popular"
+         [class.free]="tier.free">
+      <div class="popular-badge" *ngIf="tier.popular">Most Popular</div>
+      <div class="free-badge" *ngIf="tier.free">Free Forever</div>
+      
+      <h2>{{tier.name}}</h2>
+      <div class="price" *ngIf="!tier.free">
+        <span class="currency">€</span>
+        <span class="amount">{{getPrice(tier)}}</span>
+        <span class="period">/{{isYearly ? 'year' : 'month'}}</span>
+      </div>
+      <div class="price free-price" *ngIf="tier.free">
+        <span class="amount">€0</span>
+        <span class="period">/forever</span>
+      </div>
+
+      <div class="savings" *ngIf="isYearly && getSavings(tier) > 0">
+        Save €{{getSavings(tier).toFixed(2)}} per year
+      </div>
+
+      <ul class="features">
+        <li *ngFor="let feature of tier.features">
+          <i class="fas fa-check"></i>
+          {{feature}}
+        </li>
+      </ul>
+
+      <button class="subscribe-button" 
+              (click)="subscribe(tier)"
+              [disabled]="processing && selectedTier?.id === tier.id">
+        <span *ngIf="!(processing && selectedTier?.id === tier.id)">
+          {{tier.free ? 'Start Now' : 'Subscribe Now'}}
+        </span>
+        <span *ngIf="processing && selectedTier?.id === tier.id">
+          Processing...
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <div class="error-message" *ngIf="error" role="alert">
+    {{error}}
+  </div>
+</div>

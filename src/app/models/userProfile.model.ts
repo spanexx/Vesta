@@ -67,7 +67,12 @@ export interface UserProfile {
       };
       whatsapp?: string;  // Add this line
     };
-    profileLevel: 'standard' | 'premium' | 'vip';
+    profileLevel: 'free' | 'standard' | 'premium' | 'vip';
+    subscription?: {
+      stripeSubscriptionId?: string;
+      currentPeriodEnd?: Date;
+      status: 'active' | 'canceled' | 'expired';
+    };
     workingTime?: string;
     termsAccepted: boolean;
     verificationStatus: 'pending' | 'verified' | 'rejected';

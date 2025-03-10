@@ -43,7 +43,7 @@
       <div class="profiles-grid">
         <div class="profile-card" *ngFor="let profile of userProfiles" [routerLink]="['/profile', profile._id]">
           <div class="card-media">
-            <img [src]="profile.images[0] || 'assets/default-profile.jpg'" [alt]="profile.fullName">
+            <img [src]="profile.images[0] || 'https://static.vecteezy.com/system/resources/previews/005/129/844/original/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg'" [alt]="profile.fullName">
             <div class="card-badges">
               <span *ngIf="profile.profileLevel === 'vip'" class="badge vip">
                 <i class="fas fa-star"></i> VIP
@@ -83,4 +83,14 @@
       </div>
     </main>
   </div>
+
+  <a routerLink="/pricing" class="floating-cta" aria-label="Upgrade to Premium">
+    <div class="cta-content">
+      <i class="fas fa-crown"></i>
+      <div class="cta-text">
+        <strong>Upgrade Now</strong>
+        <span>Get more visibility</span>
+      </div>
+    </div>
+  </a>
 </div>

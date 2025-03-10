@@ -187,6 +187,42 @@
   box-shadow: 0 2px 10px rgba(234, 200, 100, 0.3);
 }
 
+.badge.level-free {
+  background: linear-gradient(135deg, #808080, #a0a0a0);
+  box-shadow: 0 2px 10px rgba(128, 128, 128, 0.2);
+}
+
+.subscription-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  margin-left: 1rem;
+}
+
+.subscription-status.active {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+}
+
+.subscription-status.expired {
+  background: linear-gradient(135deg, #f44336, #d32f2f);
+  color: white;
+}
+
+.subscription-status.canceled {
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+  color: white;
+}
+
+.subscription-expiry {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 0.5rem;
+}
+
 .verified-badge {
   color: #ea64b8;
   margin-left: 0.5rem;
@@ -1246,4 +1282,63 @@ h2 {
   width: 16px;
   height: 16px;
   accent-color: #25D366;
+}
+
+.upgrade-banner {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(234, 100, 184, 0.1), rgba(200, 100, 234, 0.1));
+  border-radius: 12px;
+  border: 1px solid rgba(234, 100, 184, 0.2);
+}
+
+.banner-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.banner-content i {
+  font-size: 1.5rem;
+  color: #ea64b8;
+}
+
+.banner-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.banner-text strong {
+  color: #ea64b8;
+  font-size: 1.1rem;
+}
+
+.banner-text span {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.upgrade-button {
+  padding: 0.5rem 1.5rem;
+  background: linear-gradient(135deg, #ea64b8, #c864ea);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.upgrade-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(234, 100, 184, 0.3);
+}
+
+@media (max-width: 768px) {
+  .banner-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
 }

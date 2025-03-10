@@ -12,6 +12,8 @@
         <li *ngFor="let role of roles">
           <a (click)="onRoleSelect(role.value)">{{role.label}}</a>
         </li>
+        <li>    <a routerLink="/video-upload">Videos</a>
+        </li>
       </ul>
     </nav>
   </div>

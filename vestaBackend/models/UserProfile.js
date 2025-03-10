@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import { type } from 'os';
 
 const userProfileSchema = new mongoose.Schema({
 
@@ -204,8 +205,28 @@ const userProfileSchema = new mongoose.Schema({
   // Use a different field name for the profile level to distinguish it
   profileLevel: {
     type: String,
-    enum: ['standard', 'premium', 'vip'],
-    default: 'standard',
+    enum: ['free', 'standard', 'premium', 'vip'],
+    default: 'free',
+  },
+  subscription: {
+    stripeSubscriptionId: String,
+    currentPeriodEnd: Date,
+    status: {
+      type: String,
+      enum: ['active', 'canceled', 'expired'],
+      default: 'expired'
+    }
+  },
+  videoSubscription: {
+    isSubscribed: { type: Boolean, default: false },
+    subscribedAt: Date,
+    expiresAt: Date,
+  },
+  subscriberVideo: {
+    url: String,
+    uploadedAt: Date,
+    title: String,
+    description: String,
   },
   workingTime: {
     type: String,
@@ -237,6 +258,10 @@ const userProfileSchema = new mongoose.Schema({
     type: String,
     default: null
   },
+  stripeCustomerId: {
+    type: String,
+    sparse: true
+  }
 }, { timestamps: true });
 
 // Geospatial index for proximity queries

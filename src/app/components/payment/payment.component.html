@@ -1,0 +1,77 @@
+<div class="payment-container">
+  <h2>Complete Your Payment</h2>
+  
+  <div class="payment-details" *ngIf="subscriptionDetails">
+    <div class="plan-details">
+      <h3>{{subscriptionDetails.plan}} Plan</h3>
+      <p class="amount">€{{subscriptionDetails.amount}} / {{subscriptionDetails.interval}}</p>
+    </div>
+  </div>
+
+  <div class="payment-method-selector">
+    <button 
+      (click)="selectPaymentMethod('card')" 
+      [class.active]="paymentMethod === 'card'"
+      class="payment-method-btn">
+      <i class="fas fa-credit-card"></i> Credit Card
+    </button>
+    <button 
+      (click)="selectPaymentMethod('crypto')" 
+      [class.active]="paymentMethod === 'crypto'"
+      class="payment-method-btn">
+      <i class="fab fa-bitcoin"></i> USDT (Binance Pay)
+    </button>
+  </div>
+
+  <!-- Crypto Payment Section -->
+  <div *ngIf="paymentMethod === 'crypto'" class="crypto-payment">
+    <div *ngIf="cryptoPaymentDetails" class="crypto-details">
+      <h3>Payment Details</h3>
+      <p>Amount: {{cryptoPaymentDetails.orderAmount}} USDT</p>
+      
+      <!-- QR Code -->
+      <div class="qr-container">
+        <img [src]="cryptoPaymentDetails.qrcodeLink" alt="Payment QR Code">
+      </div>
+
+      <!-- Payment Links -->
+      <div class="payment-links">
+        <a [href]="cryptoPaymentDetails.checkoutUrl" target="_blank" class="web-link">
+          Pay on Web
+        </a>
+        <a [href]="cryptoPaymentDetails.deeplink" class="app-link">
+          Open in Binance App
+        </a>
+      </div>
+
+      <div class="payment-timer" *ngIf="paymentTimeLeft">
+        Time remaining: {{paymentTimeLeft}}
+      </div>
+    </div>
+  </div>
+
+  <form (ngSubmit)="handleSubmit()" #paymentForm="ngForm" class="payment-form" *ngIf="paymentMethod === 'card'">
+    <div class="form-control">
+      <label for="card-element">Credit or Debit Card</label>
+      <div id="card-element" class="card-element"></div>
+      <div id="card-errors" role="alert" *ngIf="error">{{ error }}</div>
+    </div>
+
+    <button type="submit" 
+            class="submit-button" 
+            [disabled]="processing || !card"
+            [attr.aria-busy]="processing">
+      <span *ngIf="!processing">Complete Payment</span>
+      <span *ngIf="processing" aria-live="polite">Processing...</span>
+    </button>
+
+    <div class="payment-status" aria-live="polite">
+      <div *ngIf="completed" class="success-message" role="status">
+        Payment completed successfully! Redirecting to your profile in a moment...
+        <div class="spinner-container" *ngIf="processing">
+          <div class="spinner"></div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

@@ -5,6 +5,8 @@ import { UserProfile } from '../models/userProfile.model';
 import { authRoutes, meRoute } from '../../environments/apiRoutes';
 import { LoginResponse } from '../interfaces/auth.interface';
 import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +14,7 @@ import { Router } from '@angular/router';
 export class AuthenticationService {
   private currentUserSubject = new BehaviorSubject<UserProfile | null>(null);
   currentUser$ = this.currentUserSubject.asObservable();
+  private apiUrl = environment.apiUrl;
 
   constructor(
     private http: HttpClient,
@@ -165,6 +168,16 @@ export class AuthenticationService {
       })
     );
   }
+
+  async refreshCurrentUser(): Promise<void> {
+    try {
+      const user = await firstValueFrom(this.http.get<any>(`${this.apiUrl}/auth/me`));
+      this.currentUserSubject.next(user);
+    } catch (error) {
+      console.error('Error refreshing user:', error);
+    }
+  }
+
   /**
    * Log out the current user.
    */

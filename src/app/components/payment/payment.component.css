@@ -1,0 +1,42 @@
+.payment-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.payment-form {
+  margin-top: 2rem;
+}
+
+.card-element {
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.error-message {
+  color: #ff4444;
+  margin: 1rem 0;
+  padding: 0.5rem;
+  border: 1px solid #ff4444;
+  border-radius: 4px;
+  background: #fff2f2;
+}
+
+.success-message {
+  color: #4CAF50;
+  margin: 1rem 0;
+  padding: 0.5rem;
+  border: 1px solid #4CAF50;
+  border-radius: 4px;
+  background: #f2fff2;
+}
+
+.processing-message {
+  color: #666;
+  margin: 1rem 0;
+}

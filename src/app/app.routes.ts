@@ -7,6 +7,9 @@ import { ProfileDetailComponent } from './components/profile-detail/profile-deta
 import { LogoutComponent } from './components/logout/logout.component';
 import { authGuard } from './guards/auth.guard';
 import { ProfileSettingsComponent } from './components/profile-settings/profile-settings.component';
+import { PaymentComponent } from './components/payment/payment.component';
+import { PricingComponent } from './components/pricing/pricing.component';
+import { VideoUploadComponent } from './components/video-upload/video-upload.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -28,7 +31,20 @@ export const routes: Routes = [
   { path: 'settings', 
     component: ProfileSettingsComponent,
     canActivate: [authGuard]
-
   },
-
+  {
+    path: 'payment',
+    component: PaymentComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'pricing',
+    component: PricingComponent,
+    
+  },
+  {
+    path: 'video-upload',
+    component: VideoUploadComponent,
+    canActivate: [authGuard]
+  }
 ];
