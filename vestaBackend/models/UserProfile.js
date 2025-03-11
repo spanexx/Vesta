@@ -227,6 +227,8 @@ const userProfileSchema = new mongoose.Schema({
     uploadedAt: Date,
     title: String,
     description: String,
+    likes: { type: Number, default: 0 },
+    likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile' }]
   },
   workingTime: {
     type: String,
@@ -379,6 +381,80 @@ userProfileSchema.statics.updateProfilePicture = async function(userId, profileP
     { $set: { profilePicture } },
     { new: true, runValidators: true }
   );
+};
+
+// Update the likeVideo static method
+userProfileSchema.statics.likeVideo = async function(videoOwnerId, likerId) {
+  try {
+    console.log('Attempting to like video:', { videoOwnerId, likerId });
+    
+    // Handle anonymous likes
+    if (likerId === 'anonymous') {
+      return this.findByIdAndUpdate(
+        videoOwnerId,
+        { $inc: { 'subscriberVideo.anonymousLikes': 1 } },
+        { new: true }
+      );
+    }
+
+    // Look up the profile first to verify it exists
+    const profile = await this.findById(videoOwnerId);
+    if (!profile) {
+      console.log('Profile not found');
+      return null;
+    }
+    
+    // If video doesn't exist, return null
+    if (!profile.subscriberVideo) {
+      console.log('No video found');
+      return null;
+    }
+
+    // Initialize likedBy array if it doesn't exist
+    if (!profile.subscriberVideo.likedBy) {
+      profile.subscriberVideo.likedBy = [];
+      profile.subscriberVideo.likes = 0;
+    }
+
+    // Check if already liked
+    const alreadyLiked = profile.subscriberVideo.likedBy.includes(likerId);
+    if (alreadyLiked) {
+      console.log('Already liked');
+      return profile; // Return current state if already liked
+    }
+
+    // Update the profile with the new like
+    const updatedProfile = await this.findByIdAndUpdate(
+      videoOwnerId,
+      { 
+        $inc: { 'subscriberVideo.likes': 1 },
+        $push: { 'subscriberVideo.likedBy': likerId }
+      },
+      { new: true }
+    );
+
+    console.log('Like result:', updatedProfile ? 'Success' : 'Failed');
+    return updatedProfile;
+  } catch (error) {
+    console.error('Error in likeVideo:', error);
+    throw error;
+  }
+};
+
+// Add unlike method
+userProfileSchema.statics.unlikeVideo = async function(videoOwnerId, likerId) {
+  const profile = await this.findOneAndUpdate(
+    { 
+      _id: videoOwnerId,
+      'subscriberVideo.likedBy': likerId 
+    },
+    { 
+      $inc: { 'subscriberVideo.likes': -1 },
+      $pull: { 'subscriberVideo.likedBy': likerId }
+    },
+    { new: true }
+  );
+  return profile;
 };
 
 const UserProfile = mongoose.model('UserProfile', userProfileSchema);

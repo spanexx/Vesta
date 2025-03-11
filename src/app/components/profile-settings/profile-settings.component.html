@@ -5,7 +5,7 @@
   <section class="settings-section">
     <h2>Profile Picture</h2>
     <div class="profile-picture-container">
-      <img [src]="profile.profilePicture || 'assets/default-avatar.png'" alt="Profile Picture">
+      <img [src]="profile.profilePicture || 'assets/default-avatar.jpg'" alt="Profile Picture">
       <input type="file" 
              accept="image/*" 
              (change)="onProfilePictureSelected($event)"

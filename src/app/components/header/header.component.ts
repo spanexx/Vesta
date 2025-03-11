@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
@@ -27,18 +27,29 @@ export class HeaderComponent {
   constructor(
     private authService: AuthenticationService,
     private themeService: ThemeService,
-    private router: Router  // Add router
+    private router: Router,
+    private elementRef: ElementRef
   ) {
     this.themeService.darkMode$.subscribe(
       isDark => this.isDarkMode = isDark
     );
   }
 
+  @HostListener('document:click', ['$event'])
+  clickOutside(event: Event) {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.isMenuOpen = false;
+    }
+  }
+
   toggleDarkMode() {
     this.themeService.toggleDarkMode();
   }
 
-  toggleMenu() {
+  toggleMenu(event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
     this.isMenuOpen = !this.isMenuOpen;
   }
 
@@ -47,6 +58,7 @@ export class HeaderComponent {
   }
 
   onRoleSelect(role: string): void {
+    this.isMenuOpen = false; // Close menu after selection
     this.router.navigate(['/'], { 
       queryParams: { role },
       queryParamsHandling: 'merge'

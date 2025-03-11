@@ -45,6 +45,6 @@ export const routes: Routes = [
   {
     path: 'video-upload',
     component: VideoUploadComponent,
-    canActivate: [authGuard]
+    // canActivate: [authGuard]
   }
 ];

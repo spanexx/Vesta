@@ -27,6 +27,8 @@ interface SubscriberVideo {
   title: string;
   description: string;
   uploadedAt: Date;
+  likes: number;
+  isLiked: boolean;
 }
 
 interface VideoResponse {
@@ -63,6 +65,30 @@ export class VideoService {
   getAllVideos(): Observable<SubscriberVideo[]> {
     return this.http.get<VideoResponse>(`${videoRoutes}/all-videos`).pipe(
       map(response => response.videos)
+    );
+  }
+
+  likeVideo(videoId: string): Observable<{ likes: number; isLiked: boolean }> {
+    return this.http.post<{ success: boolean; likes: number; isLiked: boolean }>(
+      `${videoRoutes}/${videoId}/like`, 
+      {}
+    ).pipe(
+      map(response => ({ 
+        likes: response.likes, 
+        isLiked: response.isLiked 
+      }))
+    );
+  }
+
+  unlikeVideo(videoId: string): Observable<{ likes: number; isLiked: boolean }> {
+    return this.http.post<{ success: boolean; likes: number; isLiked: boolean }>(
+      `${videoRoutes}/${videoId}/unlike`, 
+      {}
+    ).pipe(
+      map(response => ({ 
+        likes: response.likes, 
+        isLiked: response.isLiked 
+      }))
     );
   }
 }

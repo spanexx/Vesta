@@ -1,6 +1,7 @@
 import express from 'express';
 import UserProfile from '../models/UserProfile.js';
 import auth from '../middleware/auth.js';
+import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 
@@ -124,7 +125,8 @@ router.get('/all-videos', async (req, res) => {
       videoId: profile._id,
       username: profile.username,
       profilePicture: profile.profilePicture,
-      ...profile.subscriberVideo
+      ...profile.subscriberVideo,
+      isLiked: profile.subscriberVideo?.likedBy?.includes(req.userId)
     }));
 
     res.json({
@@ -138,6 +140,73 @@ router.get('/all-videos', async (req, res) => {
       error: 'FETCH_FAILED',
       message: error.message
     });
+  }
+});
+
+// Add like video route - Update to handle auth state
+router.post('/:videoId/like', async (req, res) => {
+  try {
+    let userId = null;
+    
+    // Check if there's an auth token
+    if (req.headers.authorization) {
+      const token = req.headers.authorization.split(' ')[1];
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      userId = decoded.userId;
+    } else {
+      userId = 'anonymous'; // For non-authenticated users
+    }
+
+    const profile = await UserProfile.likeVideo(req.params.videoId, userId);
+    if (!profile) {
+      return res.status(404).json({
+        error: 'VIDEO_NOT_FOUND',
+        message: 'Video not found or already liked'
+      });
+    }
+    res.json({
+      success: true,
+      likes: profile.subscriberVideo.likes,
+      isLiked: true
+    });
+  } catch (error) {
+    console.error('Like video error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Add unlike video route - Update to handle auth state
+router.post('/:videoId/unlike', async (req, res) => {
+  try {
+    let userId = null;
+    
+    // Check if there's an auth token
+    if (req.headers.authorization) {
+      const token = req.headers.authorization.split(' ')[1];
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      userId = decoded.userId;
+    } else {
+      return res.status(401).json({
+        error: 'UNAUTHORIZED',
+        message: 'Must be logged in to unlike'
+      });
+    }
+
+    const profile = await UserProfile.unlikeVideo(req.params.videoId, userId);
+    if (!profile) {
+      return res.status(404).json({
+        error: 'VIDEO_NOT_FOUND',
+        message: 'Video not found or not liked'
+      });
+    }
+    res.json({
+      success: true,
+      likes: profile.subscriberVideo.likes,
+      isLiked: false
+    });
+  } catch (error) {
+    console.error('Unlike video error:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 

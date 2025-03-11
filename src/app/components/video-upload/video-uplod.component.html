@@ -1,0 +1,91 @@
+<div class="video-upload-container">
+
+    
+    <ng-container *ngIf="currentUser$ | async as currentUser">
+      <h2>Upload Your Video</h2>
+      <div *ngIf="!hasSubscription" class="subscription-notice">
+        <p>You need an active video subscription to upload videos</p>
+        <button (click)="subscribeToVideo()">Get Video Subscription</button>
+      </div>
+
+      <div *ngIf="hasSubscription" class="upload-section">
+        <div *ngIf="currentVideo" class="current-video">
+          <h3>Your Current Video</h3>
+          <video controls>
+            <source [src]="safeVideoUrl(currentVideo.url)" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+          <p>Title: {{currentVideo.title}}</p>
+          <p>Uploaded: {{currentVideo.uploadedAt | date}}</p>
+        </div>
+
+        <div class="upload-form">
+          <input type="file" 
+                 accept="video/*"
+                 (change)="onVideoSelected($event)"
+                 #videoInput>
+          <input type="text" 
+                 [(ngModel)]="videoTitle" 
+                 placeholder="Video title">
+          <textarea [(ngModel)]="videoDescription" 
+                    placeholder="Video description"></textarea>
+          
+          <div *ngIf="uploadProgress > 0 && uploadProgress < 100" class="progress-bar">
+            <div class="progress" [style.width.%]="uploadProgress">
+              {{uploadProgress}}%
+            </div>
+          </div>
+          
+          <button (click)="uploadVideo()" 
+                  [disabled]="!selectedVideo || isUploading">
+            {{ isUploading ? 'Uploading...' : 'Upload Video' }}
+          </button>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- <ng-template #loginRequired>
+      <div class="login-notice">
+        <p>Please login to upload videos</p>
+        <button (click)="navigateToLogin()">Login</button>
+      </div>
+    </ng-template> -->
+    
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+    </div>
+
+    <!-- All Videos Section -->
+    <div class="all-videos-section">
+      <h2>All Videos</h2>
+      <div class="videos-grid">
+        <div *ngFor="let video of allVideos" class="video-card">
+          <div class="video-header">
+            <img [src]="video.profilePicture || 'assets/default-avatar.jpg'" 
+                 alt="Profile picture" 
+                 class="profile-pic">
+            <span class="username">{{video.username}}</span>
+          </div>
+          <video controls class="video-player">
+            <source [src]="safeVideoUrl(video.url)" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+          <div class="video-info">
+            <h3>{{video.title}}</h3>
+            <div class="video-stats">
+              <p class="upload-date">{{video.uploadedAt | date}}</p>
+              <div class="like-container">
+                <button class="like-button" [class.liked]="video.isLiked" (click)="toggleLike(video)">
+                  <i [class.fa-solid]="video.isLiked" 
+                     [class.fa-regular]="!video.isLiked" 
+                     class="fa-heart"></i>
+                  <span class="like-count">{{video.likes || '0'}}</span>
+                </button>
+              </div>
+            </div>
+            <p class="description">{{video.description}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
