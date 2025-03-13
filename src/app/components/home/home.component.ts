@@ -68,37 +68,39 @@ export class HomeComponent implements OnInit, OnDestroy {
     console.log('Component initialized'); // Debug log
     this.initializeLocation();
     
-    // Use a single stream to handle both profiles and query params
-    this.route.queryParams.pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(params => {
-      console.log('Received query params:', params);
-      this.currentFilter = {
-        country: params['country'],
-        city: params['city']
-      };
-      
-      this.isLoading = true;
-      this.userProfiles = []; // Clear existing profiles
-      
-      if (params['role']) {
-        this.profileService.filterByRole(params['role']).subscribe({
-          next: (profiles) => {
-            console.log(`Loaded ${profiles.length} profiles for role ${params['role']}`);
-            this.userProfiles = profiles;
-            // Update the behavior subject
-            this.profilesCache.next(profiles);
-            this.isLoading = false;
-          },
-          error: (error) => {
-            console.error('Error loading profiles:', error);
-            this.handleError(error);
-            this.isLoading = false;
-          }
-        });
-      } else {
-        // If no role filter, load all profiles
-        this.loadProfiles();
+    // Improve route parameter handling
+    combineLatest([
+      this.route.params,
+      this.route.queryParams
+    ]).pipe(
+      takeUntil(this.destroy$),
+      tap(([params, queryParams]) => {
+        console.log('Route changed:', { params, queryParams });
+        this.isLoading = true;
+        
+        // Update filter
+        this.currentFilter = {
+          country: queryParams['country'],
+          city: queryParams['city']
+        };
+      }),
+      switchMap(([_, queryParams]) => {
+        if (queryParams['role']) {
+          return this.profileService.filterByRole(queryParams['role']);
+        }
+        return this.profileService.getAllProfiles();
+      })
+    ).subscribe({
+      next: (profiles) => {
+        console.log(`Loaded ${profiles.length} profiles`);
+        this.userProfiles = profiles;
+        this.profilesCache.next(profiles);
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading profiles:', error);
+        this.handleError(error);
+        this.isLoading = false;
       }
     });
   }
@@ -106,10 +108,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   private initializeDataStream(): Observable<UserProfile[]> {
     return this.profilesCache.asObservable().pipe(
       map(profiles => {
-        console.log('Profiles in stream:', profiles.length); // Debug log
-        if (profiles.length === 0) {
-          this.loadProfiles(); // Load profiles if cache is empty
-        }
+        console.log('Processing profiles stream:', profiles.length);
         return this.sortProfilesByDistanceAndStatus(profiles, this.userLocation);
       })
     );

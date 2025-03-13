@@ -1,7 +1,7 @@
 import { authRoutes } from './../../environments/apiRoutes';
 import { Injectable } from '@angular/core';
 import { AuthenticationService } from './authentication.service';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, tap, throwError, map } from 'rxjs';
 import { UserProfile } from '../models/userProfile.model';
 import { profileRoutes } from '../../environments/apiRoutes';
@@ -91,7 +91,33 @@ export class ProfileService {
   }
 
   addUserLike(profileId: string): Observable<{ userlikes: number }> {
-    return this.http.post<{ userlikes: number }>(`${profileRoutes}/${profileId}/like/user`, {});
+    // If already liked, return current likes count without error
+    if (this.isProfileLikedAnonymously(profileId)) {
+      return this.getProfileById(profileId).pipe(
+        map(profile => ({ userlikes: profile.userlikes || 0 }))
+      );
+    }
+
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.authService.getToken()}`
+    );
+    
+    return this.http.post<{ userlikes: number }>(
+      `${profileRoutes}/${profileId}/like/user`, 
+      {},
+      { headers }
+    ).pipe(
+      catchError(error => {
+        if (error.status === 400) {
+          // If already liked, fetch current likes count
+          return this.getProfileById(profileId).pipe(
+            map(profile => ({ userlikes: profile.userlikes || 0 }))
+          );
+        }
+        return throwError(() => error);
+      })
+    );
   }
 
   private isProfileLikedAnonymously(profileId: string): boolean {
@@ -104,7 +130,7 @@ export class ProfileService {
     return stored ? JSON.parse(stored) : [];
   }
 
-  private addAnonymousProfileLike(profileId: string) {
+  private addAnonymousProfileLike(profileId: string): void {
     const likedProfiles = this.getAnonymousLikedProfiles();
     if (!likedProfiles.includes(profileId)) {
       likedProfiles.push(profileId);
@@ -112,7 +138,7 @@ export class ProfileService {
     }
   }
 
-  private getAnonymousId(): string {
+  private getOrCreateAnonymousId(): string {
     let id = localStorage.getItem(this.anonymousIdKey);
     if (!id) {
       id = `anon_${Date.now()}_${Math.random().toString(36).substring(7)}`;
@@ -122,24 +148,33 @@ export class ProfileService {
   }
 
   addViewerLike(profileId: string): Observable<{ viewerlikes: number }> {
-    // Check if already liked anonymously
-    if (this.isProfileLikedAnonymously(profileId)) {
-      return new Observable(subscriber => {
-        subscriber.error({ message: 'You have already liked this profile' });
-      });
+    // Generate a unique anonymous ID
+    const anonymousId = `anon_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+    
+    // Check local storage for previous likes
+    const likedProfiles = this.getAnonymousLikedProfiles();
+    if (likedProfiles.includes(profileId)) {
+      // If already liked, return current likes count
+      return this.getProfileById(profileId).pipe(
+        map(profile => ({ viewerlikes: profile.viewerlikes || 0 }))
+      );
     }
-
-    const anonymousId = this.getAnonymousId();
-
-    return this.http.post<{ viewerlikes: number; anonymousId: string }>(
+  
+    return this.http.post<{ viewerlikes: number }>(
       `${profileRoutes}/${profileId}/like/viewer`,
       { anonymousId }
     ).pipe(
-      map(response => {
-        if (!this.authService.getToken()) {
-          this.addAnonymousProfileLike(profileId);
+      tap(() => {
+        // Add profile to liked profiles in local storage
+        this.addAnonymousProfileLike(profileId);
+      }),
+      catchError(error => {
+        if (error.status === 400) {
+          return this.getProfileById(profileId).pipe(
+            map(profile => ({ viewerlikes: profile.viewerlikes || 0 }))
+          );
         }
-        return { viewerlikes: response.viewerlikes };
+        return throwError(() => error);
       })
     );
   }

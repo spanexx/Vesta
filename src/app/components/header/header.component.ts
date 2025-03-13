@@ -59,9 +59,13 @@ export class HeaderComponent {
 
   onRoleSelect(role: string): void {
     this.isMenuOpen = false; // Close menu after selection
+    // First navigate to home, then set query params
     this.router.navigate(['/'], { 
       queryParams: { role },
-      queryParamsHandling: 'merge'
+      queryParamsHandling: 'merge',
+      // Add these options to force route reload
+      skipLocationChange: false,
+      replaceUrl: true
     });
   }
 }

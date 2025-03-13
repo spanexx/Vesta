@@ -3,7 +3,6 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ProfileService } from '../../services/profile.service';
 import { UserProfile } from '../../models/userProfile.model';
-import { CustomSpinnerComponent } from '../../custom-spinner/custom-spinner.component';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FileUploadService } from '../../services/file-upload.service';
 import { FormsModule } from '@angular/forms';
@@ -11,14 +10,23 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { CurrencyConversionService, SupportedCurrency } from '../../services/currency-conversion.service';
 import { generateWhatsAppLink } from '../../utils/whatsapp.util';
 import { ScrollingModule } from '@angular/cdk/scrolling';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { ProfileSkeletonComponent } from './components/profile-skeleton/profile-skeleton.component';
 import { ProfileGalleryComponent } from './components/profile-gallery/profile-gallery.component';
 import { Rates, EditingState, RoleSelections, ServiceSelections, ServiceUpdate, ServiceAccumulator, RateType } from '../../models/profile.types';
-import { ProfileHeaderComponent } from './components/profile-header/profile-header.component';
 import { calculateAge, formatLocation } from '../../utils/profile/profile-calculations.util';
 import { getRateDurations, validateRateValue } from '../../utils/profile/rate-management.util';
 import { initializeServiceSelections, createServiceUpdate } from '../../utils/profile/service-management.util';
+import { 
+  getLikeButtonTitle, 
+  getCoordinates, 
+  getWhatsAppLink as getWhatsAppLinkUtil,
+  getMediaType,
+  availableRoles as availableRoles,
+  availableServices as availableServices,
+  getIncludedServices as getIncludedServicesUtil,
+  getExtraServices as getExtraServicesUtil
+} from '../../utils/profile/profile-detail.util';
 
 @Component({
   selector: 'app-profile-detail',
@@ -71,13 +79,7 @@ export class ProfileDetailComponent implements OnInit {
     currentValue: null
   };
 
-  availableRoles = [
-    { value: 'girlfriend', label: 'Girlfriend' },
-    { value: 'wife', label: 'Wife' }, 
-    { value: 'mistress', label: 'Mistress' },
-    { value: 'pornstar', label: 'Pornstar' },
-    { value: 'onenight', label: 'One Night' }
-  ]; // Remove stray semicolon
+  availableRoles = availableRoles;
 
   roleSelections: RoleSelections = {};
   selectedCurrency: SupportedCurrency = 'EUR';
@@ -85,23 +87,7 @@ export class ProfileDetailComponent implements OnInit {
   imagePreview: string | null = null;
   selectedImageIndex: number | null = null;
 
-  availableServices = [
-    // Basic Services
-    'Classic vaginal sex', 'Sex Toys', 'Striptease', 'Uniforms', '69 position', 
-    'Cum in face', 'Cum in mouth', 'Cum on body', 'Deepthroat', 'Domination', 
-    'Erotic massage', 'Erotic Photos', 'Foot fetish', 'French kissing', 
-    'Golden shower give', 'Group sex', 'Oral without condom', 'With 2 men',
-    // Pornstar Services
-    'Video Recording', 'Photo Shooting', 'Live Cam Show', 'Adult Film Production',
-    'Private Show', 'Professional Photos', 'Explicit Content Creation',
-    // Mistress Services
-    'BDSM', 'Role Play', 'Spanking', 'Bondage', 'Fetish', 'Slave Training',
-    'Discipline', 'Humiliation', 'Rope Play', 'Wax Play',
-    // Girlfriend Experience
-    'Dinner Date', 'Overnight Stay', 'Weekend Trip', 'Social Events',
-    'Romantic Evening', 'Cuddling', 'Dating', 'Travel Companion',
-    'Dancing', 'Shopping Together'
-  ];
+  availableServices = availableServices;
 
   serviceSelections: ServiceSelections = {
     included: {} as Record<string, boolean>,
@@ -282,6 +268,7 @@ export class ProfileDetailComponent implements OnInit {
     if (!this.isAuthenticated) {
       return;
     }
+
     if (this.profile?._id) {
       this.profileService.addUserLike(this.profile._id).subscribe({
         next: (response) => {
@@ -289,36 +276,24 @@ export class ProfileDetailComponent implements OnInit {
             this.profile.userlikes = response.userlikes;
           }
         },
-        error: (error) => {
-          if (error.message === 'You have already liked this profile') {
-            this.error = error.message;
-            setTimeout(() => this.error = '', 3000);
-          } else {
-            console.error('Error adding user like:', error);
-          }
-        }
+        error: () => {} // Silent error handling
       });
     }
   }
 
   addViewerLike() {
-    if (this.profile?._id) {
-      this.profileService.addViewerLike(this.profile._id).subscribe({
-        next: (response) => {
-          if (this.profile) {
-            this.profile.viewerlikes = response.viewerlikes;
-          }
-        },
-        error: (error) => {
-          if (error.message === 'You have already liked this profile') {
-            this.error = error.message;
-            setTimeout(() => this.error = '', 3000);
-          } else {
-            console.error('Error adding viewer like:', error);
-          }
-        }
-      });
+    if (this.isAuthenticated || !this.profile?._id) {
+      return;
     }
+  
+    this.profileService.addViewerLike(this.profile._id).subscribe({
+      next: (response) => {
+        if (this.profile) {
+          this.profile.viewerlikes = response.viewerlikes;
+        }
+      },
+      error: () => {} // Silent error handling
+    });
   }
 
   // Update methods
@@ -334,8 +309,7 @@ export class ProfileDetailComponent implements OnInit {
   }
 
   getMediaType(url: string): 'image' | 'video' {
-    const videoExtensions = ['.mp4', '.webm', '.ogg'];
-    return videoExtensions.some(ext => url.toLowerCase().endsWith(ext)) ? 'video' : 'image';
+    return getMediaType(url);
   }
 
   startEditing(fieldName: string): void {
@@ -750,13 +724,11 @@ export class ProfileDetailComponent implements OnInit {
 
   // Add new helper methods
   getIncludedServices(): string[] {
-    return this.profile?.services?.included || [];
+    return this.profile ? getIncludedServicesUtil(this.profile) : [];
   }
 
   getExtraServices(): { service: string; price: number }[] {
-    if (!this.profile?.services?.extra) return [];
-    return Object.entries(this.profile.services.extra)
-      .map(([service, price]) => ({ service, price }));
+    return this.profile ? getExtraServicesUtil(this.profile) : [];
   }
 
   getWhatsAppLink(): string {
@@ -764,10 +736,14 @@ export class ProfileDetailComponent implements OnInit {
       return '#';
     }
     const defaultMessage = `Hi ${this.profile.fullName || ''}, I saw your profile on https://spanexx.com`;
-    return generateWhatsAppLink(this.profile.contact.whatsapp, defaultMessage);
+    return getWhatsAppLinkUtil(this.profile.contact.whatsapp, defaultMessage);
   }
 
   isEditing(fieldName: string): boolean {
     return this.editingState.fieldName === fieldName;
+  }
+
+  getLikeButtonTitle(): string {
+    return getLikeButtonTitle(this.isAuthenticated, this.isCurrentUser);
   }
 }

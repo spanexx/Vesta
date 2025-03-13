@@ -86,7 +86,11 @@
           <i class="fas fa-heart"></i>
           <span>{{profile.userlikes || 0}}</span>
         </button>
-        <button (click)="addViewerLike()" class="like-button viewer-like">
+        <button (click)="addViewerLike()" 
+                class="like-button viewer-like"
+                [class.disabled]="isAuthenticated"
+                [disabled]="isAuthenticated"
+                [title]="isAuthenticated ? 'Please use the user like button' : ''">
           <i class="fas fa-eye"></i>
           <span>{{profile.viewerlikes || 0}}</span>
         </button>

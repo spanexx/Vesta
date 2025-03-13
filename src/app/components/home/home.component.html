@@ -27,14 +27,9 @@
 
     <!-- Main content -->
     <main class="main-content">
-      <!-- Add debug info -->
-      <!-- <div *ngIf="!isLoading" style="margin-bottom: 1rem; color: #666;">
-        <small>Debug: {{ (userProfiles$ | async)?.length || 0 }} profiles loaded</small>
-      </div> -->
-
       <cdk-virtual-scroll-viewport itemSize="350">
         <div class="profiles-grid">
-          <ng-container *ngIf="loading$ | async; else profilesContent">
+          <ng-container *ngIf="isLoading">
             <div class="profile-card skeleton" *ngFor="let i of [1,2,3,4,5,6]">
               <div class="skeleton-image"></div>
               <div class="skeleton-content">
@@ -44,51 +39,54 @@
             </div>
           </ng-container>
           
-          <ng-template #profilesContent>
-            <div *cdkVirtualFor="let profile of userProfiles$ | async" 
-                 class="profile-card"
-                 [routerLink]="['/profile', profile._id]">
-              <div class="card-media">
-                <img [src]="profile.images[0] || 'https://static.vecteezy.com/system/resources/previews/005/129/844/original/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg'" [alt]="profile.fullName" loading="lazy">
-                <div class="card-badges">
-                  <span *ngIf="profile.profileLevel === 'vip'" class="badge vip">
-                    <i class="fas fa-star"></i> VIP
-                  </span>
-                  <span *ngIf="profile.profileLevel === 'premium'" class="badge premium">
-                    <i class="fas fa-crown"></i> Premium
-                  </span>
-                </div>
-              </div>
-
-              <div class="card-content">
-                <div class="card-header">
-                  <h3>{{ profile.fullName }}</h3>
-                  <p class="username">{{ profile.username ? '@' + profile.username : '' }}</p>
-                </div>
-
-                <div class="card-details">
-                  <div class="detail-item" *ngIf="profile.role">
-                    <i class="fas fa-briefcase"></i>
-                    <span>{{ profile.role }}</span>
-                  </div>
-                  
-                  <div class="detail-item" *ngIf="userLocation && getCoordinates(profile)">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span>{{ calculateDistance(userLocation, getCoordinates(profile)!) | number:'1.0-1' }} km</span>
+          <ng-container *ngIf="!isLoading">
+            <ng-container *ngIf="userProfiles.length > 0; else noProfiles">
+              <div *ngFor="let profile of userProfiles" 
+                   class="profile-card"
+                   [routerLink]="['/profile', profile._id]">
+                <div class="card-media">
+                  <img [src]="profile.images[0] || 'https://static.vecteezy.com/system/resources/previews/005/129/844/original/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg'" [alt]="profile.fullName" loading="lazy">
+                  <div class="card-badges">
+                    <span *ngIf="profile.profileLevel === 'vip'" class="badge vip">
+                      <i class="fas fa-star"></i> VIP
+                    </span>
+                    <span *ngIf="profile.profileLevel === 'premium'" class="badge premium">
+                      <i class="fas fa-crown"></i> Premium
+                    </span>
                   </div>
                 </div>
+
+                <div class="card-content">
+                  <div class="card-header">
+                    <h3>{{ profile.fullName }}</h3>
+                    <p class="username">{{ profile.username ? '@' + profile.username : '' }}</p>
+                  </div>
+
+                  <div class="card-details">
+                    <div class="detail-item" *ngIf="profile.role">
+                      <i class="fas fa-briefcase"></i>
+                      <span>{{ profile.role }}</span>
+                    </div>
+                    
+                    <div class="detail-item" *ngIf="userLocation && getCoordinates(profile)">
+                      <i class="fas fa-map-marker-alt"></i>
+                      <span>{{ calculateDistance(userLocation, getCoordinates(profile)!) | number:'1.0-1' }} km</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </ng-template>
+            </ng-container>
+            
+            <ng-template #noProfiles>
+              <div class="no-results">
+                <i class="fas fa-search"></i>
+                <h3>No profiles found</h3>
+                <p>Try adjusting your filters or search criteria</p>
+              </div>
+            </ng-template>
+          </ng-container>
         </div>
       </cdk-virtual-scroll-viewport>
-
-      <!-- No results message -->
-      <div *ngIf="!isLoading && userProfiles.length === 0" class="no-results">
-        <i class="fas fa-search"></i>
-        <h3>No profiles found</h3>
-        <p>Try adjusting your filters or search criteria</p>
-      </div>
     </main>
   </div>
 

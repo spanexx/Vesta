@@ -72,6 +72,11 @@ export class AuthenticationService {
     localStorage.setItem('token', token);
   }
 
+  getAuthHeaders() {
+    const token = this.getToken();
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  }
+
   /**
    * Register a new user.
    * @param user The user data to register.
