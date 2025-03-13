@@ -741,3 +741,71 @@
     background: rgba(0, 0, 0, 0.7);
   }
 }
+
+.skeleton {
+  animation: loading 1.5s infinite;
+  
+  .skeleton-image {
+    width: 100%;
+    height: 200px;
+    background: #eee;
+    border-radius: var(--card-radius);
+  }
+  
+  .skeleton-content {
+    padding: 1rem;
+    
+    .skeleton-text {
+      height: 20px;
+      background: #eee;
+      margin: 10px 0;
+      border-radius: 4px;
+      
+      &:last-child {
+        width: 60%;
+      }
+    }
+  }
+}
+
+@keyframes loading {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+cdk-virtual-scroll-viewport {
+  height: calc(100vh - 100px);
+  width: 100%;
+  overflow-x: hidden;
+  
+  .profiles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+  }
+}
+
+.profile-card {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  margin: 0;
+  flex: 1 1 280px;
+  max-width: calc(33.333% - 1rem);
+  min-width: 280px;
+  margin: 0.75rem;
+  background: var(--surface);
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  box-shadow: 0 8px 32px var(--shadow);
+  border: 1px solid rgba(234, 100, 184, 0.1);
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:hover {
+    transform: translateY(-4px) rotate(1deg);
+    box-shadow: 0 12px 48px rgba(234, 100, 184, 0.2);
+  }
+}

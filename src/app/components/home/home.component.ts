@@ -5,12 +5,16 @@ import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { ProfileService, LocationFilter, ProfileQueryParams } from '../../services/profile.service';
 import { UserProfile } from '../../models/userProfile.model';
-import { CustomSpinnerComponent } from '../../custom-spinner/custom-spinner.component';
 import { FilterPipe } from '../../pipes/filter.pipe';
 import { calculateDistance } from '../../utils/distance.util';
 import { LocationFilterComponent } from '../location-filter/location-filter.component';
+import { BehaviorSubject, Observable, combineLatest, Subject } from 'rxjs';
+import { map, switchMap, debounceTime, distinctUntilChanged, tap, takeUntil } from 'rxjs/operators';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { CacheService } from '../../services/cache.service';
 
 type ProfileLevel = 'vip' | 'premium' | 'standard' | 'basic';
+type Coordinates = [number, number];
 
 @Component({
   selector: 'app-home',
@@ -19,20 +23,28 @@ type ProfileLevel = 'vip' | 'premium' | 'standard' | 'basic';
     CommonModule,
     FormsModule,
     RouterModule,
-    CustomSpinnerComponent,
-    // FilterPipe,
+    ScrollingModule,
     LocationFilterComponent
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit, OnDestroy {
+  private loadingSubject = new BehaviorSubject<boolean>(true);
+  loading$ = this.loadingSubject.asObservable();
+  private filterSubject = new BehaviorSubject<LocationFilter>({});
+  private locationSubject = new BehaviorSubject<Coordinates | undefined>(undefined);
+  private destroy$ = new Subject<void>();
+  public profilesCache = new BehaviorSubject<UserProfile[]>([]);
+
+  userProfiles$ = this.initializeDataStream();
+
   userProfiles: UserProfile[] = [];
   isLoading = false;
   error: string | null = null;
   locationError: string | null = null;
   private queryParamsSub?: Subscription;
-  userLocation: [number, number] | undefined = undefined;  // Changed from null to undefined
+  userLocation: Coordinates | undefined = undefined;  // Changed from null to undefined
   currentFilter: LocationFilter = {};
   isUsingLocation = false;  // Add this property
   showFilters = false;
@@ -48,47 +60,34 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(
     private profileService: ProfileService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cacheService: CacheService
   ) {}
 
   ngOnInit(): void {
-    // Check for saved location when component initializes
-    const savedLocation = sessionStorage.getItem('userLocation');
-    if (savedLocation) {
-      const { coordinates, timestamp } = JSON.parse(savedLocation);
-      const fiveMinutes = 5 * 60 * 1000;
-      
-      // Use saved location if it's less than 5 minutes old
-      if (Date.now() - timestamp < fiveMinutes) {
-        this.userLocation = coordinates;
-        const params: ProfileQueryParams = {
-          coordinates: this.userLocation,
-          age: this.selectedAge,
-          services: this.selectedServices?.join(',')
-        };
-        this.fetchProfiles(params);
-        return;
-      } else {
-        sessionStorage.removeItem('userLocation');
-      }
-    }
-
-    this.queryParamsSub = this.route.queryParams.subscribe(params => {
+    console.log('Component initialized'); // Debug log
+    this.initializeLocation();
+    
+    // Use a single stream to handle both profiles and query params
+    this.route.queryParams.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(params => {
       console.log('Received query params:', params);
       this.currentFilter = {
         country: params['country'],
         city: params['city']
       };
       
-      // Handle role parameter
+      this.isLoading = true;
+      this.userProfiles = []; // Clear existing profiles
+      
       if (params['role']) {
-        this.isLoading = true;
-        this.userProfiles = []; // Clear existing profiles
-        
         this.profileService.filterByRole(params['role']).subscribe({
           next: (profiles) => {
             console.log(`Loaded ${profiles.length} profiles for role ${params['role']}`);
             this.userProfiles = profiles;
+            // Update the behavior subject
+            this.profilesCache.next(profiles);
             this.isLoading = false;
           },
           error: (error) => {
@@ -98,13 +97,61 @@ export class HomeComponent implements OnInit, OnDestroy {
           }
         });
       } else {
+        // If no role filter, load all profiles
         this.loadProfiles();
       }
     });
   }
 
+  private initializeDataStream(): Observable<UserProfile[]> {
+    return this.profilesCache.asObservable().pipe(
+      map(profiles => {
+        console.log('Profiles in stream:', profiles.length); // Debug log
+        if (profiles.length === 0) {
+          this.loadProfiles(); // Load profiles if cache is empty
+        }
+        return this.sortProfilesByDistanceAndStatus(profiles, this.userLocation);
+      })
+    );
+  }
+
+  private initializeLocation(): void {
+    const savedLocation = sessionStorage.getItem('userLocation');
+    if (savedLocation) {
+      const { coordinates, timestamp } = JSON.parse(savedLocation);
+      if (Date.now() - timestamp < 5 * 60 * 1000) {
+        this.locationSubject.next(coordinates);
+        return;
+      }
+    }
+    this.requestLocation();
+  }
+
+  private requestLocation(): void {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const coordinates: Coordinates = [
+            position.coords.longitude,
+            position.coords.latitude
+          ];
+          this.locationSubject.next(coordinates);
+          sessionStorage.setItem('userLocation', JSON.stringify({
+            coordinates,
+            timestamp: Date.now()
+          }));
+        },
+        (error) => {
+          this.locationSubject.next(undefined);
+          this.locationError = 'Could not get your location.';
+        }
+      );
+    }
+  }
+
   ngOnDestroy(): void {
-    this.queryParamsSub?.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   // Handle filter component events
@@ -286,9 +333,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   private fetchProfiles(params?: ProfileQueryParams): void {
     this.isLoading = true;
     this.error = null;
+    console.log('Fetching profiles with params:', params); // Debug log
     
     this.profileService.getAllProfiles(params).subscribe({
       next: (profiles: UserProfile[]) => {
+        console.log('Fetched profiles:', profiles.length); // Debug log
         if (params?.coordinates && profiles.length > 0) {
           this.userProfiles = this.sortProfilesByDistanceAndStatus(
             profiles, 
@@ -297,21 +346,20 @@ export class HomeComponent implements OnInit, OnDestroy {
         } else {
           this.userProfiles = profiles;
         }
-        this.isLoading = false;
+        this.profilesCache.next(this.userProfiles);
+        this.loadingSubject.next(false);
       },
       error: (error) => {
+        console.error('Error fetching profiles:', error); // Debug log
         this.handleError(error);
-        this.isLoading = false;
-      },
-      complete: () => {
-        this.isLoading = false;
+        this.loadingSubject.next(false);
       }
     });
   }
 
   private sortProfilesByDistanceAndStatus(
     profiles: UserProfile[],
-    userLocation: [number, number]
+    userLocation?: Coordinates
   ): UserProfile[] {
     return profiles.sort((a, b) => {
       // First, sort by profile level using type-safe mapping
@@ -330,12 +378,14 @@ export class HomeComponent implements OnInit, OnDestroy {
       if (levelDiff !== 0) return levelDiff;
 
       // Then, sort by distance if coordinates are available
-      const coordsA = this.getCoordinates(a);
-      const coordsB = this.getCoordinates(b);
-      if (coordsA && coordsB) {
-        const distanceA = this.calculateDistance(userLocation, coordsA);
-        const distanceB = this.calculateDistance(userLocation, coordsB);
-        return distanceA - distanceB;
+      if (userLocation) {
+        const coordsA = this.getCoordinates(a);
+        const coordsB = this.getCoordinates(b);
+        if (coordsA && coordsB) {
+          const distanceA = this.calculateDistance(userLocation, coordsA);
+          const distanceB = this.calculateDistance(userLocation, coordsB);
+          return distanceA - distanceB;
+        }
       }
       
       return 0;
@@ -349,17 +399,17 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   // Add helper method to safely get coordinates
-  getCoordinates(profile: UserProfile): [number, number] | null {
+  public getCoordinates(profile: UserProfile): Coordinates | undefined {
     if (profile.contact?.location?.coordinates && 
         Array.isArray(profile.contact.location.coordinates) && 
         profile.contact.location.coordinates.length === 2) {
-      return profile.contact.location.coordinates as [number, number];
+      return profile.contact.location.coordinates as Coordinates;
     }
-    return null;
+    return undefined;
   }
 
   // Update calculateDistance to handle null values
-  calculateDistance(coords1: [number, number] | null, coords2: [number, number] | null): number {
+  calculateDistance(coords1: Coordinates, coords2: Coordinates): number {
     if (!coords1 || !coords2) return 0;
     return calculateDistance(coords1, coords2);
   }

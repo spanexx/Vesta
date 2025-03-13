@@ -417,13 +417,13 @@ router.get('/:id', checkSubscription, async (req, res) => {
 // Add user like to profile
 router.post('/:id/like/user', auth, async (req, res) => {
   try {
-    const profile = await UserProfile.incrementUserLikes(req.params.id);
+    const profile = await UserProfile.incrementUserLikes(req.params.id, req.userId);
     if (!profile) {
       return createErrorResponse(
         res,
-        404,
-        'PROFILE_NOT_FOUND',
-        'Profile not found'
+        400,
+        'ALREADY_LIKED',
+        'You have already liked this profile'
       );
     }
     res.json({ userlikes: profile.userlikes });
@@ -441,16 +441,19 @@ router.post('/:id/like/user', auth, async (req, res) => {
 // Add viewer like to profile
 router.post('/:id/like/viewer', async (req, res) => {
   try {
-    const profile = await UserProfile.incrementViewerLikes(req.params.id);
+    // Generate a unique anonymous ID if not provided
+    const anonymousId = req.body.anonymousId || `anon_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+    
+    const profile = await UserProfile.incrementViewerLikes(req.params.id, anonymousId);
     if (!profile) {
       return createErrorResponse(
         res,
-        404,
-        'PROFILE_NOT_FOUND',
-        'Profile not found'
+        400,
+        'ALREADY_LIKED',
+        'You have already liked this profile'
       );
     }
-    res.json({ viewerlikes: profile.viewerlikes });
+    res.json({ viewerlikes: profile.viewerlikes, anonymousId });
   } catch (error) {
     createErrorResponse(
       res,

@@ -197,6 +197,10 @@ export class VideoUploadComponent implements OnInit {
 
   toggleLike(video: SubscriberVideo) {
     if (video.isLiked) {
+      // Only allow unlike for authenticated users
+      if (!this.authService.getToken()) {
+        return;
+      }
       this.videoService.unlikeVideo(video.videoId).subscribe({
         next: (response) => {
           video.likes = response.likes;
@@ -213,7 +217,12 @@ export class VideoUploadComponent implements OnInit {
           video.isLiked = response.isLiked;
         },
         error: (err) => {
-          console.error('Error liking video:', err);
+          if (err.message === 'You have already liked this video') {
+            // Show feedback to user that they've already liked the video
+            this.error = err.message;
+          } else {
+            console.error('Error liking video:', err);
+          }
         }
       });
     }

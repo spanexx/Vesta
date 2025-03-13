@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { videoRoutes } from '../../environments/apiRoutes';
 import { environment } from '../../environments/environment';
+import { AuthenticationService } from './authentication.service';
 
 interface VideoSubscriptionStatus {
   videoSubscription?: {
@@ -40,7 +41,12 @@ interface VideoResponse {
   providedIn: 'root'
 })
 export class VideoService {
-  constructor(private http: HttpClient) {}
+  private likedVideosKey = 'anonymousLikedVideos';
+
+  constructor(
+    private http: HttpClient,
+    private authService: AuthenticationService
+  ) {}
 
   checkSubscription(): Observable<{ isSubscribed: boolean }> {
     return this.http.get<VideoSubscriptionStatus>(`${videoRoutes}/subscription-status`).pipe(
@@ -64,19 +70,43 @@ export class VideoService {
 
   getAllVideos(): Observable<SubscriberVideo[]> {
     return this.http.get<VideoResponse>(`${videoRoutes}/all-videos`).pipe(
-      map(response => response.videos)
+      map(response => {
+        const videos = response.videos;
+        // Check local storage for anonymous likes
+        if (!this.authService.getToken()) {
+          const likedVideos = this.getAnonymousLikedVideos();
+          return videos.map(video => ({
+            ...video,
+            isLiked: likedVideos.includes(video.videoId)
+          }));
+        }
+        return videos;
+      })
     );
   }
 
   likeVideo(videoId: string): Observable<{ likes: number; isLiked: boolean }> {
+    // Check if already liked anonymously
+    if (this.isVideoLikedAnonymously(videoId)) {
+      return new Observable(subscriber => {
+        subscriber.error({ message: 'You have already liked this video' });
+      });
+    }
+
     return this.http.post<{ success: boolean; likes: number; isLiked: boolean }>(
       `${videoRoutes}/${videoId}/like`, 
       {}
     ).pipe(
-      map(response => ({ 
-        likes: response.likes, 
-        isLiked: response.isLiked 
-      }))
+      map(response => {
+        // Store anonymous like if successful
+        if (!this.authService.getToken()) {
+          this.addAnonymousLike(videoId);
+        }
+        return { 
+          likes: response.likes, 
+          isLiked: response.isLiked 
+        };
+      })
     );
   }
 
@@ -90,5 +120,23 @@ export class VideoService {
         isLiked: response.isLiked 
       }))
     );
+  }
+
+  private isVideoLikedAnonymously(videoId: string): boolean {
+    const likedVideos = this.getAnonymousLikedVideos();
+    return likedVideos.includes(videoId);
+  }
+
+  private getAnonymousLikedVideos(): string[] {
+    const stored = localStorage.getItem(this.likedVideosKey);
+    return stored ? JSON.parse(stored) : [];
+  }
+
+  private addAnonymousLike(videoId: string) {
+    const likedVideos = this.getAnonymousLikedVideos();
+    if (!likedVideos.includes(videoId)) {
+      likedVideos.push(videoId);
+      localStorage.setItem(this.likedVideosKey, JSON.stringify(likedVideos));
+    }
   }
 }

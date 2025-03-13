@@ -263,7 +263,11 @@ const userProfileSchema = new mongoose.Schema({
   stripeCustomerId: {
     type: String,
     sparse: true
-  }
+  },
+  likedProfiles: {
+    userLikes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile' }],
+    viewerLikes: [{ type: String }] // Store anonymous IDs for viewer likes
+  },
 }, { timestamps: true });
 
 // Geospatial index for proximity queries
@@ -342,18 +346,46 @@ userProfileSchema.statics.updateField = async function(userId, fieldName, value)
   return updatedProfile;
 };
 
-userProfileSchema.statics.incrementUserLikes = async function(profileId) {
-  return this.findByIdAndUpdate(
-    profileId,
-    { $inc: { userlikes: 1 } },
-    { new: true }
-  );
+userProfileSchema.statics.incrementUserLikes = async function(profileId, likerId) {
+  // Check if user has already liked this profile
+  const likerProfile = await this.findById(likerId);
+  if (likerProfile.likedProfiles.userLikes.includes(profileId)) {
+    return null; // Already liked
+  }
+
+  // Add like and update liker's profile
+  const [updatedProfile] = await Promise.all([
+    this.findByIdAndUpdate(
+      profileId,
+      { $inc: { userlikes: 1 } },
+      { new: true }
+    ),
+    this.findByIdAndUpdate(
+      likerId,
+      { $push: { 'likedProfiles.userLikes': profileId } }
+    )
+  ]);
+
+  return updatedProfile;
 };
 
-userProfileSchema.statics.incrementViewerLikes = async function(profileId) {
+userProfileSchema.statics.incrementViewerLikes = async function(profileId, anonymousId) {
+  // Check if anonymous user has already liked this profile
+  const profile = await this.findOne({
+    _id: profileId,
+    'likedProfiles.viewerLikes': anonymousId
+  });
+
+  if (profile) {
+    return null; // Already liked
+  }
+
   return this.findByIdAndUpdate(
     profileId,
-    { $inc: { viewerlikes: 1 } },
+    {
+      $inc: { viewerlikes: 1 },
+      $push: { 'likedProfiles.viewerLikes': anonymousId }
+    },
     { new: true }
   );
 };

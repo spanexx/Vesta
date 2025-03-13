@@ -10,60 +10,60 @@ import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CurrencyConversionService, SupportedCurrency } from '../../services/currency-conversion.service';
 import { generateWhatsAppLink } from '../../utils/whatsapp.util';
-
-interface EditingState {
-  fieldName: string | null;
-  currentValue: string | number | boolean | string[] | ServiceUpdate | RoleSelections | null;
-}
-
-interface RateType {
-  [key: string]: number;
-}
-
-interface Rates {
-  incall: RateType;
-  outcall: RateType;
-  currency: SupportedCurrency;
-}
-
-interface RoleSelections {
-  [key: string]: boolean;
-}
-
-interface ServiceSelections {
-  included: Record<string, boolean>;
-  extra: Record<string, number | null>;
-}
-
-interface ServiceUpdate {
-  included: string[];
-  extra: Record<string, number>;
-}
-
-interface ServiceAccumulator {
-  [key: string]: number;
-}
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { BehaviorSubject } from 'rxjs';
+import { ProfileSkeletonComponent } from './components/profile-skeleton/profile-skeleton.component';
+import { ProfileGalleryComponent } from './components/profile-gallery/profile-gallery.component';
+import { Rates, EditingState, RoleSelections, ServiceSelections, ServiceUpdate, ServiceAccumulator, RateType } from '../../models/profile.types';
+import { ProfileHeaderComponent } from './components/profile-header/profile-header.component';
+import { calculateAge, formatLocation } from '../../utils/profile/profile-calculations.util';
+import { getRateDurations, validateRateValue } from '../../utils/profile/rate-management.util';
+import { initializeServiceSelections, createServiceUpdate } from '../../utils/profile/service-management.util';
 
 @Component({
   selector: 'app-profile-detail',
   standalone: true,
-  imports: [CommonModule, CustomSpinnerComponent, RouterModule, FormsModule],
+  imports: [
+    CommonModule,
+    RouterModule, 
+    FormsModule,
+    ScrollingModule,
+    // CustomSpinnerComponent,
+    ProfileSkeletonComponent,
+    // ProfileHeaderComponent,
+    ProfileGalleryComponent
+  ],
   templateUrl: './profile-detail.component.html',
-  styleUrls: ['./profile-detail.component.css'],
-  providers: [ProfileService]
+  styleUrls: ['./profile-detail.component.css']
 })
 export class ProfileDetailComponent implements OnInit {
+  private loadingSubject = new BehaviorSubject<boolean>(true);
+  loading$ = this.loadingSubject.asObservable();
+  profile$ = new BehaviorSubject<UserProfile | null>(null);
+  isCurrentUser$ = new BehaviorSubject<boolean>(false);
+
+  // Add helper method
+  getAsyncBoolean(observable$: BehaviorSubject<boolean>): boolean {
+    return observable$.getValue();
+  }
+
+  // Add handler method 
+  onUpdateProfile(profile: UserProfile): void {
+    this.profile$.next(profile);
+  }
+
   profile: UserProfile | null = null;
   isLoading = true;
   error = '';
   isCurrentUser = false;
   userId: string = '';
   images: string[] = [];
-  selectedImage: string | null = null;
+  // Change selectedImage to selectedMedia to handle both types
+  selectedMedia: string | null = null;
   rates: Rates = {
     incall: {},
     outcall: {},
-    currency: 'EUR'
+    currency: 'EUR' as SupportedCurrency
   };
 
   editingState: EditingState = {
@@ -109,6 +109,7 @@ export class ProfileDetailComponent implements OnInit {
   };
 
   usePhoneForWhatsapp = false;
+  isAuthenticated = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -133,6 +134,10 @@ export class ProfileDetailComponent implements OnInit {
       if (currentUser && this.profile) {
         this.isCurrentUser = currentUser._id === this.profile._id;
       }
+    });
+
+    this.authService.currentUser$.subscribe(user => {
+      this.isAuthenticated = !!user;
     });
   }
 
@@ -180,31 +185,15 @@ export class ProfileDetailComponent implements OnInit {
 
   // Helper methods for displaying data
   getAge(birthdate: Date): number {
-    const today = new Date();
-    const birth = new Date(birthdate);
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-      age--;
-    }
-    return age;
+    return calculateAge(birthdate);
   }
 
   formatLocation(coordinates: [number, number]): string {
-    return `${coordinates[0].toFixed(6)}, ${coordinates[1].toFixed(6)}`;
+    return formatLocation(coordinates);
   }
 
   formatBirthday(birthdate: string | Date): number {
-    const today = new Date();
-    const birth = new Date(birthdate);
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-      age--;
-    }
-    
-    return age;
+    return calculateAge(birthdate);
   }
 
   onFileSelected(event: any, index?: number) {
@@ -290,6 +279,9 @@ export class ProfileDetailComponent implements OnInit {
   }
 
   addUserLike() {
+    if (!this.isAuthenticated) {
+      return;
+    }
     if (this.profile?._id) {
       this.profileService.addUserLike(this.profile._id).subscribe({
         next: (response) => {
@@ -298,7 +290,12 @@ export class ProfileDetailComponent implements OnInit {
           }
         },
         error: (error) => {
-          console.error('Error adding user like:', error);
+          if (error.message === 'You have already liked this profile') {
+            this.error = error.message;
+            setTimeout(() => this.error = '', 3000);
+          } else {
+            console.error('Error adding user like:', error);
+          }
         }
       });
     }
@@ -313,18 +310,32 @@ export class ProfileDetailComponent implements OnInit {
           }
         },
         error: (error) => {
-          console.error('Error adding viewer like:', error);
+          if (error.message === 'You have already liked this profile') {
+            this.error = error.message;
+            setTimeout(() => this.error = '', 3000);
+          } else {
+            console.error('Error adding viewer like:', error);
+          }
         }
       });
     }
   }
 
-  openImageModal(image: string) {
-    this.selectedImage = image;
+  // Update methods
+  openMediaModal(mediaUrl: string) {
+    // Only open modal for images
+    if (this.getMediaType(mediaUrl) === 'image') {
+      this.selectedMedia = mediaUrl;
+    }
   }
 
-  closeImageModal() {
-    this.selectedImage = null;
+  closeMediaModal() {
+    this.selectedMedia = null;
+  }
+
+  getMediaType(url: string): 'image' | 'video' {
+    const videoExtensions = ['.mp4', '.webm', '.ogg'];
+    return videoExtensions.some(ext => url.toLowerCase().endsWith(ext)) ? 'video' : 'image';
   }
 
   startEditing(fieldName: string): void {
@@ -572,17 +583,7 @@ export class ProfileDetailComponent implements OnInit {
 
   // Add these new methods
   getRateDurations(): string[] {
-    const allDurations = new Set<string>();
-    Object.keys(this.rates.incall || {}).forEach(d => allDurations.add(d));
-    Object.keys(this.rates.outcall || {}).forEach(d => allDurations.add(d));
-    return Array.from(allDurations).sort((a, b) => {
-      // Custom sorting logic for durations
-      const getHours = (duration: string) => {
-        const match = duration.match(/(\d+)/);
-        return match ? parseInt(match[0]) : 0;
-      };
-      return getHours(a) - getHours(b);
-    });
+    return getRateDurations(this.rates);
   }
 
   addNewRate(): void {
@@ -608,7 +609,7 @@ export class ProfileDetailComponent implements OnInit {
   updateCurrency() {
     if (!this.rates) return;
     
-    const previousCurrency = this.rates.currency;
+    const previousCurrency = this.rates.currency as SupportedCurrency;
     const newCurrency = this.selectedCurrency;
     
     // First convert rates
@@ -672,23 +673,12 @@ export class ProfileDetailComponent implements OnInit {
   startEditingServices(): void {
     if (!this.isCurrentUser) return;
     
-    // Initialize serviceSelections with existing selections
-    this.serviceSelections = {
-      included: this.availableServices.reduce((acc, service) => {
-        // Keep existing selections from both current state and profile
-        acc[service] = this.serviceSelections.included[service] || 
-                      this.profile?.services?.included?.includes(service) || 
-                      false;
-        return acc;
-      }, {} as Record<string, boolean>),
-      extra: this.availableServices.reduce((acc, service) => {
-        // Keep existing extra prices
-        acc[service] = this.serviceSelections.extra[service] || 
-                      this.profile?.services?.extra?.[service] || 
-                      null;
-        return acc;
-      }, {} as Record<string, number | null>)
-    };
+    // Change null to undefined when passing to the utility function
+    this.serviceSelections = initializeServiceSelections(
+      this.availableServices,
+      this.serviceSelections,
+      this.profile || undefined  // Convert null to undefined here
+    );
 
     this.editingState = {
       fieldName: 'services',

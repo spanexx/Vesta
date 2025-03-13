@@ -1,12 +1,11 @@
 <div class="profile-detail-container">
-  <div *ngIf="isLoading" class="loading-state">
-    <app-custom-spinner></app-custom-spinner>
-  </div>
+  <!-- Show skeleton while loading -->
+  <app-profile-skeleton *ngIf="isLoading"></app-profile-skeleton>
 
-  <div *ngIf="error" class="error-message">
-    {{ error }}
-  </div>
+  <!-- Show profile content when loaded -->
   <div *ngIf="profile && !isLoading" class="profile-content">
+    <!-- <app-profile-header [profile]="profile"></app-profile-header> -->
+    
     <div class="profile-top-section">
       <!-- Profile Picture Section -->
       <div class="profile-picture-section">
@@ -79,7 +78,11 @@
 
       </div>
       <div class="like-buttons-section">
-        <button (click)="addUserLike()" class="like-button user-like">
+        <button (click)="addUserLike()" 
+                class="like-button user-like"
+                [class.disabled]="!isAuthenticated" 
+                [disabled]="!isAuthenticated"
+                [title]="!isAuthenticated ? 'Login to like this profile' : ''">
           <i class="fas fa-heart"></i>
           <span>{{profile.userlikes || 0}}</span>
         </button>
@@ -88,25 +91,17 @@
           <span>{{profile.viewerlikes || 0}}</span>
         </button>
       </div>
+      <div class="error-message" *ngIf="error">{{ error }}</div>
     </div>
     </div>
 
-    <!-- Image Gallery -->
-    <div class="image-gallery">
-      <div class="main-images" *ngIf="profile.images.length">
-        <div class="gallery-item" *ngFor="let image of profile.images">
-          <img [src]="image" [alt]="profile.fullName" (click)="openImageModal(image)">
-        </div>
-      </div>
-      <div class="videos" *ngIf="profile.videos.length">
-        <div class="gallery-item" *ngFor="let video of profile.videos">
-          <video controls>
-            <source [src]="video" type="video/mp4">
-          </video>
-        </div>
-      </div>
-    </div>
-
+    <!-- Add gallery component -->
+    <app-profile-gallery 
+      [images]="profile.images"
+      [videos]="profile.videos"
+      (mediaClick)="openMediaModal($event)">
+    </app-profile-gallery>
+    
     <!-- Bio Section -->
     <div class="bio-section">
       <h2>Roles</h2>
@@ -379,11 +374,17 @@
   </div>
 
 
-  <!-- Add this at the bottom of your component -->
-  <div class="image-modal" *ngIf="selectedImage" (click)="closeImageModal()">
-    <div class="modal-content">
-      <span class="close-button" (click)="closeImageModal()">&times;</span>
-      <img [src]="selectedImage" alt="Full size image">
+  <!-- Update the modal section at the bottom of the file -->
+  <div class="image-modal" *ngIf="selectedMedia" (click)="closeMediaModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <span class="close-button" (click)="closeMediaModal()">&times;</span>
+      <ng-container [ngSwitch]="getMediaType(selectedMedia)">
+        <img *ngSwitchCase="'image'" [src]="selectedMedia" alt="Full size image">
+        <video *ngSwitchCase="'video'" controls autoplay>
+          <source [src]="selectedMedia" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </ng-container>
     </div>
   </div>
 </div>
