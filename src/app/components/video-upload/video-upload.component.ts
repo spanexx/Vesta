@@ -8,25 +8,15 @@ import { lastValueFrom } from 'rxjs';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { environment } from '../../../environments/environment';
 import { AuthenticationService } from '../../services/authentication.service';
-
-interface SubscriberVideo {
-  videoId: string;
-  username: string;
-  profilePicture: string | null;
-  url: string;
-  title: string;
-  description: string;
-  uploadedAt: Date;
-  isLiked: boolean;
-  likes: number;
-}
+import { SubscriberVideo } from '../../models/subscriberVideo.model';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-video-upload',
   standalone: true,
-  imports: [CommonModule, FormsModule],
-    templateUrl: './video-uplod.component.html',
-    styleUrls: ['./video-uplod.component.css']
+  imports: [CommonModule, FormsModule, RouterModule],
+    templateUrl: './video-upload.component.html',
+    styleUrls: ['./video-upload.component.css']
 })
 export class VideoUploadComponent implements OnInit {
   hasSubscription = false;
@@ -39,6 +29,7 @@ export class VideoUploadComponent implements OnInit {
   uploadProgress = 0;
   currentUser$ = this.authService.currentUser$;
   allVideos: SubscriberVideo[] = [];
+  userId = ""
 
   constructor(
     private videoService: VideoService,

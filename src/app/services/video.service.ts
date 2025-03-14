@@ -5,37 +5,8 @@ import { map } from 'rxjs/operators';
 import { videoRoutes } from '../../environments/apiRoutes';
 import { environment } from '../../environments/environment';
 import { AuthenticationService } from './authentication.service';
+import { SubscriberVideo, VideoResponse, VideoSubscriptionStatus, VideoUploadPayload } from '../models/subscriberVideo.model';
 
-interface VideoSubscriptionStatus {
-  videoSubscription?: {
-    isSubscribed: boolean;
-    subscribedAt: Date;
-    expiresAt: Date;
-  };
-}
-
-interface VideoUploadPayload {
-  videoUrl: string;
-  title?: string;
-  description?: string;
-}
-
-interface SubscriberVideo {
-  videoId: string;
-  username: string;
-  profilePicture: string | null;
-  url: string;
-  title: string;
-  description: string;
-  uploadedAt: Date;
-  likes: number;
-  isLiked: boolean;
-}
-
-interface VideoResponse {
-  success: boolean;
-  videos: SubscriberVideo[];
-}
 
 @Injectable({
   providedIn: 'root'
@@ -77,6 +48,7 @@ export class VideoService {
           const likedVideos = this.getAnonymousLikedVideos();
           return videos.map(video => ({
             ...video,
+            userId: video.userId,
             isLiked: likedVideos.includes(video.videoId)
           }));
         }

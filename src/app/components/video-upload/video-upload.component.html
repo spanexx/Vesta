@@ -57,14 +57,14 @@
 
     <!-- All Videos Section -->
     <div class="all-videos-section">
-      <h2>All Videos</h2>
+      <h2>Hot Videos</h2>
       <div class="videos-grid">
         <div *ngFor="let video of allVideos" class="video-card">
           <div class="video-header">
             <img [src]="video.profilePicture || 'assets/default-avatar.jpg'" 
                  alt="Profile picture" 
                  class="profile-pic">
-            <span class="username">{{video.username}}</span>
+            <span class="username" [routerLink]="['/profile', video.userId]" style="cursor: pointer;">{{video.username}}</span>
           </div>
           <video controls class="video-player">
             <source [src]="safeVideoUrl(video.url)" type="video/mp4">

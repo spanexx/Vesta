@@ -117,12 +117,14 @@ router.get('/all-videos', async (req, res) => {
       {
         'subscriberVideo': 1,
         'username': 1,
-        'profilePicture': 1
+        'profilePicture': 1,
+        '_id': 1  // Explicitly include _id
       }
     );
 
     const videos = profiles.map(profile => ({
       videoId: profile._id,
+      userId: profile._id,  // Add userId field
       username: profile.username,
       profilePicture: profile.profilePicture,
       ...profile.subscriberVideo,

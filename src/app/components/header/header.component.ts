@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
 import { ThemeService } from '../../services/theme.service';
+import { UserProfile } from '../../models/userProfile.model';
 
 @Component({
   selector: 'app-header',
@@ -15,6 +16,7 @@ export class HeaderComponent {
   currentUser$ = this.authService.currentUser$;
   isDarkMode = false;
   isMenuOpen = false;
+  user!: UserProfile;
 
   roles = [
     { value: 'girlfriend', label: 'Girlfriend' },
@@ -51,6 +53,12 @@ export class HeaderComponent {
       event.stopPropagation();
     }
     this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  getcurrentUser() {
+    this.authService.getCurrentUser().subscribe(user => {
+      this.user = user;
+    });
   }
 
   logout() {

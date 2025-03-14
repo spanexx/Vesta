@@ -84,7 +84,7 @@ h2 {
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem;
-  background: #fdf4fa;
+  /* background: #fdf4fa; */
   border-radius: 8px;
 }
 
@@ -211,7 +211,7 @@ input[type="number"] {
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 1rem;
   padding: 1rem;
-  background: #fdf4fa;
+  /* background: #fdf4fa; */
   border-radius: 8px;
 }
 
@@ -290,4 +290,95 @@ input[type="number"] {
 
 .attribute-item input.ng-invalid.ng-touched {
   border-color: #ff4444;
+}
+
+/* Dark Mode Styles */
+:host-context(.dark-mode) {
+  .profile-settings-container {
+    background: #1a1a1a;
+    color: #fff;
+  }
+
+  .settings-section {
+    background: #242424;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .settings-section::after {
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgba(234, 100, 184, 0.1),
+      rgba(234, 100, 184, 0.2),
+      rgba(234, 100, 184, 0.1),
+      transparent
+    );
+  }
+
+  input[type="text"],
+  input[type="number"],
+  textarea,
+  select {
+    background: #333;
+    color: #fff;
+    border-color: #ea64b8;
+  }
+
+  .service-item {
+    background: rgba(234, 100, 184, 0.1);
+    color: #fff;
+  }
+
+  .service-item label {
+    color: #fff;
+  }
+
+  /* .checkbox-group label {
+    color: #fff;
+  } */
+
+ .checkbox-group {
+    background: #242424;
+  }
+
+
+
+  .roles-container label {
+    color: #0c0b0b;
+  }
+
+  .roles-container label:hover,
+  .checkbox-group label:hover {
+    background-color: rgba(234, 100, 184, 0.2);
+  }
+
+  .services-grid {
+    background: #242424;
+  }
+
+  .checkbox-group input[type="checkbox"] {
+    accent-color: #ea64b8;
+  }
+
+  select option {
+    background: #242424;
+    color: #fff;
+  }
+
+  .checkbox-group label:hover {
+    background-color: rgba(234, 100, 184, 0.15);
+  }
+
+  .hint-text {
+    color: #999;
+  }
+
+  .image-item img,
+  .video-item video {
+    border: 1px solid rgba(234, 100, 184, 0.2);
+  }
+
+  .error-message {
+    background: rgba(255, 68, 68, 0.15);
+  }
 }

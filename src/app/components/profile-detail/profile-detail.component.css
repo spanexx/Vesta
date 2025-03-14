@@ -1411,9 +1411,12 @@ h2 {
 :host-context(.dark-mode) .bio p {
   color: #ccc;
 }
+:host-context(.dark-mode) .bio {
+  background: #141414;
+}
 
 :host-context(.dark-mode) .bio span {
-  color: #fff;
+  color: #c9c1c1;
 }
 
 :host-context(.dark-mode) .username {
