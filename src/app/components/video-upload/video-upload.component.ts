@@ -10,6 +10,8 @@ import { environment } from '../../../environments/environment';
 import { AuthenticationService } from '../../services/authentication.service';
 import { SubscriberVideo } from '../../models/subscriberVideo.model';
 import { RouterModule } from '@angular/router';
+import { ProfileService } from '../../services/profile.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-video-upload',
@@ -36,7 +38,9 @@ export class VideoUploadComponent implements OnInit {
     private fileUploadService: FileUploadService,
     private router: Router,
     private authService: AuthenticationService,
-    private sanitizer: DomSanitizer // Add this
+    private sanitizer: DomSanitizer,
+    private profileService: ProfileService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
@@ -146,9 +150,34 @@ export class VideoUploadComponent implements OnInit {
   }
 
   subscribeToVideo() {
-    this.router.navigate(['/video-payment'], { 
-      queryParams: { plan: 'video' }
-    });
+    this.authService.currentUser$.subscribe(user => {
+      if (user) {
+        this.profileService.getProfileById(user._id).subscribe({
+          next: (profile) => {
+            console.log('Profile:', profile);
+            if (profile.profileLevel === 'free') {
+              this.snackBar.open(
+                'You are currently on a Free Plan. Upgrade to subscribe to video content', 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'bottom',
+                panelClass: ['error-snackbar']
+              });
+              this.router.navigate(['/pricing'], {
+                // queryParams: { message: 'You need to upgrade your profile to subscribe to video content' }
+              });
+            } else {
+              this.router.navigate(['/video-payment'], {
+                queryParams: { plan: 'video' }
+              });
+            }
+          },
+          error: (err) => {}
+        });
+      }});
+    // this.router.navigate(['/video-payment'], { 
+    //   queryParams: { plan: 'video' }
+    // });
   }
 
   navigateToLogin() {

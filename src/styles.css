@@ -119,3 +119,13 @@ body.dark-mode .overlay {
   background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(4px);
 }
+
+/* Snackbar styles */
+.error-snackbar {
+  background: #ff4444;
+  color: white;
+}
+
+.error-snackbar .mat-simple-snackbar-action {
+  color: white;
+}

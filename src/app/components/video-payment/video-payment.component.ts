@@ -56,25 +56,7 @@ export class VideoPaymentComponent {
   ) {}
 
   ngOnInit() {
-    this.authService.currentUser$.subscribe(user => {
-      if (user) {
-        this.profileService.getProfileById(user._id).subscribe({
-          next: (profile) => {
-            if (profile.profileLevel === 'free') {
-              this.router.navigate(['/pricing'], {
-                queryParams: { 
-                  redirect: 'video-payment',
-                  message: 'You need to upgrade your profile to subscribe to video content'
-                }
-              });
-            }
-          },
-          error: (error) => {
-            console.error('Error loading profile:', error);
-          }
-        });
-      }
-    });
+    // Remove profile level check since it's now handled by guard
   }
 
   getPrice(tier: PricingTier): number {
