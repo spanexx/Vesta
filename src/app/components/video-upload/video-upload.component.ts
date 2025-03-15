@@ -146,7 +146,7 @@ export class VideoUploadComponent implements OnInit {
   }
 
   subscribeToVideo() {
-    this.router.navigate(['/pricing'], { 
+    this.router.navigate(['/video-payment'], { 
       queryParams: { plan: 'video' }
     });
   }

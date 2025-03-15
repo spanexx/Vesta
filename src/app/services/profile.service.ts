@@ -25,6 +25,7 @@ export interface ProfileQueryParams {
 export class ProfileService {
   private likedProfilesKey = 'anonymousLikedProfiles';
   private anonymousIdKey = 'anonymousUserId';
+  private _profileCache = new Map<string, UserProfile>();
 
   constructor(private authService: AuthenticationService, private http: HttpClient) { }
 
@@ -222,6 +223,115 @@ export class ProfileService {
         console.error('Role filtering failed:', error);
         return throwError(() => error);
       })
+    );
+  }
+
+  deleteProfile(profileId: string): Observable<any> {
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.authService.getToken()}`
+    );
+
+    return this.http.delete(`${profileRoutes}/${profileId}`, { headers }).pipe(
+      catchError(error => {
+        console.error('Error deleting profile:', error);
+        return throwError(() => new Error(error.error?.message || 'Failed to delete profile'));
+      })
+    );
+  }
+
+  deleteField(profileId: string, fieldName: string[]): Observable<any> {
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.authService.getToken()}`
+    );
+    console.log("id", profileId, "fieldName", fieldName);
+
+    return this.http.delete(`${profileRoutes}/${profileId}/field/${fieldName}`, { headers }).pipe(
+      catchError(error => {
+        console.error(`Error deleting field ${fieldName}:`, error);
+        return throwError(() => new Error(error.error?.message || 'Failed to delete field'));
+      })
+    );
+  }
+
+  deleteImage(profileId: string, imageUrl: string): Observable<UserProfile> {
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.authService.getToken()}`
+    );
+
+    return this.http.delete<UserProfile>(
+      `${profileRoutes}/${profileId}/images`, 
+      { 
+        headers,
+        body: { imageUrl }  // Send image URL in request body
+      }
+    ).pipe(
+      tap(updatedProfile => {
+        // Update cache if using caching
+        if (this._profileCache.has(profileId)) {
+          this._profileCache.set(profileId, updatedProfile);
+        }
+      }),
+      catchError(error => {
+        console.error('Error deleting image:', error);
+        return throwError(() => new Error('Failed to delete image'));
+      })
+    );
+  }
+
+  deleteRate(profileId: string, duration: string): Observable<UserProfile> {
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.authService.getToken()}`
+    );
+
+    return this.http.delete<UserProfile>(
+      `${profileRoutes}/${profileId}/rates/${duration}`,
+      { headers }
+    ).pipe(
+      tap(updatedProfile => {
+        if (this._profileCache.has(profileId)) {
+          this._profileCache.set(profileId, updatedProfile);
+        }
+      }),
+      catchError(error => {
+        console.error('Error deleting rate:', error);
+        return throwError(() => new Error('Failed to delete rate'));
+      })
+    );
+  }
+
+  deleteVideo(profileId: string, videoUrl: string): Observable<UserProfile> {
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.authService.getToken()}`
+    );
+
+    return this.http.delete<UserProfile>(
+      `${profileRoutes}/${profileId}/videos`,
+      {
+        headers,
+        body: { videoUrl }  // Send video URL in request body
+      }
+    ).pipe(
+      tap(updatedProfile => {
+        if (this._profileCache.has(profileId)) {
+          this._profileCache.set(profileId, updatedProfile);
+        }
+      }),
+      catchError(error => {
+        console.error('Error deleting video:', error);
+        return throwError(() => new Error('Failed to delete video'));
+      })
+    );
+  }
+
+  updateVerificationDocuments(userId: string, documentData: string, side: 'front' | 'back'): Observable<UserProfile> {
+    return this.http.post<UserProfile>(
+      `${profileRoutes}/${userId}/verification-documents`,
+      { documentData, side }
     );
   }
 }

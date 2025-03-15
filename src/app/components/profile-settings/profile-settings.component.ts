@@ -97,7 +97,15 @@ export class ProfileSettingsComponent implements OnInit {
     });
   }
 
+  canUpload(): boolean {
+    return this.profile?.status !== 'pending';
+  }
+
   onProfilePictureSelected(event: Event) {
+    if (!this.canUpload()) {
+      this.error = 'Cannot upload while account is pending verification';
+      return;
+    }
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -110,6 +118,10 @@ export class ProfileSettingsComponent implements OnInit {
   }
 
   onImagesSelected(event: Event) {
+    if (!this.canUpload()) {
+      this.error = 'Cannot upload while account is pending verification';
+      return;
+    }
     const files = (event.target as HTMLInputElement).files;
     if (files) {
       const images: string[] = [];
@@ -131,6 +143,10 @@ export class ProfileSettingsComponent implements OnInit {
   }
 
   onVideosSelected(event: Event) {
+    if (!this.canUpload()) {
+      this.error = 'Cannot upload while account is pending verification';
+      return;
+    }
     const files = (event.target as HTMLInputElement).files;
     if (files) {
       const videos: string[] = [];

@@ -25,6 +25,12 @@
     </button>
 
     <ng-container *ngIf="currentUser$ | async as user; else loginButton">
+      <ng-container *ngIf="isCurrentUser">
+        <a routerLink="/pricing" class="upgrade-button">
+          <i class="fas fa-crown"></i>
+          <span>Upgrade</span>
+        </a>
+      </ng-container>
       <a [routerLink]="['/profile', user._id]" class="profile-link">
         <i class="fas fa-user"></i>
       </a>

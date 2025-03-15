@@ -45,7 +45,7 @@
               </div>
             </div>
 
-          <div class="upgrade-banner" *ngIf="isCurrentUser && profile.profileLevel === 'standard'">
+          <div class="upgrade-banner" *ngIf="isCurrentUser && profile.profileLevel === 'free'">
             <div class="banner-content">
               <i class="fas fa-crown"></i>
               <div class="banner-text">
@@ -69,11 +69,21 @@
           {{profile.profileLevel}}
           <i *ngIf="profile.profileLevel.toLowerCase() === 'vip'" class="fas fa-star vip-star"></i>
         </span>
-        <span class="badge status" [ngClass]="{
-          'status-active': profile.status === 'active',
-          'status-suspended': profile.status === 'suspended',
-          'status-pending': profile.status === 'pending'
-        }">{{profile.status}}</span>
+        <span class="badge status" 
+              [ngClass]="{
+                'status-active': profile.status === 'active',
+                'status-suspended': profile.status === 'suspended',
+                'status-pending': profile.status === 'pending'
+              }"
+              [routerLink]="profile.status === 'pending' ? ['/activation'] : null"
+              [style.cursor]="profile.status === 'pending' ? 'pointer' : 'default'"
+              >
+          {{profile.status}}
+          <div *ngIf="isCurrentUser && profile.status === 'pending'" class="status-hint">
+            Click here to complete your verification
+            <i class="fas fa-arrow-right"></i>
+          </div>
+        </span>
         <span *ngIf="isCurrentUser" class="badge settings" routerLink="/settings"><i class="fas fa-magic"></i></span>
 
       </div>
@@ -103,7 +113,11 @@
     <app-profile-gallery 
       [images]="profile.images"
       [videos]="profile.videos"
-      (mediaClick)="openMediaModal($event)">
+      [isCurrentUser]="isCurrentUser"
+      [canUpload]="canUpload()"
+      (mediaClick)="openMediaModal($event)"
+      (deleteImage)="deleteImage($event)"
+      (deleteVideo)="deleteVideo($event)">
     </app-profile-gallery>
     
     <!-- Bio Section -->
@@ -276,7 +290,7 @@
             <input type="email" [(ngModel)]="editingState.currentValue" placeholder="Enter email">
             <div class="edit-buttons">
               <button class="save-btn" (click)="saveField('email')">Save</button>
-              <button class="cancel-btn" (click)="cancelEditing()">Cancel</button>
+              <button  class="cancel-btn" (click)="cancelEditing(); $event.stopPropagation();">Cancel</button>
             </div>
           </div>
         </div>
@@ -300,7 +314,7 @@
             </div>
             <div class="edit-buttons">
               <button class="save-btn" (click)="saveField('contact.whatsapp')">Save</button>
-              <button class="cancel-btn" (click)="cancelEditing()">Cancel</button>
+              <button class="cancel-btn" (click)="cancelEditing(); $event.stopPropagation();">Cancel</button>
             </div>
           </div>
         </div>
@@ -339,7 +353,7 @@
           <tbody>
             <tr *ngFor="let duration of getRateDurations()">
               <td>{{duration}}</td>
-              <td class="editable-field" (click)="startEditing('rates.incall.' + duration)">
+              <td class="editable-field" (click)="startEditing(getRatePath('incall', duration))">
                 <span *ngIf="editingState.fieldName !== 'rates.incall.' + duration">
                   {{ rates.incall[duration] ? rates.incall[duration] + ' ' + (rates.currency || 'EUR') : 'N/A' }}
                 </span>
@@ -351,7 +365,7 @@
                   </div>
                 </div>
               </td>
-              <td class="editable-field" (click)="startEditing('rates.outcall.' + duration)">
+              <td class="editable-field" (click)="startEditing(getRatePath('outcall', duration))">
                 <span *ngIf="editingState.fieldName !== 'rates.outcall.' + duration">
                   {{ rates.outcall[duration] ? rates.outcall[duration] + ' ' + (rates.currency || 'EUR') : 'N/A' }}
                 </span>
@@ -364,7 +378,9 @@
                 </div>
               </td>
               <td *ngIf="isCurrentUser">
-                <button class="delete-btn" (click)="deleteRate(duration)"><i class="fas fa-trash"></i></button>
+                <button class="delete-btn" (click)="deleteRate(duration)">
+                  <i class="fas fa-trash"></i>
+                </button>
               </td>
             </tr>
           </tbody>

@@ -16,6 +16,11 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
                class="gallery-item"
                (click)="onImageClick(image)">
             <img [src]="image" loading="lazy" [alt]="'Gallery image'">
+            <button *ngIf="isCurrentUser" 
+                    class="delete-button" 
+                    (click)="onDeleteImage(image); $event.stopPropagation()">
+              <i class="fas fa-trash"></i>
+            </button>
           </div>
         </div>
       </section>
@@ -29,6 +34,11 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
               <source [src]="video" type="video/mp4">
               Your browser does not support the video tag.
             </video>
+            <button *ngIf="isCurrentUser" 
+                    class="delete-button" 
+                    (click)="onDeleteVideo(video)">
+              <i class="fas fa-trash"></i>
+            </button>
           </div>
         </div>
       </section>
@@ -54,6 +64,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       transition: transform 0.3s ease;
+      position: relative;
     }
 
     .gallery-item:hover {
@@ -92,12 +103,39 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
       object-fit: cover;
       background: #000;
     }
+
+    .delete-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(255, 0, 0, 0.7);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .delete-button:hover {
+      background: rgba(255, 0, 0, 0.9);
+      transform: scale(1.1);
+    }
   `]
 })
 export class ProfileGalleryComponent {
   @Input() images: string[] = [];
   @Input() videos: string[] = [];
+  @Input() isCurrentUser: boolean = false;
+  @Input() canUpload: boolean = true; // Add this line
+
   @Output() mediaClick = new EventEmitter<string>();
+  @Output() deleteImage = new EventEmitter<string>();
+  @Output() deleteVideo = new EventEmitter<string>();
 
   get combinedMedia(): string[] {
     // Keep images and videos separate instead of combining them
@@ -119,5 +157,13 @@ export class ProfileGalleryComponent {
 
   onImageClick(imageUrl: string): void {
     this.mediaClick.emit(imageUrl);
+  }
+
+  onDeleteImage(imageUrl: string): void {
+    this.deleteImage.emit(imageUrl);
+  }
+
+  onDeleteVideo(videoUrl: string): void {
+    this.deleteVideo.emit(videoUrl);
   }
 }

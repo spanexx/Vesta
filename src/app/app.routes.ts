@@ -10,6 +10,8 @@ import { ProfileSettingsComponent } from './components/profile-settings/profile-
 import { PaymentComponent } from './components/payment/payment.component';
 import { PricingComponent } from './components/pricing/pricing.component';
 import { VideoUploadComponent } from './components/video-upload/video-upload.component';
+import { ActivationComponent } from './components/activation/activation.component';
+import { VideoPaymentComponent } from './components/video-payment/video-payment.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -46,5 +48,15 @@ export const routes: Routes = [
     path: 'video-upload',
     component: VideoUploadComponent,
     // canActivate: [authGuard]
+  },
+  {
+    path: 'activation',
+    component: ActivationComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'video-payment',
+    component: VideoPaymentComponent,
+    canActivate: [authGuard]
   }
 ];

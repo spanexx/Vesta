@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { ProfileService, LocationFilter, ProfileQueryParams } from '../../services/profile.service';
 import { UserProfile } from '../../models/userProfile.model';
 import { FilterPipe } from '../../pipes/filter.pipe';
@@ -88,7 +88,17 @@ export class HomeComponent implements OnInit, OnDestroy {
         if (queryParams['role']) {
           return this.profileService.filterByRole(queryParams['role']);
         }
-        return this.profileService.getAllProfiles();
+        if (queryParams['country'] || queryParams['city']) {
+          return this.profileService.filterByLocation({
+            country: queryParams['country'],
+            city: queryParams['city']
+          });
+        }
+        // Pass query parameters to getAllProfiles
+        return this.profileService.getAllProfiles({
+          ...queryParams,
+          coordinates: this.userLocation
+        });
       })
     ).subscribe({
       next: (profiles) => {

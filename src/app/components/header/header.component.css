@@ -128,11 +128,28 @@
   color: #ea64b8;
 }
 
-/* @media (max-width: 865px) {
-  .menu-button {
-    display: block;
-  }
-} */
+.upgrade-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #ff6b6b, #ff4757);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: 500;
+  margin-right: 1rem;
+  transition: all 0.3s ease;
+}
+
+.upgrade-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+}
+
+.upgrade-button i {
+  font-size: 1rem;
+}
 
 @media (max-width: 865px) {
   .menu-button {
@@ -190,4 +207,9 @@
 
 :host-context(.dark-mode) .logout-button {
   color: #fff;
+}
+
+:host-context(.dark-mode) .upgrade-button {
+  background: linear-gradient(135deg, #ff4757, #ff6b6b);
+  box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
 }

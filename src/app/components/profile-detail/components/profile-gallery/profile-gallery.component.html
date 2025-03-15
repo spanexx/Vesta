@@ -1,0 +1,36 @@
+<div class="gallery-container">
+  <div class="main-images">
+    <div *ngFor="let image of images; let i = index" class="gallery-item">
+      <img [src]="image" (click)="onMediaClick(image)">
+      <button *ngIf="isCurrentUser" class="delete-button" (click)="onDeleteImage(image)">
+        <i class="fas fa-trash"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="videos">
+    <div *ngFor="let video of videos; let i = index" class="gallery-item">
+      <video [src]="video" controls (click)="onMediaClick(video)"></video>
+      <button *ngIf="isCurrentUser" class="delete-button" (click)="onDeleteVideo(video)">
+        <i class="fas fa-trash"></i>
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="isCurrentUser && !canUpload" class="pending-notice">
+    <i class="fas fa-exclamation-circle"></i>
+    Your account is pending verification. You cannot upload content at this time.
+    Please wait for admin approval.
+  </div>
+
+  <div class="upload-controls" *ngIf="isCurrentUser" [class.upload-disabled]="!canUpload">
+    <label for="image-upload" class="upload-label">
+      <i class="fas fa-upload"></i> Upload Images
+      <input id="image-upload" type="file" (change)="onFileSelected($event)" multiple>
+    </label>
+    <label for="video-upload" class="upload-label">
+      <i class="fas fa-upload"></i> Upload Videos
+      <input id="video-upload" type="file" (change)="onFileSelected($event)" multiple>
+    </label>
+  </div>
+</div>

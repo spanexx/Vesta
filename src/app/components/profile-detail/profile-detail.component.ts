@@ -13,7 +13,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { BehaviorSubject, of } from 'rxjs';
 import { ProfileSkeletonComponent } from './components/profile-skeleton/profile-skeleton.component';
 import { ProfileGalleryComponent } from './components/profile-gallery/profile-gallery.component';
-import { Rates, EditingState, RoleSelections, ServiceSelections, ServiceUpdate, ServiceAccumulator, RateType } from '../../models/profile.types';
+import { Rates, EditingState, RoleSelections, ServiceSelections, ServiceUpdate, ServiceAccumulator, RateType, EditableFields } from '../../models/profile.types';
 import { calculateAge, formatLocation } from '../../utils/profile/profile-calculations.util';
 import { getRateDurations, validateRateValue } from '../../utils/profile/rate-management.util';
 import { initializeServiceSelections, createServiceUpdate } from '../../utils/profile/service-management.util';
@@ -111,6 +111,8 @@ export class ProfileDetailComponent implements OnInit {
       this.loadProfile(id);
     });
 
+    
+
 
     this.authService.currentUser$.subscribe(currentUser => {
       console.log('Current User:', currentUser);
@@ -182,7 +184,16 @@ export class ProfileDetailComponent implements OnInit {
     return calculateAge(birthdate);
   }
 
+  canUpload(): boolean {
+    return this.profile?.status !== 'pending';
+  }
+
   onFileSelected(event: any, index?: number) {
+    if (!this.canUpload()) {
+      this.error = 'Your account is pending verification. You cannot upload content at this time.';
+      return;
+    }
+
     const file: File = event.target.files[0];
     if (!file) return;
 
@@ -201,17 +212,26 @@ export class ProfileDetailComponent implements OnInit {
 
 
   updateVideos(videos: string[]) {
+    if (!this.canUpload()) {
+      this.error = 'Your account is pending verification. You cannot upload content at this time.';
+      return;
+    }
     this.profileService.updateVideos(this.userId, videos).subscribe(
       (response: any) => {
         console.log('Videos uploaded successfully', response);
       },
       (error: HttpErrorResponse) => {
-        console.error('Error uploading videos', error);
+        this.error = error.error?.message || 'Failed to upload videos';
+        console.error('Error uploading videos:', error);
       }
     );
   }
 
   updateProfilePicture(profilePicture: string) {
+    if (!this.canUpload()) {
+      this.error = 'Your account is pending verification. You cannot upload content at this time.';
+      return;
+    }
     this.profileService.updateProfilePicture(this.userId, profilePicture).subscribe(
       (response: any) => {
         console.log('User Id:', this.userId);
@@ -253,15 +273,21 @@ export class ProfileDetailComponent implements OnInit {
   }
 
   uploadImages(images: string[]) {
-    this.profileService.updateImages(this.userId, images).subscribe(
-      (response: any) => {
+    if (!this.canUpload()) {
+      this.error = 'Your account is pending verification. You cannot upload content at this time.';
+      return;
+    }
+
+    this.profileService.updateImages(this.userId, images).subscribe({
+      next: (response: any) => {
         console.log('Images uploaded successfully', response);
-        this.images = response.images; // Update local images array if needed
+        this.images = response.images;
       },
-      (error: HttpErrorResponse) => {
-        console.error('Error uploading images', error);
+      error: (error: HttpErrorResponse) => {
+        this.error = error.error?.message || 'Failed to upload images';
+        console.error('Error uploading images:', error);
       }
-    );
+    });
   }
 
   addUserLike() {
@@ -312,38 +338,38 @@ export class ProfileDetailComponent implements OnInit {
     return getMediaType(url);
   }
 
-  startEditing(fieldName: string): void {
-    if (!this.isCurrentUser) return;
+  // Update helper method to use EditableFields
+  private getNestedValue(obj: any, path: EditableFields): any {
+    return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+  }
+
+  startEditing(fieldName: EditableFields): void {
+    if (!this.isCurrentUser || !this.profile) return;
     
-    let currentValue: any;
+    let currentValue: EditingState['currentValue'] = null;
     
     if (fieldName === 'contact.whatsapp') {
-      currentValue = this.profile?.contact?.whatsapp || '';
-      // Reset checkbox when starting edit
+      currentValue = this.profile.contact?.whatsapp || '';
       this.usePhoneForWhatsapp = false;
-    } else {
-      // Existing logic for other fields
-      if (fieldName.includes('.')) {
-        const parts = fieldName.split('.');
-        if (parts[0] === 'rates') {
-          const [, type, duration] = parts;
-          const ratesObj = (this.rates[type as keyof Rates] as RateType);
-          currentValue = ratesObj?.[duration] || '';
-        } else {
-          let obj = this.profile;
-          for (const part of parts) {
-            obj = obj?.[part];
-          }
-          currentValue = obj;
-        }
+    } else if (fieldName.includes('.')) {
+      if (fieldName.startsWith('rates.')) {
+        const [, type, duration] = fieldName.split('.');
+        const ratesObj = (this.rates[type as keyof Rates] as RateType);
+        currentValue = ratesObj?.[duration]?.toString() || '';
       } else {
-        currentValue = this.profile?.[fieldName];
+        const [parent, child] = fieldName.split('.') as [keyof UserProfile, string];
+        const parentObj = this.profile[parent] as any;
+        currentValue = parentObj?.[child]?.toString() || '';
       }
+    } else {
+      const key = fieldName as keyof UserProfile;
+      const value = this.profile[key];
+      currentValue = value?.toString() || '';
     }
 
     this.editingState = {
       fieldName,
-      currentValue: currentValue?.toString() || ''
+      currentValue
     };
 
     // Handle role selections
@@ -572,11 +598,27 @@ export class ProfileDetailComponent implements OnInit {
   }
 
   deleteRate(duration: string) {
+    if (!this.profile?._id) return;
+
     if (confirm(`Are you sure you want to delete the rate for ${duration}?`)) {
-      delete this.rates.incall[duration];
-      delete this.rates.outcall[duration];
-      // Update to use single parameter
-      this.saveField('rates');
+      this.profileService.deleteRate(this.profile._id, duration).subscribe({
+        next: (updatedProfile) => {
+          if (this.profile) {
+            // Update local rates object
+            this.rates = {
+              incall: { ...(updatedProfile.rates?.incall || {}) },
+              outcall: { ...(updatedProfile.rates?.outcall || {}) },
+              currency: (updatedProfile.rates?.currency as SupportedCurrency) ?? 'EUR'
+            };
+            this.profile.rates = updatedProfile.rates;
+          }
+        },
+        error: (error) => {
+          this.error = 'Failed to delete rate';
+          console.error('Error deleting rate:', error);
+          setTimeout(() => this.error = '', 3000);
+        }
+      });
     }
   }
 
@@ -666,24 +708,22 @@ export class ProfileDetailComponent implements OnInit {
 
   updateServices() {
     if (this.editingState.fieldName === 'services') {
-      const included = Object.keys(this.serviceSelections.included)
-        .filter(key => this.serviceSelections.included[key]);
-      
-      const extra = Object.entries(this.serviceSelections.extra)
-        .reduce<{ [key: string]: number }>((acc, [key, value]) => {
-          if (value && value > 0) {
-            acc[key] = value;
-          }
-          return acc;
-        }, {});
-
-      // Create properly typed service update
-      const servicesUpdate: ServiceUpdate = {
-        included,
-        extra
+      const serviceUpdate: ServiceUpdate = {
+        included: Object.keys(this.serviceSelections.included)
+          .filter(key => this.serviceSelections.included[key]),
+        extra: Object.entries(this.serviceSelections.extra)
+          .reduce<{ [key: string]: number }>((acc, [key, value]) => {
+            if (value && value > 0) {
+              acc[key] = value;
+            }
+            return acc;
+          }, {})
       };
 
-      this.editingState.currentValue = servicesUpdate;
+      this.editingState = {
+        fieldName: 'services',
+        currentValue: serviceUpdate
+      };
       this.saveField('services');
     }
   }
@@ -745,5 +785,47 @@ export class ProfileDetailComponent implements OnInit {
 
   getLikeButtonTitle(): string {
     return getLikeButtonTitle(this.isAuthenticated, this.isCurrentUser);
+  }
+
+  deleteImage(imageUrl: string) {
+    if (!this.profile?._id) return;
+
+    if (confirm('Are you sure you want to delete this image?')) {
+      this.profileService.deleteImage(this.profile._id, imageUrl).subscribe({
+        next: (updatedProfile) => {
+          if (this.profile) {
+            this.profile.images = updatedProfile.images || [];
+          }
+        },
+        error: (error) => {
+          this.error = 'Failed to delete image';
+          console.error('Error deleting image:', error);
+          setTimeout(() => this.error = '', 3000);
+        }
+      });
+    }
+  }
+
+  deleteVideo(videoUrl: string) {
+    if (!this.profile?._id) return;
+
+    if (confirm('Are you sure you want to delete this video?')) {
+      this.profileService.deleteVideo(this.profile._id, videoUrl).subscribe({
+        next: (updatedProfile) => {
+          if (this.profile) {
+            this.profile.videos = updatedProfile.videos || [];
+          }
+        },
+        error: (error) => {
+          this.error = 'Failed to delete video';
+          console.error('Error deleting video:', error);
+          setTimeout(() => this.error = '', 3000);
+        }
+      });
+    }
+  }
+
+  getRatePath(type: 'incall' | 'outcall', duration: string): EditableFields {
+    return `rates.${type}.${duration}` as EditableFields;
   }
 }

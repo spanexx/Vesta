@@ -61,6 +61,56 @@ const checkSubscription = async (req, res, next) => {
   }
 };
 
+// Add middleware to check user status
+const checkUserStatus = async (req, res, next) => {
+  try {
+    const profile = await UserProfile.findById(req.userId);
+    if (!profile) {
+      return res.status(404).json({
+        error: 'PROFILE_NOT_FOUND',
+        message: 'Profile not found'
+      });
+    }
+
+    console.log(profile.status);
+    
+    if (profile.status === 'pending') {
+     
+      return res.status(403).json({
+        error: 'PENDING_STATUS',
+        message: 'Your account is pending verification. You cannot upload content at this time.'
+      });
+    }
+    next();
+  } catch (error) {
+    next(error);
+  }
+  
+  };
+
+// Add this middleware function after other middleware definitions
+const checkProfileLevel = async (req, res, next) => {
+  try {
+    const profile = await UserProfile.findById(req.userId);
+    if (!profile) {
+      return res.status(404).json({
+        error: 'PROFILE_NOT_FOUND',
+        message: 'Profile not found'
+      });
+    }
+
+    if (profile.profileLevel === 'free') {
+      return res.status(403).json({
+        error: 'SUBSCRIPTION_REQUIRED',
+        message: 'You need to upgrade your profile to subscribe to video content'
+      });
+    }
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Update profile using the UserProfile static method
 router.post('/update', auth, async (req, res) => {
   try {
@@ -155,7 +205,7 @@ router.post('/update', auth, async (req, res) => {
 });
 
 // Update profile picture
-router.put('/profile-picture', auth, async (req, res) => {
+router.put('/profile-picture', auth, checkUserStatus, async (req, res) => {
   try {
     const { pictureUrl } = req.body;
     
@@ -196,7 +246,7 @@ router.put('/profile-picture', auth, async (req, res) => {
 });
 
 // Update profile videos
-router.put('/videos', auth, async (req, res) => {
+router.put('/videos', auth, checkUserStatus, async (req, res) => {
   try {
     const { videos } = req.body;
     
@@ -233,7 +283,7 @@ router.put('/videos', auth, async (req, res) => {
 });
 
 // Update profile images
-router.put('/images', auth, async (req, res) => {
+router.put('/images', auth, checkUserStatus, async (req, res) => {
   try {
     const { images } = req.body;
     
@@ -247,6 +297,7 @@ router.put('/images', auth, async (req, res) => {
     }
 
     const updatedProfile = await UserProfile.updateImages(req.userId, images);
+    console.log("Updated Profile", updatedProfile.status);
 
     if (!updatedProfile) {
       return createErrorResponse(
@@ -561,7 +612,7 @@ router.patch('/field/:fieldName', auth, checkSubscription, async (req, res) => {
 });
 
 // Update images
-router.put('/:userId/images', async (req, res) => {
+router.put('/:userId/images', checkUserStatus, async (req, res) => {
   try {
     const updatedProfile = await UserProfile.updateImages(req.params.userId, req.body.images);
     res.status(200).json(updatedProfile);
@@ -571,7 +622,7 @@ router.put('/:userId/images', async (req, res) => {
 });
 
 // Update videos
-router.put('/:userId/videos', async (req, res) => {
+router.put('/:userId/videos', checkUserStatus, async (req, res) => {
   try {
     const updatedProfile = await UserProfile.updateVideos(req.params.userId, req.body.videos);
     res.status(200).json(updatedProfile);
@@ -590,5 +641,248 @@ router.put('/:userId/profilePicture', async (req, res) => {
   }
 });
 
+// Delete profile
+router.delete('/:id', auth, async (req, res) => {
+  try {
+    const profileId = req.params.id;
+
+    // Check if user is authorized to delete this profile
+    if (profileId !== req.userId) {
+      return res.status(403).json({
+        error: 'UNAUTHORIZED',
+        message: 'You can only delete your own profile'
+      });
+    }
+
+    const deletedProfile = await UserProfile.findByIdAndDelete(profileId);
+    
+    if (!deletedProfile) {
+      return res.status(404).json({
+        error: 'PROFILE_NOT_FOUND',
+        message: 'Profile not found'
+      });
+    }
+
+    res.json({ 
+      success: true, 
+      message: 'Profile deleted successfully' 
+    });
+
+  } catch (error) {
+    console.error('Profile deletion error:', error);
+    res.status(500).json({
+      error: 'DELETE_FAILED',
+      message: 'Failed to delete profile',
+      details: error.message
+    });
+  }
+});
+
+// Delete specific field
+router.delete('/:id/field/:fieldName', auth, async (req, res) => {
+  try {
+    const { id, fieldName } = req.params;
+  console.log("id", id, "fieldName", fieldName);
+    // Check if user is authorized
+    if (id !== req.userId) {
+      return res.status(403).json({
+        error: 'UNAUTHORIZED',
+        message: 'You can only modify your own profile'
+      });
+    }
+
+    const updatedProfile = await UserProfile.deleteField(id, fieldName);
+    res.json(updatedProfile);
+
+  } catch (error) {
+    console.error('Field deletion error:', error);
+    
+    // Handle specific error cases
+    if (error.message === 'Profile not found') {
+      return res.status(404).json({
+        error: 'PROFILE_NOT_FOUND',
+        message: 'Profile not found'
+      });
+    }
+    
+    if (error.message === 'Cannot delete protected field') {
+      return res.status(400).json({
+        error: 'PROTECTED_FIELD',
+        message: 'Cannot delete protected field'
+      });
+    }
+
+    res.status(500).json({
+      error: 'DELETE_FAILED',
+      message: 'Failed to delete field',
+      details: error.message
+    });
+  }
+});
+
+// Delete specific image
+router.delete('/:userId/images', auth, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { imageUrl } = req.body;
+
+    // Check if user is authorized
+    if (userId !== req.userId) {
+      return res.status(403).json({
+        error: 'UNAUTHORIZED',
+        message: 'You can only modify your own profile'
+      });
+    }
+
+    const profile = await UserProfile.findById(userId);
+    if (!profile) {
+      return res.status(404).json({
+        error: 'PROFILE_NOT_FOUND',
+        message: 'Profile not found'
+      });
+    }
+
+    // Remove the image URL from the images array
+    profile.images = profile.images.filter(img => img !== imageUrl);
+    await profile.save();
+
+    res.json(profile);
+  } catch (error) {
+    console.error('Image deletion error:', error);
+    res.status(500).json({
+      error: 'DELETE_FAILED',
+      message: 'Failed to delete image',
+      details: error.message
+    });
+  }
+});
+
+// Delete specific rate
+router.delete('/:userId/rates/:duration', auth, async (req, res) => {
+  try {
+    const { userId, duration } = req.params;
+
+    // Check if user is authorized
+    if (userId !== req.userId) {
+      return res.status(403).json({
+        error: 'UNAUTHORIZED',
+        message: 'You can only modify your own profile'
+      });
+    }
+
+    const updatedProfile = await UserProfile.deleteRate(userId, duration);
+    
+    if (!updatedProfile) {
+      return res.status(404).json({
+        error: 'PROFILE_NOT_FOUND',
+        message: 'Profile not found'
+      });
+    }
+
+    res.json(updatedProfile);
+  } catch (error) {
+    console.error('Rate deletion error:', error);
+    res.status(500).json({
+      error: 'DELETE_FAILED',
+      message: 'Failed to delete rate',
+      details: error.message
+    });
+  }
+});
+
+// Delete specific video
+router.delete('/:userId/videos', auth, checkUserStatus, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { videoUrl } = req.body;
+
+    // Check if user is authorized
+    if (userId !== req.userId) {
+      return res.status(403).json({
+        error: 'UNAUTHORIZED',
+        message: 'You can only modify your own profile'
+      });
+    }
+
+    const profile = await UserProfile.findById(userId);
+    if (!profile) {
+      return res.status(404).json({
+        error: 'PROFILE_NOT_FOUND',
+        message: 'Profile not found'
+      });
+    }
+
+    // Remove the video URL from the videos array
+    profile.videos = profile.videos.filter(vid => vid !== videoUrl);
+    await profile.save();
+
+    res.json(profile);
+  } catch (error) {
+    console.error('Video deletion error:', error);
+    res.status(500).json({
+      error: 'DELETE_FAILED',
+      message: 'Failed to delete video',
+      details: error.message
+    });
+  }
+});
+
+// Update verification documents
+router.post('/:id/verification-documents', auth, async (req, res) => {
+  try {
+    const { documentData, side } = req.body;
+
+    // Validate user authorization
+    if (req.params.id !== req.userId) {
+      return res.status(403).json({
+        error: 'UNAUTHORIZED',
+        message: 'You can only modify your own profile'
+      });
+    }
+
+    // Find profile
+    const profile = await UserProfile.findById(req.userId);
+    if (!profile) {
+      return res.status(404).json({
+        error: 'PROFILE_NOT_FOUND',
+        message: 'Profile not found'
+      });
+    }
+
+    // Remove existing document of same side if exists
+    profile.verificationDocuments = profile.verificationDocuments.filter(doc => doc.side !== side);
+
+    // Add new document
+    profile.verificationDocuments.push({
+      data: documentData,
+      side: side,
+      uploadedAt: new Date()
+    });
+
+    // Update verification status to reviewing if both sides uploaded
+    const hasFront = profile.verificationDocuments.some(doc => doc.side === 'front');
+    const hasBack = profile.verificationDocuments.some(doc => doc.side === 'back');
+    
+    if (hasFront && hasBack) {
+      profile.verificationStatus = 'reviewing';
+    }
+
+    const updatedProfile = await profile.save();
+    res.json(updatedProfile);
+
+  } catch (error) {
+    console.error('Document upload error:', error);
+    res.status(500).json({
+      error: 'UPLOAD_FAILED',
+      message: 'Failed to upload verification document',
+      details: error.message
+    });
+  }
+});
+
+// Add checkProfileLevel middleware to video subscription routes
+router.post('/video-subscription', auth, checkProfileLevel, async (req, res) => {
+  // ...existing video subscription route code...
+});
 
 export default router;

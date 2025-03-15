@@ -49,16 +49,20 @@ const userProfileSchema = new mongoose.Schema({
     enum: ['girlfriend', 'wife', 'mistress', 'pornstar', 'onenight'],
     default: ['onenight']
   },
-  // To avoid confusion with profile level, we rename the user level field:
-  accountLevel: {
-    type: String,
-    enum: ['vip', 'regular'],
-  },
+ 
   lastLogin: Date,
-  verificationDocuments: {
-    type: [String],
-    default: [],
-  },
+  verificationDocuments: [{
+    data: { type: String, required: true },
+    side: { 
+      type: String,
+      enum: ['front', 'back'],
+      required: true 
+    },
+    uploadedAt: { 
+      type: Date,
+      default: Date.now 
+    }
+  }],
   emergencyContact: {
     name: { type: String },
     phoneNumber: { type: String },
@@ -240,7 +244,7 @@ const userProfileSchema = new mongoose.Schema({
   },
   verificationStatus: {
     type: String,
-    enum: ['pending', 'verified', 'rejected'],
+    enum: ['pending', "reviewing", 'verified', 'rejected'],
     default: 'pending',
   },
   moderationFlags: {
@@ -487,6 +491,59 @@ userProfileSchema.statics.unlikeVideo = async function(videoOwnerId, likerId) {
     { new: true }
   );
   return profile;
+};
+
+userProfileSchema.statics.deleteField = async function(userId, fieldName) {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    // Validate field name to prevent deleting critical fields
+    const protectedFields = ['_id', 'user', 'role', 'createdAt', 'updatedAt'];
+    if (protectedFields.includes(fieldName)) {
+      throw new Error('Cannot delete protected field');
+    }
+
+    const updateQuery = { $unset: { [fieldName]: 1 } };
+    const profile = await this.findByIdAndUpdate(
+      userId,
+      updateQuery,
+      { 
+        new: true,
+        runValidators: true,
+        session 
+      }
+    );
+
+    if (!profile) {
+      throw new Error('Profile not found');
+    }
+
+    await session.commitTransaction();
+    return profile;
+
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
+  }
+};
+
+userProfileSchema.statics.deleteRate = async function(userId, duration) {
+  return this.findByIdAndUpdate(
+    userId,
+    { 
+      $unset: {
+        [`rates.incall.${duration}`]: 1,
+        [`rates.outcall.${duration}`]: 1
+      }
+    },
+    { 
+      new: true, 
+      runValidators: true 
+    }
+  );
 };
 
 const UserProfile = mongoose.model('UserProfile', userProfileSchema);

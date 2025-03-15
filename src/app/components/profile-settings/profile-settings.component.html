@@ -10,7 +10,11 @@
              accept="image/*" 
              (change)="onProfilePictureSelected($event)"
              #profilePictureInput>
-      <button (click)="profilePictureInput.click()">Change Profile Picture</button>
+      <button (click)="profilePictureInput.click()" 
+              [disabled]="!canUpload()"
+              [title]="!canUpload() ? 'Account pending verification' : ''">
+        Change Profile Picture
+      </button>
     </div>
   </section>
 
@@ -50,7 +54,11 @@
              accept="image/*" 
              (change)="onImagesSelected($event)"
              #imagesInput>
-      <button (click)="imagesInput.click()">Add Images</button>
+      <button (click)="imagesInput.click()"
+              [disabled]="!canUpload()"
+              [title]="!canUpload() ? 'Account pending verification' : ''">
+        Add Images
+      </button>
     </div>
   </section>
 
@@ -70,7 +78,11 @@
              accept="video/*" 
              (change)="onVideosSelected($event)"
              #videosInput>
-      <button (click)="videosInput.click()">Add Videos</button>
+      <button (click)="videosInput.click()"
+              [disabled]="!canUpload()"
+              [title]="!canUpload() ? 'Account pending verification' : ''">
+        Add Videos
+      </button>
     </div>
   </section>
 

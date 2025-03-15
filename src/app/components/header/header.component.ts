@@ -17,6 +17,8 @@ export class HeaderComponent {
   isDarkMode = false;
   isMenuOpen = false;
   user!: UserProfile;
+  isFreeProfile = false; // Add this property
+  isCurrentUser = false; // Add this property
 
   roles = [
     { value: 'girlfriend', label: 'Girlfriend' },
@@ -36,6 +38,27 @@ export class HeaderComponent {
       isDark => this.isDarkMode = isDark
     );
   }
+
+  ngOnInit() {
+
+    this.currentUser$.subscribe(user => {
+      if (user) {
+        this.user = user;
+        this.isFreeProfile = user.profileLevel === 'free';
+        // console.log('User profile level:', user);
+      }
+      
+    });
+
+    this.authService.currentUser$.subscribe(currentUser => {
+      console.log('Current User:', currentUser);
+
+      if (currentUser) {
+        this.isCurrentUser = true;
+      }
+
+  });
+}
 
   @HostListener('document:click', ['$event'])
   clickOutside(event: Event) {

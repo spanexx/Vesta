@@ -1,6 +1,13 @@
+<div class="all">
+<span *ngIf="currentFilter.country || currentFilter.city" (click)="clearFilters()" class="clear-wrapper">
+  <i class="fas fa-times clear" title="Clear all filters"></i>
+</span>
 <aside class="filters-sidebar">
+
   <div class="sidebar-header">
-    <h2>Filter Profiles</h2>
+    <div class="header-flex">
+      <h2>Filter Profiles</h2>
+    </div>
     <button 
       class="location-button"
       (click)="useLocation()"
@@ -15,6 +22,7 @@
     <i class="fas fa-exclamation-triangle"></i>
     {{ locationError }}
   </div>
+ 
 
   <div class="filter-section">
     <h3>Countries</h3>
@@ -59,10 +67,5 @@
       </button>
     </div>
   </div>
-
-  <div class="filter-actions" *ngIf="currentFilter.country || currentFilter.city">
-    <button class="clear-filters-button" (click)="clearFilters()">
-      Clear All Filters
-    </button>
-  </div>
 </aside>
+</div>

@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { PaymentService } from '../../services/payment.service';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ProfileService } from '../../services/profile.service';
+import { AuthenticationService } from '../../services/authentication.service';
 
 interface PricingTier {
   id: string;
@@ -15,79 +17,65 @@ interface PricingTier {
 }
 
 @Component({
-  selector: 'app-pricing',
+  selector: 'app-video-payment',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './pricing.component.html',
-  styleUrls: ['./pricing.component.scss']
+  templateUrl: './video-payment.component.html',
+  styleUrl: './video-payment.component.css'
 })
-export class PricingComponent {
-  isYearly = false;
+export class VideoPaymentComponent {
+ isYearly = false;
   selectedTier: PricingTier | null = null;
   processing = false;
   error = '';
 
   pricingTiers: PricingTier[] = [
+
     {
-      id: 'free',
-      name: 'Free',
+      id: 'video',
+      name: 'Video Creator',
+      monthlyPrice: 19.99,
+      yearlyPrice: 199.99,
       features: [
-        'Basic profile listing',
-        'Up to 3 photos',
-        'Basic profile customization',
-        'Community access'
-      ],
-      free: true
-    },
-    {
-      id: 'standard',
-      name: 'Standard',
-      monthlyPrice: 29.99,
-      yearlyPrice: 299.99,  // Save ~$60/year
-      features: [
-        'Basic profile listing',
-        'Up to 5 photos',
-        'Email support',
-        'Basic analytics'
-      ]
-    },
-    {
-      id: 'premium',
-      name: 'Premium',
-      monthlyPrice: 49.99,
-      yearlyPrice: 499.99,  // Save ~$100/year
-      features: [
-        'Priority listing',
-        'Up to 20 photos',
-        'Video uploads',
+        'Upload 1 HD video',
+        'Video hosting',
+        'Video analytics',
+        'Update video monthly',
         'Priority support',
-        'Advanced analytics',
-        'Featured profile boost'
-      ],
-      popular: true
-    },
-    {
-      id: 'vip',
-      name: 'VIP',
-      monthlyPrice: 99.99,
-      yearlyPrice: 999.99,  // Save ~$200/year
-      features: [
-        'Top listing placement',
-        'Unlimited photos',
-        'Unlimited videos',
-        '24/7 VIP support',
-        'Real-time analytics',
-        'Premium profile badge',
-        'Custom profile URL',
-        'Background check verification'
+        'Verified creator badge'
       ]
-    }
+    },
+
   ];
 
   constructor(
     private paymentService: PaymentService,
-    private router: Router
+    private router: Router,
+    private profileService: ProfileService,
+    private authService: AuthenticationService
   ) {}
+
+  ngOnInit() {
+    this.authService.currentUser$.subscribe(user => {
+      if (user) {
+        this.profileService.getProfileById(user._id).subscribe({
+          next: (profile) => {
+            if (profile.profileLevel === 'free') {
+              this.router.navigate(['/pricing'], {
+                queryParams: { 
+                  redirect: 'video-payment',
+                  message: 'You need to upgrade your profile to subscribe to video content'
+                }
+              });
+            }
+          },
+          error: (error) => {
+            console.error('Error loading profile:', error);
+          }
+        });
+      }
+    });
+  }
 
   getPrice(tier: PricingTier): number {
     if (tier.free) return 0;
