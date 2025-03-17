@@ -6,6 +6,7 @@ import { UserProfile } from '../../models/userProfile.model';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FileUploadService } from '../../services/file-upload.service';
 import { Role, RoleOption } from '../../models/role.model';
+import { lastValueFrom, map } from 'rxjs';
 
 @Component({
   selector: 'app-profile-settings',
@@ -189,6 +190,7 @@ export class ProfileSettingsComponent implements OnInit {
     this.profileService.updateImages(this.userId, images)
       .subscribe({
         next: (updatedProfile) => {
+          console.log('Updated profile:', this.userId, images);
           this.profile = updatedProfile;
           this.isLoading = false;
           this.error = '';

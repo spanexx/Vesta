@@ -244,7 +244,7 @@ const userProfileSchema = new mongoose.Schema({
   },
   verificationStatus: {
     type: String,
-    enum: ['pending', "reviewing", 'verified', 'rejected'],
+    enum: ['pending', 'reviewing', 'verified', 'rejected'],
     default: 'pending',
   },
   moderationFlags: {

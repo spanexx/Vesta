@@ -77,6 +77,8 @@ export class ProfileService {
 
   
   updateImages(userId: string, images: string[]): Observable<any> {
+    console.log('Updating images for user:', userId);
+    console.log('Images:', images);
     return this.http.put(`${profileRoutes}/${userId}/images`, { images });
   }
 

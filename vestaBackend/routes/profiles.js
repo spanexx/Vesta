@@ -8,6 +8,7 @@ import path from 'path';
 import { GridFsStorage } from 'multer-gridfs-storage';
 import Grid from 'gridfs-stream';
 import dotenv from 'dotenv';
+import {checkUploadLimits} from '../middleware/subscription-check.js';
 
 dotenv.config();
 
@@ -64,7 +65,7 @@ const checkSubscription = async (req, res, next) => {
 // Add middleware to check user status
 const checkUserStatus = async (req, res, next) => {
   try {
-    const profile = await UserProfile.findById(req.userId);
+    const profile = await UserProfile.findById(req.params.userId);
     if (!profile) {
       return res.status(404).json({
         error: 'PROFILE_NOT_FOUND',
@@ -245,80 +246,6 @@ router.put('/profile-picture', auth, checkUserStatus, async (req, res) => {
   }
 });
 
-// Update profile videos
-router.put('/videos', auth, checkUserStatus, async (req, res) => {
-  try {
-    const { videos } = req.body;
-    
-    if (!Array.isArray(videos)) {
-      return createErrorResponse(
-        res,
-        400,
-        'INVALID_INPUT',
-        'Videos must be an array of URLs'
-      );
-    }
-
-    const updatedProfile = await UserProfile.updateVideos(req.userId, videos);
-
-    if (!updatedProfile) {
-      return createErrorResponse(
-        res,
-        404,
-        'PROFILE_NOT_FOUND',
-        'Profile not found'
-      );
-    }
-
-    res.json(updatedProfile);
-  } catch (error) {
-    createErrorResponse(
-      res,
-      500,
-      'UPDATE_FAILED',
-      'Failed to update profile videos',
-      error
-    );
-  }
-});
-
-// Update profile images
-router.put('/images', auth, checkUserStatus, async (req, res) => {
-  try {
-    const { images } = req.body;
-    
-    if (!Array.isArray(images)) {
-      return createErrorResponse(
-        res,
-        400,
-        'INVALID_INPUT',
-        'Images must be an array of URLs'
-      );
-    }
-
-    const updatedProfile = await UserProfile.updateImages(req.userId, images);
-    console.log("Updated Profile", updatedProfile.status);
-
-    if (!updatedProfile) {
-      return createErrorResponse(
-        res,
-        404,
-        'PROFILE_NOT_FOUND',
-        'Profile not found'
-      );
-    }
-
-    res.json(updatedProfile);
-  } catch (error) {
-    createErrorResponse(
-      res,
-      500,
-      'UPDATE_FAILED',
-      'Failed to update profile images',
-      error
-    );
-  }
-});
 
 // Filter profiles by role
 router.get('/filter', async (req, res) => {
@@ -612,17 +539,19 @@ router.patch('/field/:fieldName', auth, checkSubscription, async (req, res) => {
 });
 
 // Update images
-router.put('/:userId/images', checkUserStatus, async (req, res) => {
+router.put('/:userId/images', checkUserStatus, checkUploadLimits, async (req, res) => {
   try {
     const updatedProfile = await UserProfile.updateImages(req.params.userId, req.body.images);
+    console.log("updatedProfile: ", req.params.userId, req.body.images);
     res.status(200).json(updatedProfile);
   } catch (error) {
+    console.error('Image update error:', error);
     res.status(400).json({ message: error.message });
   }
 });
 
 // Update videos
-router.put('/:userId/videos', checkUserStatus, async (req, res) => {
+router.put('/:userId/videos', checkUserStatus, checkUploadLimits, async (req, res) => {
   try {
     const updatedProfile = await UserProfile.updateVideos(req.params.userId, req.body.videos);
     res.status(200).json(updatedProfile);
@@ -721,7 +650,7 @@ router.delete('/:id/field/:fieldName', auth, async (req, res) => {
 });
 
 // Delete specific image
-router.delete('/:userId/images', auth, async (req, res) => {
+router.delete('/:userId/images', auth, checkUserStatus, async (req, res) => {
   try {
     const { userId } = req.params;
     const { imageUrl } = req.body;
@@ -791,7 +720,7 @@ router.delete('/:userId/rates/:duration', auth, async (req, res) => {
 });
 
 // Delete specific video
-router.delete('/:userId/videos', auth, checkUserStatus, async (req, res) => {
+router.delete('/:userId/videos', auth, async (req, res) => {
   try {
     const { userId } = req.params;
     const { videoUrl } = req.body;
