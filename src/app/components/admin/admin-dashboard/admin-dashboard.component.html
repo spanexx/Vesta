@@ -1,0 +1,29 @@
+<div class="admin-dashboard">
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h3>Total Users</h3>
+      <p class="stat-value">{{stats.totalUsers || 0}}</p>
+    </div>
+    <div class="stat-card">
+      <h3>Pending Verifications</h3>
+      <p class="stat-value">{{stats.pendingVerifications || 0}}</p>
+    </div>
+    <div class="stat-card">
+      <h3>Premium Users</h3>
+      <p class="stat-value">{{stats.premiumUsers || 0}}</p>
+    </div>
+    <div class="stat-card">
+      <h3>Recent Reports</h3>
+      <p class="stat-value">{{stats.recentReports || 0}}</p>
+    </div>
+  </div>
+
+  <div class="quick-actions">
+    <h2>Quick Actions</h2>
+    <div class="action-buttons">
+      <button routerLink="/admin/users">Manage Users</button>
+      <button routerLink="/admin/moderation">Moderation Queue</button>
+      <button routerLink="/admin/analytics">View Analytics</button>
+    </div>
+  </div>
+</div>

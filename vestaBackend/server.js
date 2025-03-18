@@ -11,6 +11,8 @@ import moderationRoutes from './routes/moderation.js';
 import paymentRoutes from './routes/payments.js';  // Add this import
 import videoUploadRoutes from './routes/videoUpload.js'; // Add this import
 import mediaRouter from './routes/media.js';
+import adminRoutes from './routes/admin.js';
+import { createMainAdmin } from './seeders/adminSeeder.js';
 
 import { Server } from 'socket.io';
 import { createServer } from 'http';
@@ -92,7 +94,14 @@ app.use('/files', (err, req, res, next) => {
 
 // Database connection
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB'))
+  .then(async () => {
+    console.log('Connected to MongoDB');
+    try {
+      await createMainAdmin();
+    } catch (error) {
+      console.error('Error creating main admin:', error);
+    }
+  })
   .catch(err => console.error('MongoDB connection error:', err));
 
 // Routes
@@ -100,7 +109,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/profiles', profileRoutes);
 app.use('/api/moderation', moderationRoutes);
 app.use('/api/payments', paymentRoutes);
-// app.use('/api/upload', uploadRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/videos', videoUploadRoutes);
 app.use('/media', mediaRouter);  // Changed from /api/media to /media
 
