@@ -232,17 +232,33 @@ export class ProfileSettingsComponent implements OnInit {
 
   updateProfilePicture(profilePicture: string) {
     this.isLoading = true;
-    this.profileService.updateProfilePicture(this.userId, profilePicture)
+
+    // Extract content type and filename from base64 string
+    const contentType = profilePicture.split(';')[0].split(':')[1];
+    const extension = contentType.split('/')[1];
+    const filename = `profile_picture.${extension}`;
+
+    this.fileUploadService.uploadProfilePicture(profilePicture, filename, contentType, this.userId)
       .subscribe({
-        next: (updatedProfile) => {
+        next: (updatedProfile: UserProfile) => {
           this.profile = updatedProfile;
+
+          console.log('Updated profile:', updatedProfile);
           this.isLoading = false;
           this.error = '';
+          this.snackBar.open('Profile picture updated successfully', 'Close', {
+            duration: 3000,
+            panelClass: ['success-snackbar']
+          });
         },
         error: (err) => {
           this.isLoading = false;
           this.error = 'Failed to update profile picture';
-          console.error(err);
+          this.snackBar.open('Failed to update profile picture', 'Close', {
+            duration: 5000,
+            panelClass: ['error-snackbar']
+          });
+          console.error("Err: ", err);
         }
       });
   }
@@ -508,5 +524,12 @@ export class ProfileSettingsComponent implements OnInit {
         console.error('Failed to update roles:', error);
       }
     });
+  }
+
+  getProfilePictureUrl(): string {
+    if (this.profile?.profilePicture) {
+      return this.fileUploadService.getMediaUrl(this.profile.profilePicture);
+    }
+    return 'assets/default-profile.png';
   }
 }

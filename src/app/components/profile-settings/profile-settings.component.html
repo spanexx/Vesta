@@ -1,3 +1,31 @@
+<!-- <div class="settings-container">
+  <h2>Profile Settings</h2> -->
+
+  <!-- <section class="settings-section">
+    <h3>Profile Picture</h3>
+    <div class="profile-picture-container">
+      <img 
+        [src]="getProfilePictureUrl()"
+        alt="Profile picture"
+        class="profile-picture"
+      >
+      <div class="picture-upload">
+        <label class="upload-button">
+          Change Picture
+          <input 
+            type="file" 
+            accept="image/*"
+            (change)="onProfilePictureSelected($event)"
+            [disabled]="!canUpload()"
+          >
+        </label>
+        <span class="error" *ngIf="!canUpload()">Account verification required to upload media</span>
+      </div>
+    </div>
+  </section> -->
+
+
+
 <div class="profile-settings-container" *ngIf="profile">
   <div *ngIf="error" class="error-message">{{ error }}</div>
 
@@ -5,16 +33,19 @@
   <section class="settings-section">
     <h2>Profile Picture</h2>
     <div class="profile-picture-container">
-      <img [src]="profile.profilePicture || 'assets/default-avatar.jpg'" alt="Profile Picture">
-      <input type="file" 
-             accept="image/*" 
-             (change)="onProfilePictureSelected($event)"
-             #profilePictureInput>
-      <button (click)="profilePictureInput.click()" 
-              [disabled]="!canUpload()"
-              [title]="!canUpload() ? 'Account pending verification' : ''">
-        Change Profile Picture
-      </button>
+      <img [src]="getProfilePictureUrl() || 'assets/default-avatar.jpg'" alt="Profile Picture">
+      <div class="picture-upload">
+        <label class="upload-button">
+          Change Picture
+          <input 
+            type="file" 
+            accept="image/*"
+            (change)="onProfilePictureSelected($event)"
+            [disabled]="!canUpload()"
+          >
+        </label>
+        <span class="error" *ngIf="!canUpload()">Account verification required to upload media</span>
+      </div>
     </div>
   </section>
 

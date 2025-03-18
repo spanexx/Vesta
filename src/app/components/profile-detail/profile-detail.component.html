@@ -10,7 +10,7 @@
       <!-- Profile Picture Section -->
       <div class="profile-picture-section">
         <div class="profile-picture">
-          <img [src]="profile.profilePicture" [alt]="profile.fullName">
+          <img [src]="getProfilePictureUrl() || 'assets/default-avatar.jpg'" alt="Profile Picture">
         </div>
       </div>
 

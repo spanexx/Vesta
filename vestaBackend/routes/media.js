@@ -40,7 +40,7 @@ router.post(
       // Verify content type matches base64 data
       const actualContentType = base64Data.match(/^data:([^;]+);base64,/)?.[1];
       if (actualContentType && actualContentType !== contentType) {
-        console.warn(`Content type mismatch: declared ${contentType}, actual ${actualContentType}`);
+        console.warn(`Content type mismatch: declared ${contentType, actualContentType}`);
       }
 
       // Upload file to GridFS
@@ -78,8 +78,7 @@ router.post(
 router.post(
   '/upload-video',
   auth,
-    checkUploadLimits,
-
+  checkUploadLimits,
   async (req, res) => {
     const { base64Data, filename, contentType, userId } = req.body;
 
@@ -126,6 +125,110 @@ router.post(
   }
 );
 
+// Add verification document upload route
+router.post(
+  '/verification-documents/:userId/:side',
+  auth,
+  async (req, res) => {
+    const { base64Data, filename, contentType } = req.body;
+    const { userId, side } = req.params;
+
+    if (!base64Data || !filename || !contentType || !userId || !side) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required fields'
+      });
+    }
+
+    try {
+      // Upload file to GridFS
+      const fileId = await mediaStorage.uploadBase64Media(base64Data, filename, contentType);
+      
+      // Get user profile
+      const profile = await UserProfile.findById(userId);
+      if (!profile) {
+        return res.status(404).json({
+          success: false,
+          message: 'Profile not found'
+        });
+      }
+
+      // Remove existing document of same side if exists
+      profile.verificationDocuments = profile.verificationDocuments.filter(doc => doc.side !== side);
+
+      // Add new document
+      profile.verificationDocuments.push({
+        data: fileId.toString(),
+        side,
+        uploadedAt: new Date()
+      });
+
+      // Update verification status if both sides uploaded
+      const hasFront = profile.verificationDocuments.some(doc => doc.side === 'front');
+      const hasBack = profile.verificationDocuments.some(doc => doc.side === 'back');
+      
+      if (hasFront && hasBack) {
+        profile.verificationStatus = 'reviewing';
+      }
+
+      const updatedProfile = await profile.save();
+      res.json(updatedProfile);
+    } catch (error) {
+      console.error('Verification document upload error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to upload verification document',
+        error: error.message
+      });
+    }
+  }
+);
+
+// Add profile picture upload route
+router.post(
+  '/profile-picture/:userId',
+  auth,
+  checkUserStatus,
+  async (req, res) => {
+    const { base64Data, filename, contentType } = req.body;
+    const { userId } = req.params;
+
+    if (!base64Data || !filename || !contentType || !userId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required fields'
+      });
+    }
+
+    try {
+      // Upload file to GridFS
+      const fileId = await mediaStorage.uploadBase64Media(base64Data, filename, contentType);
+      
+      // Update user profile with new profile picture ID
+      const updatedProfile = await UserProfile.findByIdAndUpdate(
+        userId,
+        { profilePicture: fileId.toString() },
+        { new: true }
+      );
+
+      if (!updatedProfile) {
+        return res.status(404).json({
+          success: false,
+          message: 'Profile not found'
+        });
+      }
+
+      res.json(updatedProfile);
+    } catch (error) {
+      console.error('Profile picture upload error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to upload profile picture',
+        error: error.message
+      });
+    }
+  }
+);
 
 router.get('/:id', async (req, res) => {
   try {

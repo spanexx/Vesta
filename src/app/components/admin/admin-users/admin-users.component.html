@@ -1,0 +1,29 @@
+<div class="users-container">
+  <div class="users-header">
+    <h2>User Management</h2>
+    <div class="filters">
+      <!-- Add filters here in future -->
+    </div>
+  </div>
+  
+  <div class="users-grid">
+    <div *ngFor="let user of users" class="user-card">
+      <img [src]="getUserProfilePictureUrl(user)" alt="Profile picture">
+      <div class="user-info">
+        <h3>{{user.username}}</h3>
+        <p class="email">{{user.email}}</p>
+        <p class="status" [class]="user.status">Status: {{user.status}}</p>
+      </div>
+      <div class="actions">
+        <button class="edit-btn" (click)="editUser(user)">
+          <i class="fas fa-edit"></i>
+          Edit
+        </button>
+        <button class="delete-btn" (click)="deleteUser(user._id)">
+          <i class="fas fa-trash"></i>
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

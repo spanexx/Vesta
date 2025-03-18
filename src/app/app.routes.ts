@@ -18,6 +18,7 @@ import { AdminDashboardComponent } from './components/admin/admin-dashboard/admi
 import { AdminUsersComponent } from './components/admin/admin-users/admin-users.component';
 import { AdminModerationComponent } from './components/admin/admin-moderation/admin-moderation.component';
 import { AdminAnalyticsComponent } from './components/admin/admin-analytics/admin-analytics.component';
+import { AdminEditUserComponent } from './components/admin/admin-edit-user/admin-edit-user.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -78,7 +79,8 @@ export const routes: Routes = [
       { path: 'dashboard', component: AdminDashboardComponent },
       { path: 'users', component: AdminUsersComponent },
       { path: 'moderation', component: AdminModerationComponent },
-      { path: 'analytics', component: AdminAnalyticsComponent }
+      { path: 'analytics', component: AdminAnalyticsComponent },
+      { path: 'users/:userId/edit', component: AdminEditUserComponent }
     ]
   }
 ];

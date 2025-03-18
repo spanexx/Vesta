@@ -4,6 +4,7 @@ import { Observable, map } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { profileRoutes } from '../../environments/apiRoutes';
 import { AuthenticationService } from './authentication.service';
+import { UserProfile } from '../models/userProfile.model';
 
 interface UploadResponse {
   success: boolean;
@@ -14,6 +15,14 @@ interface UploadResponse {
     originalname: string;
   };
   message: string;
+}
+
+interface ProfilePictureResponse {
+  success: boolean;
+  message?: string;
+  error?: string;
+  fileId?: string;
+  profile?: UserProfile;
 }
 
 @Injectable({
@@ -83,6 +92,30 @@ export class FileUploadService {
     const payload = { base64Data, filename, contentType, userId };
     console.log('payload', payload);
     return this.http.post(`${this.mediaBaseUrl}/upload-video`, payload);
+  }
+
+  /**
+   * Upload verification document
+   */
+  uploadVerificationDocument(base64Data: string, filename: string, contentType: string, userId: string, side: 'front' | 'back'): Observable<UserProfile> {
+    const payload = { base64Data, filename, contentType };
+    return this.http.post<UserProfile>(`${this.mediaBaseUrl}/verification-documents/${userId}/${side}`, payload);
+  }
+
+  /**
+   * Upload profile picture
+   */
+  uploadProfilePicture(base64Data: string, filename: string, contentType: string, userId: string): Observable<UserProfile> {
+    const payload = { base64Data, filename, contentType };
+    return this.http.post<UserProfile>(`${this.mediaBaseUrl}/profile-picture/${userId}`, payload)
+      .pipe(
+        map(response => {
+          if (!response) {
+            throw new Error('No profile returned from server');
+          }
+          return response;
+        })
+      );
   }
 
   /**

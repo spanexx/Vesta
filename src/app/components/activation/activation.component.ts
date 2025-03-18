@@ -6,6 +6,7 @@ import { ProfileService } from '../../services/profile.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
+import { FileUploadService } from '../../services/file-upload.service';
 
 @Component({
   selector: 'app-activation',
@@ -127,7 +128,8 @@ export class ActivationComponent implements OnInit {
   constructor(
     private profileService: ProfileService,
     private authService: AuthenticationService,
-    private router: Router
+    private router: Router,
+    private fileUploadService: FileUploadService
   ) {}
 
   ngOnInit() {
@@ -185,7 +187,17 @@ export class ActivationComponent implements OnInit {
     this.uploading = true;
     const reader = new FileReader();
     reader.onload = (e: any) => {
-      this.profileService.updateVerificationDocuments(this.profile!._id, e.target.result, side).subscribe({
+      const base64Data = e.target.result;
+      const contentType = file.type;
+      const filename = `verification_${side}.${file.name.split('.').pop()}`;
+
+      this.fileUploadService.uploadVerificationDocument(
+        base64Data,
+        filename,
+        contentType,
+        this.profile!._id,
+        side
+      ).subscribe({
         next: (updatedProfile: UserProfile) => {
           this.profile = updatedProfile;
           if (side === 'front') this.frontUploaded = true;

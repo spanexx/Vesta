@@ -14,6 +14,13 @@
   display: flex;
   align-items: center;
   gap: 2rem;
+
+}
+
+@media (max-width: 768px) {
+  .header-left {
+    gap: 0.2rem;
+  }
 }
 
 .logo img {
@@ -65,7 +72,7 @@
 
 @media (max-width: 768px) {
   .header-right {
-    gap: 0.5rem;
+    gap: 0.2rem;
   }
 }
 
@@ -93,12 +100,14 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #666;
+  color: #372121;
   text-decoration: none;
   padding: 0.5rem 1rem;
   border-radius: 20px;
   transition: all 0.3s ease;
 }
+
+
 
 .login-button {
   background: linear-gradient(135deg, #ea64b8, #c864ea);
@@ -142,6 +151,28 @@
   transition: all 0.3s ease;
 }
 
+
+@media (max-width: 768px) {
+  .upgrade-button{
+    font-size: 0.8rem; 
+    padding: 0.25rem .5rem;
+ 
+  }
+
+  .logout-button {
+    padding: 0.25rem .5rem;
+    font-weight: 600;
+  }
+
+  .profile-link{
+    gap: 0.2rem;
+    padding: 0.2rem 0.3rem;
+
+  }
+
+}
+
+
 .upgrade-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
@@ -151,7 +182,7 @@
   font-size: 1rem;
 }
 
-@media (max-width: 865px) {
+@media (max-width: 1020px) {
   .menu-button {
     display: block;
   }

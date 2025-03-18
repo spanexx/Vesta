@@ -7,12 +7,12 @@
   align-items: center;
 
   .activation-card {
-    background: white;
+    background: var(--surface);
     border-radius: 20px;
     padding: 2rem;
     max-width: 600px;
     width: 100%;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--card-shadow);
 
     h1 {
       color: var(--primary);
@@ -32,19 +32,24 @@
         padding: 0.5rem 1rem;
         border-radius: 20px;
         margin-bottom: 1rem;
-        
+
         &.pending {
-          background: #fff3e0;
+          background: rgba(245, 124, 0, 0.1);
           color: #f57c00;
         }
+      }
+
+      p {
+        color: var(--text);
       }
     }
 
     .requirements-section {
-      background: #f8f9fa;
+      background: var(--surface);
       padding: 1.5rem;
       border-radius: 15px;
       margin-bottom: 2rem;
+      border: 1px solid rgba(var(--text-rgb), 0.1);
 
       h2 {
         color: var(--text);
@@ -72,42 +77,27 @@
             }
             
             &.fa-times {
-              color: #f44336;
+              color: var(--error);
             }
           }
 
           &.completed {
-            color: #4caf50;
+            color: var(--text);
           }
-        }
-      }
-    }
-
-    .contact-section {
-      text-align: center;
-      
-      a {
-        color: var(--primary);
-        text-decoration: none;
-        font-weight: 500;
-        
-        &:hover {
-          text-decoration: underline;
         }
       }
     }
 
     .document-upload-section {
-      margin-top: 2rem;
+      background: var(--surface);
       padding: 1.5rem;
-      background: #fff;
       border-radius: 15px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      margin-bottom: 2rem;
+      border: 1px solid rgba(var(--text-rgb), 0.1);
 
       h3 {
         color: var(--text);
         margin-bottom: 1.5rem;
-        font-size: 1.2rem;
       }
 
       .verification-stage {
@@ -135,19 +125,18 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: #f0f2f5;
+            background: var(--background);
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 0.5rem;
-            font-size: 1.2rem;
           }
         }
 
         .stage-connector {
           width: 60px;
           height: 2px;
-          background: #f0f2f5;
+          background: var(--background);
           margin: 0 1rem;
         }
       }
@@ -169,10 +158,11 @@
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
+            color: var(--text);
 
             &:hover {
               border-color: var(--primary);
-              background: #f8f9fa;
+              background: rgba(var(--primary-rgb), 0.05);
             }
 
             i {
@@ -207,33 +197,51 @@
 
       .upload-status {
         text-align: center;
-        color: var(--primary);
-        margin: 1rem 0;
+        color: var(--text);
         
         i {
           margin-right: 0.5rem;
+          color: var(--primary);
         }
       }
+    }
 
-      .verification-note {
-        background: #f8f9fa;
-        padding: 1rem;
-        border-radius: 10px;
-        margin-top: 1rem;
+    .verification-note {
+      background: var(--background);
+      padding: 1rem;
+      border-radius: 10px;
+      margin-top: 1rem;
+      color: var(--text);
 
-        i {
-          color: var(--primary);
-          margin-right: 0.5rem;
+      i {
+        color: var(--primary);
+        margin-right: 0.5rem;
+      }
+
+      ul {
+        margin: 0.5rem 0 0 1.5rem;
+        
+        li {
+          color: var(--text-secondary);
+          font-size: 0.9rem;
+          margin-bottom: 0.25rem;
         }
+      }
+    }
 
-        ul {
-          margin: 0.5rem 0 0 1.5rem;
-          
-          li {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 0.25rem;
-          }
+    .contact-section {
+      text-align: center;
+      
+      p {
+        color: var(--text);
+      }
+      
+      a {
+        color: var(--primary);
+        text-decoration: none;
+        
+        &:hover {
+          text-decoration: underline;
         }
       }
     }

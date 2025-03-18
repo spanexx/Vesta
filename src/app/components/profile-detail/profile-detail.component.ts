@@ -872,4 +872,12 @@ export class ProfileDetailComponent implements OnInit {
     // Extract the ID from the end of the URL
     return mediaUrl.split('/').pop() || '';
   }
+
+
+  getProfilePictureUrl(): string {
+    if (this.profile?.profilePicture) {
+      return this.fileUploadService.getMediaUrl(this.profile.profilePicture);
+    }
+    return 'assets/default-profile.png';
+  }
 }
