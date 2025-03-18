@@ -45,7 +45,9 @@
                    class="profile-card"
                    [routerLink]="['/profile', profile._id]">
                 <div class="card-media">
-                  <img [src]="profile.images[0] || 'https://static.vecteezy.com/system/resources/previews/005/129/844/original/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg'" [alt]="profile.fullName" loading="lazy">
+                  <img [src]="profile.images.length ? fileUploadService.getMediaUrl(profile.images[0]) : 'assets/default-avatar.jpg'" 
+                       [alt]="profile.fullName" 
+                       loading="lazy">
                   <div class="card-badges">
                     <span *ngIf="profile.profileLevel === 'vip'" class="badge vip">
                       <i class="fas fa-star"></i> VIP

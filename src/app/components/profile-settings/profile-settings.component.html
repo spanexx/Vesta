@@ -46,7 +46,7 @@
     <div class="images-container">
       <div class="image-grid">
         <div class="image-item" *ngFor="let image of profile.images">
-          <img [src]="image" alt="Gallery image">
+          <img [src]="fileUploadService.getMediaUrl(image)" alt="Gallery image">
         </div>
       </div>
       <input type="file" 
@@ -55,9 +55,9 @@
              (change)="onImagesSelected($event)"
              #imagesInput>
       <button (click)="imagesInput.click()"
-              [disabled]="!canUpload()"
+              [disabled]="!canUpload() || isLoading"
               [title]="!canUpload() ? 'Account pending verification' : ''">
-        Add Images
+        {{ isLoading ? 'Uploading...' : 'Add Images' }}
       </button>
     </div>
   </section>
@@ -69,7 +69,7 @@
       <div class="video-grid">
         <div class="video-item" *ngFor="let video of profile.videos">
           <video controls>
-            <source [src]="video" type="video/mp4">
+            <source [src]="fileUploadService.getMediaUrl(video)" type="video/mp4">
           </video>
         </div>
       </div>
@@ -79,9 +79,9 @@
              (change)="onVideosSelected($event)"
              #videosInput>
       <button (click)="videosInput.click()"
-              [disabled]="!canUpload()"
+              [disabled]="!canUpload() || isLoading"
               [title]="!canUpload() ? 'Account pending verification' : ''">
-        Add Videos
+        {{ isLoading ? 'Uploading...' : 'Add Videos' }}
       </button>
     </div>
   </section>

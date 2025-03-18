@@ -12,6 +12,7 @@ import { BehaviorSubject, Observable, combineLatest, Subject } from 'rxjs';
 import { map, switchMap, debounceTime, distinctUntilChanged, tap, takeUntil } from 'rxjs/operators';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CacheService } from '../../services/cache.service';
+import { FileUploadService } from '../../services/file-upload.service';  // Add this import
 
 type ProfileLevel = 'vip' | 'premium' | 'standard' | 'basic';
 type Coordinates = [number, number];
@@ -61,7 +62,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     private profileService: ProfileService,
     private router: Router,
     private route: ActivatedRoute,
-    private cacheService: CacheService
+    private cacheService: CacheService,
+    public fileUploadService: FileUploadService  // Add this service
   ) {}
 
   ngOnInit(): void {

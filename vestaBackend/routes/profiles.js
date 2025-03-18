@@ -8,34 +8,13 @@ import path from 'path';
 import { GridFsStorage } from 'multer-gridfs-storage';
 import Grid from 'gridfs-stream';
 import dotenv from 'dotenv';
-import {checkUploadLimits} from '../middleware/subscription-check.js';
+import checkUploadLimits from '../middleware/subscription-check.js';
+import checkUserStatus from '../middleware/checkStatus.js';
 
 dotenv.config();
 
 
-// Create GridFS stream
-let gfs;
-mongoose.connection.once('open', () => {
-  gfs = Grid(mongoose.connection.db, mongoose.mongo);
-  gfs.collection('uploads');
-});
 
-// Update the storage configuration
-const storage = new GridFsStorage({
-  url: process.env.MONGODB_URI,
-  options: { useNewUrlParser: true, useUnifiedTopology: true },
-  file: (req, file) => {
-    return new Promise((resolve, reject) => {
-      const fileInfo = {
-        filename: `${Date.now()}-${file.originalname}`,
-        bucketName: 'uploads'
-      };
-      resolve(fileInfo);
-    });
-  }
-});
-
-const upload = multer({ storage });
 
 const router = express.Router();
 
@@ -62,32 +41,6 @@ const checkSubscription = async (req, res, next) => {
   }
 };
 
-// Add middleware to check user status
-const checkUserStatus = async (req, res, next) => {
-  try {
-    const profile = await UserProfile.findById(req.params.userId);
-    if (!profile) {
-      return res.status(404).json({
-        error: 'PROFILE_NOT_FOUND',
-        message: 'Profile not found'
-      });
-    }
-
-    console.log(profile.status);
-    
-    if (profile.status === 'pending') {
-     
-      return res.status(403).json({
-        error: 'PENDING_STATUS',
-        message: 'Your account is pending verification. You cannot upload content at this time.'
-      });
-    }
-    next();
-  } catch (error) {
-    next(error);
-  }
-  
-  };
 
 // Add this middleware function after other middleware definitions
 const checkProfileLevel = async (req, res, next) => {
@@ -542,7 +495,6 @@ router.patch('/field/:fieldName', auth, checkSubscription, async (req, res) => {
 router.put('/:userId/images', checkUserStatus, checkUploadLimits, async (req, res) => {
   try {
     const updatedProfile = await UserProfile.updateImages(req.params.userId, req.body.images);
-    console.log("updatedProfile: ", req.params.userId, req.body.images);
     res.status(200).json(updatedProfile);
   } catch (error) {
     console.error('Image update error:', error);

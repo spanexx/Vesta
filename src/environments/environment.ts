@@ -1,9 +1,9 @@
 //environment.ts
 export const environment = {
     production: false,
+    baseUrl: 'http://localhost:6388', // Make sure this matches your backend port
     apiUrl: 'http://localhost:6388/api',
-    baseUrl: 'http://localhost:6388',
-    mediaUrl: 'http://localhost:6388/api/files',
+    mediaUrl: 'http://localhost:6388/api/media',
     stripePublishableKey: 'pk_test_51Qk30cCBesEmSvdxhucmWz9GIyHGcVSr3Vh9Yy6zAfuW9yywoitramCgcORm8POdZFaDFsvMa530gKazpayJa7Tv00Oe4sEDtx',
     secretKey: "sk_test_51Qk30cCBesEmSvdxJO1xGSdWtbmBMuqJpf57ANsSHVfCJeyLeXEJJs65vNxWbwlKwdtEgatt3k5a6HfFshkPA0sq006tZj72IL",
     hCaptchaSiteKey:'881e6b0e-58d6-4d80-818a-a0665802e6c0',

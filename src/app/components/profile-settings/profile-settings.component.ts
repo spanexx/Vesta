@@ -6,7 +6,7 @@ import { UserProfile } from '../../models/userProfile.model';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FileUploadService } from '../../services/file-upload.service';
 import { Role, RoleOption } from '../../models/role.model';
-import { lastValueFrom, map } from 'rxjs';
+import { forkJoin, lastValueFrom, map } from 'rxjs';
 
 @Component({
   selector: 'app-profile-settings',
@@ -51,7 +51,7 @@ export class ProfileSettingsComponent implements OnInit {
   constructor(
     private profileService: ProfileService,
     private authService: AuthenticationService,
-    private fileUploadService: FileUploadService
+    public fileUploadService: FileUploadService
   ) {}
 
   ngOnInit() {
@@ -148,24 +148,68 @@ export class ProfileSettingsComponent implements OnInit {
       this.error = 'Cannot upload while account is pending verification';
       return;
     }
-    const files = (event.target as HTMLInputElement).files;
-    if (files) {
-      const videos: string[] = [];
-      let loadedFiles = 0;
 
-      Array.from(files).forEach(file => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          videos.push(reader.result as string);
-          loadedFiles++;
-          
-          if (loadedFiles === files.length) {
-            this.updateVideos(videos);
+    const files = (event.target as HTMLInputElement).files;
+    if (!files || files.length === 0) return;
+
+    this.isLoading = true;
+    this.error = '';
+
+    // Process each video file
+    Array.from(files).forEach(file => {
+      // Validate file type
+      if (!file.type.startsWith('video/')) {
+        this.error = 'Invalid file type. Please select video files only.';
+        this.isLoading = false;
+        return;
+      }
+
+      // Validate file size (e.g., 100MB limit)
+      if (file.size > 100 * 1024 * 1024) {
+        this.error = 'Video file size must be less than 100MB';
+        this.isLoading = false;
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64Data = reader.result as string;
+        this.fileUploadService.uploadVideo(
+          base64Data,
+          file.name,
+          file.type,
+          this.userId
+        ).subscribe({
+          next: (response: any) => {
+            if (response.fileId) {
+              this.profileService.updateVideos(this.userId, [response.fileId]).subscribe({
+                next: (updatedProfile) => {
+                  this.profile = updatedProfile;
+                  this.isLoading = false;
+                },
+                error: (err) => {
+                  this.error = 'Failed to update profile with new video';
+                  this.isLoading = false;
+                  console.error(err);
+                }
+              });
+            }
+          },
+          error: (error) => {
+            this.error = 'Failed to upload video: ' + (error.message || 'Unknown error');
+            this.isLoading = false;
+            console.error('Video upload error:', error);
           }
-        };
-        reader.readAsDataURL(file);
-      });
-    }
+        });
+      };
+
+      reader.onerror = () => {
+        this.error = 'Error reading video file';
+        this.isLoading = false;
+      };
+
+      reader.readAsDataURL(file);
+    });
   }
 
   updateProfilePicture(profilePicture: string) {
@@ -187,37 +231,62 @@ export class ProfileSettingsComponent implements OnInit {
 
   updateImages(images: string[]) {
     this.isLoading = true;
-    this.profileService.updateImages(this.userId, images)
-      .subscribe({
-        next: (updatedProfile) => {
-          console.log('Updated profile:', this.userId, images);
-          this.profile = updatedProfile;
-          this.isLoading = false;
-          this.error = '';
-        },
-        error: (err) => {
-          this.isLoading = false;
-          this.error = 'Failed to update images';
-          console.error(err);
-        }
-      });
+    const uploadObservables = images.map(image =>
+      this.fileUploadService.uploadImage(image, 'gallery_image.png', 'image/png', this.userId)
+    );
+    
+    forkJoin(uploadObservables).subscribe({
+      next: (responses: any[]) => {
+        const fileIds = responses.map(res => res.fileId);
+        this.profileService.updateImages(this.userId, fileIds).subscribe({
+          next: (updatedProfile) => {
+            console.log('Updated profile:', this.userId, fileIds);
+            this.profile = updatedProfile;
+            this.isLoading = false;
+          },
+          error: (err) => {
+            this.error = 'Failed to update profile images';
+            this.isLoading = false;
+            console.error(err);
+          }
+        });
+      },
+      error: (error) => {
+        this.error = 'Image upload failed: ' + error.message;
+        this.isLoading = false;
+        console.error(error);
+      }
+    });
   }
 
   updateVideos(videos: string[]) {
+    console.log('Videos:', videos);
     this.isLoading = true;
-    this.profileService.updateVideos(this.userId, videos)
-      .subscribe({
-        next: (updatedProfile) => {
-          this.profile = updatedProfile;
-          this.isLoading = false;
-          this.error = '';
-        },
-        error: (err) => {
-          this.isLoading = false;
-          this.error = 'Failed to update videos';
-          console.error(err);
-        }
-      });
+    const uploadObservables = videos.map(video =>
+      this.fileUploadService.uploadVideo(video, 'profile_video.mp4', 'video/mp4', this.userId)
+    );
+    
+    forkJoin(uploadObservables).subscribe({
+      next: (responses: any[]) => {
+        const fileIds = responses.map(res => res.fileId);
+        this.profileService.updateVideos(this.userId, fileIds).subscribe({
+          next: (updatedProfile) => {
+            this.profile = updatedProfile;
+            this.isLoading = false;
+          },
+          error: (err) => {
+            this.error = 'Failed to update profile videos';
+            this.isLoading = false;
+            console.error(err);
+          }
+        });
+      },
+      error: (error) => {
+        this.error = 'Video upload failed: ' + error.message;
+        this.isLoading = false;
+        console.error(error);
+      }
+    });
   }
 
   handleServiceChange(service: string, event: Event) {

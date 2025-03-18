@@ -111,8 +111,8 @@
 
     <!-- Add gallery component -->
     <app-profile-gallery 
-      [images]="profile.images"
-      [videos]="profile.videos"
+      [images]="transformedImages"
+      [videos]="transformedVideos"
       [isCurrentUser]="isCurrentUser"
       [canUpload]="canUpload()"
       (mediaClick)="openMediaModal($event)"
@@ -399,10 +399,9 @@
     <div class="modal-content" (click)="$event.stopPropagation()">
       <span class="close-button" (click)="closeMediaModal()">&times;</span>
       <ng-container [ngSwitch]="getMediaType(selectedMedia)">
-        <img *ngSwitchCase="'image'" [src]="selectedMedia" alt="Full size image">
+        <img *ngSwitchCase="'image'" [src]="fileUploadService.getMediaUrl(getOriginalMediaId(selectedMedia))" alt="Full size image">
         <video *ngSwitchCase="'video'" controls autoplay>
-          <source [src]="selectedMedia" type="video/mp4">
-          Your browser does not support the video tag.
+          <source [src]="fileUploadService.getMediaUrl(getOriginalMediaId(selectedMedia))" type="video/mp4">
         </video>
       </ng-container>
     </div>

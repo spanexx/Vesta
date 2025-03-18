@@ -7,9 +7,11 @@ import rateLimit from 'express-rate-limit';
 import authRoutes from './routes/auth.js';
 import profileRoutes from './routes/profiles.js';
 import moderationRoutes from './routes/moderation.js';
-import uploadRoutes from './routes/upload.js';  // Changed from uploadRoutes.js to upload.js
+// import uploadRoutes from './routes/upload.js';  // Changed from uploadRoutes.js to upload.js
 import paymentRoutes from './routes/payments.js';  // Add this import
 import videoUploadRoutes from './routes/videoUpload.js'; // Add this import
+import mediaRouter from './routes/media.js';
+
 import { Server } from 'socket.io';
 import { createServer } from 'http';
 import path from 'path';
@@ -97,9 +99,10 @@ mongoose.connect(process.env.MONGODB_URI)
 app.use('/api/auth', authRoutes);
 app.use('/api/profiles', profileRoutes);
 app.use('/api/moderation', moderationRoutes);
-app.use('/api/payments', paymentRoutes);  // Add this line
-app.use('/api/profiles', uploadRoutes);
-app.use('/api/videos', videoUploadRoutes); // Add this line
+app.use('/api/payments', paymentRoutes);
+// app.use('/api/upload', uploadRoutes);
+app.use('/api/videos', videoUploadRoutes);
+app.use('/media', mediaRouter);  // Changed from /api/media to /media
 
 // Content moderation middleware
 app.use((req, res, next) => {

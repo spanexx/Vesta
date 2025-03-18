@@ -97,11 +97,14 @@ export class ProfileDetailComponent implements OnInit {
   usePhoneForWhatsapp = false;
   isAuthenticated = false;
 
+  transformedImages: string[] = [];
+  transformedVideos: string[] = [];
+
   constructor(
     private route: ActivatedRoute,
     private profileService: ProfileService,
     private authService: AuthenticationService,
-    private fileUploadService: FileUploadService,
+    public fileUploadService: FileUploadService,
     private currencyConversionService: CurrencyConversionService
   ) {}
 
@@ -155,6 +158,15 @@ export class ProfileDetailComponent implements OnInit {
         
         this.selectedCurrency = this.rates.currency;
         this.isLoading = false;
+
+        // Transform media URLs
+        this.transformedImages = (profile.images || []).map(imageId => 
+          this.fileUploadService.getMediaUrl(imageId)
+        );
+        
+        this.transformedVideos = (profile.videos || []).map(videoId => 
+          this.fileUploadService.getMediaUrl(videoId)
+        );
 
         // Update current user status
         this.authService.currentUser$.subscribe(currentUser => {
@@ -323,11 +335,8 @@ export class ProfileDetailComponent implements OnInit {
   }
 
   // Update methods
-  openMediaModal(mediaUrl: string) {
-    // Only open modal for images
-    if (this.getMediaType(mediaUrl) === 'image') {
-      this.selectedMedia = mediaUrl;
-    }
+  openMediaModal(mediaId: string) {
+    this.selectedMedia = mediaId;
   }
 
   closeMediaModal() {
@@ -791,16 +800,31 @@ export class ProfileDetailComponent implements OnInit {
     if (!this.profile?._id) return;
 
     if (confirm('Are you sure you want to delete this image?')) {
-      this.profileService.deleteImage(this.profile._id, imageUrl).subscribe({
-        next: (updatedProfile) => {
-          if (this.profile) {
-            this.profile.images = updatedProfile.images || [];
-          }
+      const imageId = this.getOriginalMediaId(imageUrl);
+      
+      // First delete the media file
+      this.fileUploadService.deleteMedia(imageId).subscribe({
+        next: () => {
+          // Then update the profile to remove the reference
+          this.profileService.deleteImage(this.profile!._id, imageId).subscribe({
+            next: (updatedProfile) => {
+              if (this.profile) {
+                this.profile.images = updatedProfile.images || [];
+                // Update the transformed images array
+                this.transformedImages = this.profile.images.map(id => 
+                  this.fileUploadService.getMediaUrl(id)
+                );
+              }
+            },
+            error: (error) => {
+              this.error = 'Failed to update profile after image deletion';
+              console.error('Error updating profile:', error);
+            }
+          });
         },
         error: (error) => {
-          this.error = 'Failed to delete image';
-          console.error('Error deleting image:', error);
-          setTimeout(() => this.error = '', 3000);
+          this.error = 'Failed to delete image file';
+          console.error('Error deleting image file:', error);
         }
       });
     }
@@ -810,16 +834,31 @@ export class ProfileDetailComponent implements OnInit {
     if (!this.profile?._id) return;
 
     if (confirm('Are you sure you want to delete this video?')) {
-      this.profileService.deleteVideo(this.profile._id, videoUrl).subscribe({
-        next: (updatedProfile) => {
-          if (this.profile) {
-            this.profile.videos = updatedProfile.videos || [];
-          }
+      const videoId = this.getOriginalMediaId(videoUrl);
+      
+      // First delete the media file
+      this.fileUploadService.deleteMedia(videoId).subscribe({
+        next: () => {
+          // Then update the profile to remove the reference
+          this.profileService.deleteVideo(this.profile!._id, videoId).subscribe({
+            next: (updatedProfile) => {
+              if (this.profile) {
+                this.profile.videos = updatedProfile.videos || [];
+                // Update the transformed videos array
+                this.transformedVideos = this.profile.videos.map(id => 
+                  this.fileUploadService.getMediaUrl(id)
+                );
+              }
+            },
+            error: (error) => {
+              this.error = 'Failed to update profile after video deletion';
+              console.error('Error updating profile:', error);
+            }
+          });
         },
         error: (error) => {
-          this.error = 'Failed to delete video';
-          console.error('Error deleting video:', error);
-          setTimeout(() => this.error = '', 3000);
+          this.error = 'Failed to delete video file';
+          console.error('Error deleting video file:', error);
         }
       });
     }
@@ -827,5 +866,10 @@ export class ProfileDetailComponent implements OnInit {
 
   getRatePath(type: 'incall' | 'outcall', duration: string): EditableFields {
     return `rates.${type}.${duration}` as EditableFields;
+  }
+
+  getOriginalMediaId(mediaUrl: string): string {
+    // Extract the ID from the end of the URL
+    return mediaUrl.split('/').pop() || '';
   }
 }

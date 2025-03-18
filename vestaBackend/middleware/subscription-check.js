@@ -23,7 +23,7 @@ const featureLimits = {
   }
 };
 
-export const checkUploadLimits = async (req, res, next) => {
+const checkUploadLimits = async (req, res, next) => {
   try {
     const profile = await UserProfile.findById(req.params.userId,);
     if (!profile) {
@@ -77,3 +77,5 @@ export const checkUploadLimits = async (req, res, next) => {
     });
   }
 };
+
+export default checkUploadLimits;
