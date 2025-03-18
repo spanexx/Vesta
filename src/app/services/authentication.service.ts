@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, catchError, tap, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, tap, throwError } from 'rxjs'
 import { UserProfile } from '../models/userProfile.model';
 import { authRoutes, meRoute } from '../../environments/apiRoutes';
 import { LoginResponse } from '../interfaces/auth.interface';

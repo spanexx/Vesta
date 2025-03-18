@@ -7,6 +7,7 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { FileUploadService } from '../../services/file-upload.service';
 import { Role, RoleOption } from '../../models/role.model';
 import { forkJoin, lastValueFrom, map } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-profile-settings',
@@ -51,7 +52,8 @@ export class ProfileSettingsComponent implements OnInit {
   constructor(
     private profileService: ProfileService,
     private authService: AuthenticationService,
-    public fileUploadService: FileUploadService
+    public fileUploadService: FileUploadService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
@@ -145,7 +147,10 @@ export class ProfileSettingsComponent implements OnInit {
 
   onVideosSelected(event: Event) {
     if (!this.canUpload()) {
-      this.error = 'Cannot upload while account is pending verification';
+      this.snackBar.open('Cannot upload while account is pending verification', 'Close', {
+        duration: 5000,
+        panelClass: ['error-snackbar']
+      });
       return;
     }
 
@@ -153,21 +158,23 @@ export class ProfileSettingsComponent implements OnInit {
     if (!files || files.length === 0) return;
 
     this.isLoading = true;
-    this.error = '';
 
-    // Process each video file
     Array.from(files).forEach(file => {
-      // Validate file type
       if (!file.type.startsWith('video/')) {
-        this.error = 'Invalid file type. Please select video files only.';
         this.isLoading = false;
+        this.snackBar.open('Invalid file type. Please select video files only.', 'Close', {
+          duration: 5000,
+          panelClass: ['error-snackbar']
+        });
         return;
       }
 
-      // Validate file size (e.g., 100MB limit)
       if (file.size > 100 * 1024 * 1024) {
-        this.error = 'Video file size must be less than 100MB';
         this.isLoading = false;
+        this.snackBar.open('Video file size must be less than 100MB', 'Close', {
+          duration: 5000,
+          panelClass: ['error-snackbar']
+        });
         return;
       }
 
@@ -186,26 +193,37 @@ export class ProfileSettingsComponent implements OnInit {
                 next: (updatedProfile) => {
                   this.profile = updatedProfile;
                   this.isLoading = false;
+                  this.snackBar.open('Video uploaded successfully', 'Close', {
+                    duration: 3000,
+                    panelClass: ['success-snackbar']
+                  });
                 },
                 error: (err) => {
-                  this.error = 'Failed to update profile with new video';
                   this.isLoading = false;
-                  console.error(err);
+                  this.snackBar.open(err.error?.message || 'Failed to update profile with new video', 'Close', {
+                    duration: 5000,
+                    panelClass: ['error-snackbar']
+                  });
                 }
               });
             }
           },
           error: (error) => {
-            this.error = 'Failed to upload video: ' + (error.message || 'Unknown error');
             this.isLoading = false;
-            console.error('Video upload error:', error);
+            this.snackBar.open(error.error?.message || 'Failed to upload video', 'Close', {
+              duration: 5000,
+              panelClass: ['error-snackbar']
+            });
           }
         });
       };
 
       reader.onerror = () => {
-        this.error = 'Error reading video file';
         this.isLoading = false;
+        this.snackBar.open('Error reading video file', 'Close', {
+          duration: 5000,
+          panelClass: ['error-snackbar']
+        });
       };
 
       reader.readAsDataURL(file);
@@ -231,9 +249,13 @@ export class ProfileSettingsComponent implements OnInit {
 
   updateImages(images: string[]) {
     this.isLoading = true;
-    const uploadObservables = images.map(image =>
-      this.fileUploadService.uploadImage(image, 'gallery_image.png', 'image/png', this.userId)
-    );
+    const uploadObservables = images.map(image => {
+      // Extract the actual content type from the base64 string
+      const contentType = image.split(';')[0].split(':')[1];
+      const filename = `gallery_image.${contentType.split('/')[1]}`; // Use appropriate extension
+      
+      return this.fileUploadService.uploadImage(image, filename, contentType, this.userId);
+    });
     
     forkJoin(uploadObservables).subscribe({
       next: (responses: any[]) => {
@@ -243,18 +265,26 @@ export class ProfileSettingsComponent implements OnInit {
             console.log('Updated profile:', this.userId, fileIds);
             this.profile = updatedProfile;
             this.isLoading = false;
+            this.snackBar.open('Images uploaded successfully', 'Close', {
+              duration: 3000,
+              panelClass: ['success-snackbar']
+            });
           },
           error: (err) => {
-            this.error = 'Failed to update profile images';
             this.isLoading = false;
-            console.error(err);
+            this.snackBar.open(err.error?.message || 'Failed to update profile images', 'Close', {
+              duration: 5000,
+              panelClass: ['error-snackbar']
+            });
           }
         });
       },
       error: (error) => {
-        this.error = 'Image upload failed: ' + error.message;
         this.isLoading = false;
-        console.error(error);
+        this.snackBar.open(error.error?.message || 'Image upload failed', 'Close', {
+          duration: 5000,
+          panelClass: ['error-snackbar']
+        });
       }
     });
   }

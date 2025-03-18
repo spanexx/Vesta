@@ -3,6 +3,15 @@ import mongoose from 'mongoose';
 import { GridFSBucket } from 'mongodb';
 import { v4 as uuidv4 } from 'uuid';
 
+const SUPPORTED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/png',
+  'image/gif',
+  'image/webp',
+  'image/bmp',
+  'image/svg+xml'
+];
+
 class MediaStorageService {
   constructor() {
     this.bucket = null;
@@ -25,6 +34,10 @@ class MediaStorageService {
   async uploadBase64Media(base64Data, filename, contentType) {
     if (!this.bucket) {
       throw new Error('Storage not initialized');
+    }
+
+    if (contentType.startsWith('image/') && !SUPPORTED_IMAGE_TYPES.includes(contentType)) {
+      throw new Error('Unsupported image format. Supported formats: JPEG, PNG, GIF, WebP, BMP, SVG');
     }
     
     try {

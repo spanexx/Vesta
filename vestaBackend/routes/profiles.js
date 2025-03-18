@@ -492,7 +492,7 @@ router.patch('/field/:fieldName', auth, checkSubscription, async (req, res) => {
 });
 
 // Update images
-router.put('/:userId/images', checkUserStatus, checkUploadLimits, async (req, res) => {
+router.put('/:userId/images', checkUserStatus, async (req, res) => {
   try {
     const updatedProfile = await UserProfile.updateImages(req.params.userId, req.body.images);
     res.status(200).json(updatedProfile);
@@ -503,7 +503,7 @@ router.put('/:userId/images', checkUserStatus, checkUploadLimits, async (req, re
 });
 
 // Update videos
-router.put('/:userId/videos', checkUserStatus, checkUploadLimits, async (req, res) => {
+router.put('/:userId/videos', checkUserStatus, async (req, res) => {
   try {
     const updatedProfile = await UserProfile.updateVideos(req.params.userId, req.body.videos);
     res.status(200).json(updatedProfile);

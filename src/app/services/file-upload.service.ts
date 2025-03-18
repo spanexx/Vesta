@@ -3,6 +3,7 @@ import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { profileRoutes } from '../../environments/apiRoutes';
+import { AuthenticationService } from './authentication.service';
 
 interface UploadResponse {
   success: boolean;

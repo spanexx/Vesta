@@ -121,11 +121,19 @@ body.dark-mode .overlay {
 }
 
 /* Snackbar styles */
+.success-snackbar {
+  background: #4caf50;
+  color: white;
+}
+
 .error-snackbar {
   background: #ff4444;
   color: white;
 }
 
+
+
+.success-snackbar .mat-simple-snackbar-action,
 .error-snackbar .mat-simple-snackbar-action {
   color: white;
 }

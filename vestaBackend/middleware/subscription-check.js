@@ -8,25 +8,27 @@ const featureLimits = {
   },
   standard: {
     photoLimit: 5,
-    videoLimit: 0,
+    videoLimit: 1,
     canUploadVideos: false
   },
   premium: {
-    photoLimit: 20,
-    videoLimit: 5,
+    photoLimit: 8,
+    videoLimit: 3,
     canUploadVideos: true
   },
   vip: {
-    photoLimit: -1, // unlimited
-    videoLimit: -1, // unlimited
+    photoLimit: 10, // unlimited
+    videoLimit: 5, // unlimited
     canUploadVideos: true
   }
 };
 
-const checkUploadLimits = async (req, res, next) => {
+export const checkUploadLimits = async (req, res, next) => {
   try {
-    const profile = await UserProfile.findById(req.params.userId,);
+    const profile = await UserProfile.findById(req.body.userId);
+    console.log('Req body:', req.body);
     if (!profile) {
+      console.error('Profile not found');
       return res.status(404).json({
         error: 'PROFILE_NOT_FOUND',
         message: 'Profile not found'
@@ -35,11 +37,29 @@ const checkUploadLimits = async (req, res, next) => {
 
     const tier = profile.profileLevel || 'free';
     const limits = featureLimits[tier];
+
+        // Determine file type from contentType
+        const fileType = req.body.contentType?.startsWith('image/') ? 'photo' : 
+        req.body.contentType?.startsWith('video/') ? 'video' : null;
+
+    // Validate content type matches declared type
+    const declaredType = req.body.contentType;
+    const actualType = req.body.base64Data?.split(';')[0]?.split(':')[1];
+    console.log('Declared type:', declaredType);
+    console.log('Actual type:', actualType);
+    if (actualType && declaredType !== actualType) {
+      return res.status(400).json({
+        error: 'CONTENT_TYPE_MISMATCH',
+        message: `Content type mismatch: declared ${declaredType}, actual ${actualType}`
+      });
+    }
     
     // Check file type and apply relevant limits
-    if (req.body.fileType === 'photo') {
+    if (req.body.contentType === 'image/jpeg' || req.body.contentType === 'image/png') {
       const currentPhotoCount = profile.images?.length || 0;
+      console.log('Current photo count:', currentPhotoCount);
       const newPhotoCount = Array.isArray(req.body.files) ? req.body.files.length : 1;
+      console.log('New photo count:', newPhotoCount);
       
       if (limits.photoLimit !== -1 && currentPhotoCount + newPhotoCount > limits.photoLimit) {
         return res.status(403).json({
@@ -49,8 +69,9 @@ const checkUploadLimits = async (req, res, next) => {
       }
     }
 
-    if (req.body.fileType === 'video') {
+    if (fileType === 'video') {
       if (!limits.canUploadVideos) {
+
         return res.status(403).json({
           error: 'FEATURE_NOT_AVAILABLE',
           message: `Video uploads not available for ${tier} tier`
@@ -70,6 +91,7 @@ const checkUploadLimits = async (req, res, next) => {
 
     next();
   } catch (error) {
+    console.error('Error checking upload limits:', error);
     res.status(500).json({
       error: 'SERVER_ERROR',
       message: 'Error checking upload limits',
@@ -77,5 +99,6 @@ const checkUploadLimits = async (req, res, next) => {
     });
   }
 };
+
 
 export default checkUploadLimits;

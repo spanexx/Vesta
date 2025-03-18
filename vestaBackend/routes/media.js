@@ -19,7 +19,7 @@ const router = express.Router();
 router.post(
   '/upload-images',
   auth,
-
+  checkUploadLimits,
   async (req, res) => {
     const { base64Data, filename, contentType, userId } = req.body;
 
@@ -78,6 +78,7 @@ router.post(
 router.post(
   '/upload-video',
   auth,
+    checkUploadLimits,
 
   async (req, res) => {
     const { base64Data, filename, contentType, userId } = req.body;
