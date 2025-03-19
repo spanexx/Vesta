@@ -101,6 +101,8 @@ export class ProfileDetailComponent implements OnInit {
   transformedImages: string[] = [];
   transformedVideos: string[] = [];
 
+  currentUser: any; // assumed to be retrieved from authService
+
   constructor(
     private route: ActivatedRoute,
     private profileService: ProfileService,
@@ -130,6 +132,8 @@ export class ProfileDetailComponent implements OnInit {
     this.authService.currentUser$.subscribe(user => {
       this.isAuthenticated = !!user;
     });
+
+    this.authService.currentUser$.subscribe(user => this.currentUser = user);
   }
 
   private loadProfile(id: string) {
@@ -299,20 +303,35 @@ export class ProfileDetailComponent implements OnInit {
   }
 
   addUserLike() {
-    if (!this.isAuthenticated) {
+    if (!this.isAuthenticated || !this.profile) {
       return;
     }
-
-    if (this.profile?._id) {
-      this.profileService.addUserLike(this.profile._id).subscribe({
-        next: (response) => {
-          if (this.profile) {
-            this.profile.userlikes = response.userlikes;
-          }
-        },
-        error: () => {} // Silent error handling
-      });
+    // Prevent liking own profile
+    if (this.currentUser && this.currentUser._id === this.profile._id) {
+      this.error = 'You cannot like your own profile';
+      console.log('Attempted to like own profile');
+      setTimeout(() => { this.error = ''; }, 3000);
+      return;
     }
+    this.profileService.addUserLike(this.profile._id).subscribe({
+      next: (response) => {
+        if (this.profile) {
+          this.profile.userlikes = response.userlikes;
+        }
+      },
+      error: (err) => {
+        const errorMsg = err?.error?.message || '';
+        if (errorMsg === 'You have already liked this profile') {
+          this.error = 'You have already liked this profile';
+          setTimeout(() => { this.error = ''; }, 3000);
+        } else if (errorMsg === 'You cannot like your own profile') {
+          this.error = 'You cannot like your own profile';
+          setTimeout(() => { this.error = ''; }, 3000);
+        } else {
+          console.error('Error liking profile:', err);
+        }
+      }
+    });
   }
 
   addViewerLike() {

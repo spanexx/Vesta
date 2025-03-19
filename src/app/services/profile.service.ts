@@ -93,7 +93,6 @@ export class ProfileService {
   }
 
   addUserLike(profileId: string): Observable<{ userlikes: number }> {
-    // If already liked, return current likes count without error
     if (this.isProfileLikedAnonymously(profileId)) {
       return this.getProfileById(profileId).pipe(
         map(profile => ({ userlikes: profile.userlikes || 0 }))
@@ -111,12 +110,17 @@ export class ProfileService {
       { headers }
     ).pipe(
       catchError(error => {
-        if (error.status === 400) {
-          // If already liked, fetch current likes count
+        if (
+          error.status === 400 &&
+          (error?.error?.error === 'ALREADY_LIKED' ||
+           error?.error?.message?.includes('already liked'))
+        ) {
+          // Return an observable with the current userlikes count
           return this.getProfileById(profileId).pipe(
             map(profile => ({ userlikes: profile.userlikes || 0 }))
           );
         }
+        // Propagate other errors
         return throwError(() => error);
       })
     );

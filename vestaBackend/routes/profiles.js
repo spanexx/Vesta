@@ -347,30 +347,22 @@ router.get('/:id', checkSubscription, async (req, res) => {
 
 // Add user like to profile
 router.post('/:id/like/user', auth, async (req, res) => {
-  try {
-    // Check if user is trying to like their own profile
-    if (req.params.id === req.userId) {
-      return res.status(400).json({
-        error: 'INVALID_ACTION',
-        message: 'You cannot like your own profile'
-      });
-    }
-
-    const profile = await UserProfile.incrementUserLikes(req.params.id, req.userId);
-    if (!profile) {
-      return res.status(400).json({
-        error: 'ALREADY_LIKED',
-        message: 'You have already liked this profile'
-      });
-    }
-    res.json({ userlikes: profile.userlikes });
-  } catch (error) {
-    console.error('Like error:', error);
-    res.status(500).json({
-      error: 'LIKE_UPDATE_FAILED',
-      message: 'Failed to update user likes'
+  // Prevent liking own profile
+  if (req.params.id === req.userId) {
+    return res.status(400).json({
+      error: 'INVALID_ACTION',
+      message: 'You cannot like your own profile'
     });
   }
+
+  const profile = await UserProfile.incrementUserLikes(req.params.id, req.userId);
+  if (!profile) {
+    return res.status(400).json({
+      error: 'ALREADY_LIKED',
+      message: 'You have already liked this profile'
+    });
+  }
+  res.json({ userlikes: profile.userlikes });
 });
 
 // Add viewer like to profile
