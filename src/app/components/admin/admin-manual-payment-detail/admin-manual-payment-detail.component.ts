@@ -34,6 +34,7 @@ export class AdminManualPaymentDetailComponent implements OnInit {
   loadPaymentDetails(): void {
     this.paymentService.getManualPayments().subscribe({
       next: (payments) => {
+        console.log('Loaded payments:', payments);
         this.payment = payments.find(p => p._id === this.paymentId) || null;
         this.loading = false;
       },
@@ -46,11 +47,21 @@ export class AdminManualPaymentDetailComponent implements OnInit {
   }
 
   async confirmPayment(): Promise<void> {
+    if (!this.payment) return;
+
     try {
-      await firstValueFrom(this.paymentService.confirmManualPayment(this.paymentId));
-      this.router.navigate(['/admin/manual-payers']);
+      this.error = '';
+      // Call the service and handle the response
+      const response = await firstValueFrom(this.paymentService.confirmManualPayment(this.paymentId));
+      if (response.success) {
+        // Navigate back to list on success
+        this.router.navigate(['/admin/manual-payers']);
+      } else {
+        this.error = response.message || 'Failed to confirm payment';
+      }
     } catch (err: any) {
       this.error = err.message || 'Failed to confirm payment';
+      console.error('Payment confirmation error:', err);
     }
   }
 

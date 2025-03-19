@@ -136,7 +136,6 @@ export class ProfileDetailComponent implements OnInit {
     this.isLoading = true;
     this.profileService.getProfileById(id).subscribe({
       next: (profile) => {
-        console.log('Loaded profile services:', profile.services); // Add logging
         this.profile = {
           ...profile,
           role: profile.role?.length ? profile.role : ['onenight'],
@@ -146,9 +145,6 @@ export class ProfileDetailComponent implements OnInit {
           }
         };
         
-        // Log the initialized profile
-        console.log('Initialized profile services:', this.profile.services);
-
         // Initialize rates with default values and proper type checking
         this.rates = {
           incall: { ...(profile.rates?.incall || {}) },

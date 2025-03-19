@@ -356,4 +356,67 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
+// Add video upload route
+router.post(
+  '/video-upload-subscriber',
+  auth,
+  async (req, res) => {
+    const { base64Data, filename, contentType, userId } = req.body;
+
+    if (!base64Data || !filename || !contentType || !userId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required fields',
+        details: {
+          base64Data: !base64Data,
+          filename: !filename,
+          contentType: !contentType,
+          userId: !userId
+        }
+      });
+    }
+
+    try {
+      // Validate video content type
+      if (!contentType.startsWith('video/')) {
+        throw new Error('Invalid content type. Must be a video file.');
+      }
+
+      // Upload file to GridFS
+      const fileId = await mediaStorage.uploadBase64Media(base64Data, filename, contentType);
+      
+      // Update user profile with video ID
+      const updatedProfile = await UserProfile.findByIdAndUpdate(
+        userId,
+        {
+          subscriberVideo: {
+            url: fileId.toString(),
+            uploadedAt: new Date(),
+            title: filename,
+            description: ''
+          }
+        },
+        { new: true }
+      );
+
+      if (!updatedProfile) {
+        throw new Error('Failed to update user profile with video');
+      }
+
+      res.status(200).json({
+        success: true,
+        fileId: fileId.toString(),
+        profile: updatedProfile
+      });
+    } catch (error) {
+      console.error('Error uploading video:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message,
+        details: error.stack
+      });
+    }
+  }
+);
+
 export default router;

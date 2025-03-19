@@ -332,6 +332,92 @@ router.get('/manual-payments', async (req, res) => {
   }
 });
 
+// Confirm manual payment
+router.post('/confirm-manual-payment/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find the manual payment
+    const manualPayment = await ManualPaymentData.findById(id);
+    
+    if (!manualPayment) {
+      return res.status(404).json({
+        error: 'PAYMENT_NOT_FOUND',
+        message: 'Manual payment not found'
+      });
+    }
+
+    // Find the user profile by username
+    const userProfile = await UserProfile.findOne({ username: manualPayment.username });
+    if (!userProfile) {
+      return res.status(404).json({
+        error: 'USER_NOT_FOUND',
+        message: 'User profile not found'
+      });
+    }
+
+    // Calculate subscription end date based on interval
+    const startDate = new Date();
+    const currentPeriodEnd = new Date(startDate);
+    switch(manualPayment.interval.toLowerCase()) {
+      case 'month':
+        currentPeriodEnd.setMonth(currentPeriodEnd.getMonth() + 1);
+        break;
+      case 'year':
+        currentPeriodEnd.setFullYear(currentPeriodEnd.getFullYear() + 1);
+        break;
+      default:
+        currentPeriodEnd.setMonth(currentPeriodEnd.getMonth() + 1); // Default to 1 month
+    }
+
+    // Check if this is a video creator subscription
+    if (manualPayment.plan.toLowerCase() === 'video creator') {
+      // Update video subscription
+      await UserProfile.findByIdAndUpdate(
+        userProfile._id,
+        {
+          videoSubscription: {
+            isSubscribed: true,
+            subscribedAt: startDate,
+            expiresAt: currentPeriodEnd
+          }
+        },
+        { new: true }
+      );
+    } else {
+      // Update regular profile subscription
+      await UserProfile.findByIdAndUpdate(
+        userProfile._id,
+        {
+          profileLevel: manualPayment.plan.toLowerCase(),
+          subscription: {
+            stripeSubscriptionId: `manual_${id}`,
+            startDate: startDate,
+            currentPeriodEnd: currentPeriodEnd,
+            status: 'active'
+          }
+        },
+        { new: true }
+      );
+    }
+
+    // Delete the manual payment record
+    await ManualPaymentData.findByIdAndDelete(id);
+
+    res.json({
+      success: true,
+      message: `${manualPayment.plan} subscription activated successfully`
+    });
+
+  } catch (error) {
+    console.error('Manual payment confirmation error:', error);
+    res.status(500).json({
+      error: 'CONFIRMATION_FAILED',
+      message: error.message
+    });
+  }
+});
+
 // Webhook handler
 router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];

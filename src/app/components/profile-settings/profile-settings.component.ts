@@ -530,6 +530,6 @@ export class ProfileSettingsComponent implements OnInit {
     if (this.profile?.profilePicture) {
       return this.fileUploadService.getMediaUrl(this.profile.profilePicture);
     }
-    return 'assets/default-profile.jpg';
+    return 'assets/avatar.jpg';
   }
 }

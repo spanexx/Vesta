@@ -12,7 +12,7 @@
         <div *ngIf="currentVideo" class="current-video">
           <h3>Your Current Video</h3>
           <video controls>
-            <source [src]="safeVideoUrl(currentVideo.url)" type="video/mp4">
+            <source [src]="getVideoUrl(currentVideo.url)" type="video/mp4">
             Your browser does not support the video tag.
           </video>
           <p>Title: {{currentVideo.title}}</p>
@@ -61,13 +61,13 @@
       <div class="videos-grid">
         <div *ngFor="let video of allVideos" class="video-card">
           <div class="video-header">
-            <img [src]="video.profilePicture || 'assets/default-avatar.jpg'" 
+            <img [src]="video.profilePicture || 'assets/avatar.jpg'" 
                  alt="Profile picture" 
                  class="profile-pic">
             <span class="username" [routerLink]="['/profile', video.userId]" style="cursor: pointer;">{{video.username}}</span>
           </div>
           <video controls class="video-player">
-            <source [src]="safeVideoUrl(video.url)" type="video/mp4">
+            <source [src]="getVideoUrl(video.url)" type="video/mp4">
             Your browser does not support the video tag.
           </video>
           <div class="video-info">

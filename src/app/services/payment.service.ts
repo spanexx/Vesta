@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 interface PaymentIntent {
   clientSecret: string;
@@ -97,10 +97,17 @@ export class PaymentService {
   }
 
   confirmManualPayment(paymentId: string): Observable<any> {
+    // Update to use direct endpoint without payload since ID is in URL
     return this.http.post<any>(`${this.apiUrl}/confirm-manual-payment/${paymentId}`, {}).pipe(
+      map(response => {
+        if (!response.success) {
+          throw new Error(response.message || 'Failed to confirm payment');
+        }
+        return response;
+      }),
       catchError(error => {
         console.error('Manual payment confirmation failed:', error);
-        throw error;
+        throw new Error(error.error?.message || 'Failed to confirm payment');
       })
     );
   }

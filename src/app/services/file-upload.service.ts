@@ -85,13 +85,21 @@ export class FileUploadService {
   }
 
   /**
-   * Uploads a video to the server.
-   * Expects base64Data, original filename, MIME type and the user ID.
+   * Upload a video file
    */
   uploadVideo(base64Data: string, filename: string, contentType: string, userId: string) {
     const payload = { base64Data, filename, contentType, userId };
-    console.log('payload', payload);
+console.log('payload', payload);
+console.log('payload', payload);
     return this.http.post(`${this.mediaBaseUrl}/upload-video`, payload);
+  }
+
+  /**
+   * Upload a subscriber video file
+   */
+  uploadSubscriberVideo(base64Data: string, filename: string, contentType: string, userId: string): Observable<any> {
+    const payload = { base64Data, filename, contentType, userId };
+    return this.http.post(`${this.mediaBaseUrl}/video-upload-subscriber`, payload);
   }
 
   /**

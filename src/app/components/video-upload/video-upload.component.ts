@@ -47,7 +47,7 @@ export class VideoUploadComponent implements OnInit {
     // Subscribe to auth state
     this.currentUser$.subscribe(user => {
       if (user) {
-        // Only check subscription and video for logged in users
+        this.userId = user._id; // Store userId when user logs in
         this.checkSubscription();
         this.getCurrentVideo();
       }
@@ -101,45 +101,40 @@ export class VideoUploadComponent implements OnInit {
     this.uploadProgress = 0;
 
     try {
-      // First upload the file to get the URL
-      const uploadResult = await new Promise<{ url: string }>((resolve, reject) => {
-        this.fileUploadService
-          .uploadFile(this.selectedVideo as File)
-          .subscribe({
-            next: (event: any) => {
-              if ('progress' in event) {
-                this.uploadProgress = event.progress;
-              } else if ('url' in event) {
-                resolve(event);
-              }
-            },
-            error: reject
-          });
+      const reader = new FileReader();
+      reader.readAsDataURL(this.selectedVideo);
+
+      const result = await new Promise<string>((resolve, reject) => {
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = () => reject(reader.error);
       });
 
-      if (!uploadResult.url) {
-        throw new Error('No URL received from file upload');
-      }
-
-      // Create payload for subscriber video
-      const videoPayload = {
-        videoUrl: uploadResult.url,
-        title: this.videoTitle || 'Untitled',
-        description: this.videoDescription || ''
-      };
-
-      // Then create the subscriber video with the URL
       const response = await lastValueFrom(
-        this.videoService.uploadSubscriberVideo(videoPayload)
+        this.fileUploadService.uploadSubscriberVideo(
+          result,
+          this.videoTitle || this.selectedVideo.name,
+          this.selectedVideo.type,
+          this.userId // Use stored userId instead of accessing from Observable
+        )
       );
 
-      // Reset form and refresh current video
-      this.selectedVideo = null;
-      this.videoTitle = '';
-      this.videoDescription = '';
-      this.uploadProgress = 0;
-      this.getCurrentVideo();
-      this.loadAllVideos(); // Refresh the videos list after upload
+      if (response.success) {
+        // Reset form and refresh
+        this.selectedVideo = null;
+        this.videoTitle = '';
+        this.videoDescription = '';
+        this.uploadProgress = 100;
+        this.getCurrentVideo();
+        this.loadAllVideos();
+
+        this.snackBar.open('Video uploaded successfully!', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom'
+        });
+      } else {
+        throw new Error(response.error || 'Failed to upload video');
+      }
 
     } catch (err: any) {
       this.error = err.message || 'Failed to upload video';
@@ -198,21 +193,10 @@ export class VideoUploadComponent implements OnInit {
     });
   }
 
-  safeVideoUrl(url: string): SafeResourceUrl {
-    if (!url) return '';
-    
-    // Handle both relative and absolute URLs
-    let fullUrl;
-    if (url.startsWith('http')) {
-      fullUrl = url;
-    } else {
-      // Extract filename and construct full URL
-      const filename = url.split('/').pop();
-      fullUrl = `${environment.baseUrl}/files/${filename}`;
-    }
-    
-    // Use bypassSecurityTrustResourceUrl for video sources
-    return this.sanitizer.bypassSecurityTrustResourceUrl(fullUrl);
+  getVideoUrl(videoId: string): SafeResourceUrl {
+    if (!videoId) return '';
+    const url = this.fileUploadService.getMediaUrl(videoId);
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
   toggleLike(video: SubscriberVideo) {

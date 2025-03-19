@@ -15,7 +15,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
           <div *ngFor="let image of images" 
                class="gallery-item"
                (click)="onImageClick(image)">
-            <img [src]="image" loading="lazy" [alt]="'Gallery image'">
+            <img [src]="image"  [alt]="'Gallery image'">
             <button *ngIf="isCurrentUser" 
                     class="delete-button" 
                     (click)="onDeleteImage(image); $event.stopPropagation()">
