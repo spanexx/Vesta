@@ -47,7 +47,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
   plan: string | null = null;
   subscriptionDetails: any;
   private userId: string = '';
-  paymentMethod: 'card' | 'crypto' = 'card';
+  paymentMethod: 'card' | 'crypto' | 'manual' = 'card';
   cryptoPaymentDetails: BinancePaymentResponse | null = null;  // Update type to use BinancePaymentResponse
   paymentTimeLeft: string = '';
   private paymentTimer: any;
@@ -425,13 +425,20 @@ export class PaymentComponent implements OnInit, OnDestroy {
     });
   }
 
-  selectPaymentMethod(method: 'card' | 'crypto') {
+  selectPaymentMethod(method: 'card' | 'crypto' | 'manual') {
     this.paymentMethod = method;
     
     // Clear any previous errors
     this.error = '';
-    
-    if (method === 'crypto') {
+
+    if (method === 'manual') {
+      this.router.navigate(['/manual-payment'], {
+        queryParams: {
+          plan: this.subscriptionDetails.plan,
+          amount: this.subscriptionDetails.amount,
+          interval: this.subscriptionDetails.interval
+        }});
+      } else if (method === 'crypto') {
       // Initialize crypto payment immediately
       this.initializeCryptoPayment();
     } else {

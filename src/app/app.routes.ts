@@ -20,6 +20,9 @@ import { AdminAnalyticsComponent } from './components/admin/admin-analytics/admi
 import { AdminEditUserComponent } from './components/admin/admin-edit-user/admin-edit-user.component';
 import { AdminHomeComponent } from './components/admin/admin-home/admin-home.component';
 import { AdminLayoutComponent } from './components/admin/admin-layout/admin-layout.component';
+import { ManualPaymentComponent } from './components/manual-payment/manual-payment.component';
+import { AdminManualPayersComponent } from './components/admin/admin-manual-payers/admin-manual-payers.component';
+import { AdminManualPaymentDetailComponent } from './components/admin/admin-manual-payment-detail/admin-manual-payment-detail.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -67,6 +70,12 @@ export const routes: Routes = [
     component: VideoPaymentComponent,
     canActivate: [authGuard]
   },
+  {
+   path: 'manual-payment',
+   component: ManualPaymentComponent,
+    canActivate: [authGuard]
+  },
+
   // Admin routes
   { 
     path: 'admin/login', 
@@ -83,7 +92,9 @@ export const routes: Routes = [
       { path: 'users', component: AdminUsersComponent },
       { path: 'moderation', component: AdminModerationComponent },
       { path: 'analytics', component: AdminAnalyticsComponent },
-      { path: 'users/:userId/edit', component: AdminEditUserComponent }
+      { path: 'users/:userId/edit', component: AdminEditUserComponent },
+      { path: 'manual-payers', component: AdminManualPayersComponent },
+      { path: 'manual-payers/:id', component: AdminManualPaymentDetailComponent }
     ]
   }
 ];

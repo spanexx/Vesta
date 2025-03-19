@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, map, catchError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { profileRoutes } from '../../environments/apiRoutes';
 import { AuthenticationService } from './authentication.service';
@@ -132,5 +132,18 @@ export class FileUploadService {
    */
   getMediaUrl(fileId: string): string {
     return `${this.baseUrl}/media/${fileId}`;
+  }
+
+  uploadPaymentSlip(base64Data: string, filename: string, contentType: string): Observable<any> {
+    return this.http.post(`${this.mediaBaseUrl}/payment-slip`, {
+      base64Data,
+      filename,
+      contentType
+    }).pipe(
+      catchError(error => {
+        console.error('Payment slip upload error:', error);
+        throw error;
+      })
+    );
   }
 }

@@ -1,0 +1,218 @@
+.manual-payment-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: var(--surface);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px var(--shadow);
+
+  h2 {
+    color: var(--text);
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+  }
+}
+
+.payment-details {
+  background: #fdf4fa;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  text-align: center;
+
+  .plan-details {
+    h3 {
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+
+    .amount {
+      color: var(--primary);
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+  }
+}
+
+.payment-method-selector {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+
+  button {
+    padding: 1rem 2rem;
+    border: 2px solid var(--primary);
+    border-radius: 10px;
+    background: white;
+    color: var(--primary);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(234, 100, 184, 0.2);
+    }
+  }
+}
+
+.payment-instructions {
+  background: var(--surface-light);
+  padding: 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+
+  h3 {
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+
+  ul {
+    list-style: disc;
+    margin-left: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-secondary);
+  }
+
+  .crypto-addresses {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+
+    .address-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+      
+      code {
+        background: #e9ecef;
+        padding: 0.5rem;
+        border-radius: 4px;
+        flex: 1;
+        font-family: monospace;
+        word-break: break-all;
+      }
+    }
+  }
+}
+
+.file-upload {
+  margin: 2rem 0;
+  text-align: center;
+
+  input[type="file"] {
+    display: none;
+  }
+
+  label {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(234, 100, 184, 0.3);
+    }
+  }
+
+  span {
+    display: block;
+    margin-top: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+}
+
+.error-message {
+  color: #ff4444;
+  margin: 1rem 0;
+  padding: 0.5rem;
+  border: 1px solid #ff4444;
+  border-radius: 4px;
+  background: #fff2f2;
+  text-align: center;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(234, 100, 184, 0.3);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+.user-info {
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-info label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.user-info input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.user-info input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+@media (max-width: 768px) {
+  .manual-payment-container {
+    margin: 1rem;
+    padding: 1rem;
+  }
+
+  .payment-method-selector {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+    }
+  }
+
+  .crypto-addresses .address-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}

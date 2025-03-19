@@ -13,6 +13,17 @@ export interface SubscriptionIntent extends PaymentIntent {
   subscriptionId: string;
 }
 
+export interface ManualPayment {
+  _id: string;
+  username: string;
+  email: string;
+  plan: string;
+  amount: string;
+  interval: string;
+  image: string;
+  createdAt: Date;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -20,7 +31,6 @@ export class PaymentService {
   private apiUrl = `${environment.apiUrl}/payments`;
 
   constructor(private http: HttpClient) {
-    console.log('Payment Service URL:', this.apiUrl); // Add this for debugging
   }
 
   createPaymentIntent(
@@ -67,5 +77,41 @@ export class PaymentService {
     );
   }
 
-  // Add methods for fetching payment history, etc.
+  submitManualPayment(formData: FormData): Observable<any> {
+    return this.http.post(`${this.apiUrl}/manual-payment`, formData).pipe(
+      catchError(error => {
+        console.error('Manual payment submission failed:', error);
+        throw new Error(error.error?.message || 'Failed to submit manual payment');
+      })
+    );
+  }
+
+  updateAdminManualPayment(data: { manualPaymentData: any }): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/update-admin-manual-payment`, data)
+      .pipe(
+        catchError(error => {
+          console.error('Admin manual payment update failed:', error);
+          throw error;
+        })
+      );
+  }
+
+  confirmManualPayment(paymentId: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/confirm-manual-payment/${paymentId}`, {}).pipe(
+      catchError(error => {
+        console.error('Manual payment confirmation failed:', error);
+        throw error;
+      })
+    );
+  }
+
+  getManualPayments(): Observable<ManualPayment[]> {
+    return this.http.get<ManualPayment[]>(`${this.apiUrl}/manual-payments`)
+      .pipe(
+        catchError(error => {
+          console.error('Failed to fetch manual payments:', error);
+          throw new Error('Failed to fetch manual payments');
+        })
+      );
+  }
 }

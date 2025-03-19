@@ -21,6 +21,12 @@
       class="payment-method-btn">
       <i class="fab fa-bitcoin"></i> USDT (Binance Pay)
     </button>
+    <button 
+    (click)="selectPaymentMethod('manual')" 
+    [class.active]="paymentMethod === 'manual'"
+    class="payment-method-btn">
+    <i class="fas fa-handshake"></i> Manual Payment
+  </button>
   </div>
 
   <!-- Crypto Payment Section -->

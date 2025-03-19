@@ -1,0 +1,9 @@
+<div class="manual-payers">
+  <h2>Manual Payment Submissions</h2>
+  <div class="payments-grid">
+    <div *ngFor="let payment of manualPayments" class="payment-card" (click)="verifyPayment(payment._id)">
+      <h3>{{ payment.username }}</h3>
+      <p>{{ payment.plan }} - €{{ payment.amount }} / {{ payment.interval }}</p>
+    </div>
+  </div>
+</div>

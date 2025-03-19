@@ -1,0 +1,94 @@
+<div class="manual-payment-container">
+  <h2>Manual Payment</h2>
+
+  <div class="payment-details" *ngIf="subscriptionDetails">
+    <div class="plan-details">
+      <h3>{{subscriptionDetails.plan}} Plan</h3>
+      <p class="amount">€{{subscriptionDetails.amount}} / {{subscriptionDetails.interval}}</p>
+    </div>
+  </div>
+
+  <div class="payment-method-selector">
+    <button 
+      (click)="paymentMethod = 'crypto'" 
+      [class.active]="paymentMethod === 'crypto'">
+      Cryptocurrency
+    </button>
+    <button 
+      (click)="paymentMethod = 'giftcard'" 
+      [class.active]="paymentMethod === 'giftcard'">
+      Gift Card
+    </button>
+    <button 
+      (click)="paymentMethod = 'paysafecard'" 
+      [class.active]="paymentMethod === 'paysafecard'">
+      Paysafe Card
+    </button>
+  </div>
+
+  <div class="payment-instructions" [ngSwitch]="paymentMethod">
+    <div *ngSwitchCase="'crypto'" class="crypto-instructions">
+      <h3>Cryptocurrency Payment</h3>
+      <p>Please send the exact amount to one of these addresses:</p>
+      <div class="crypto-addresses">
+        <div class="address-item" *ngFor="let item of cryptoAddresses | keyvalue">
+          <strong>{{item.key}}:</strong>
+          <code>{{item.value}}</code>
+        </div>
+      </div>
+      <p>After sending, please upload a screenshot of your transaction:</p>
+    </div>
+
+    <div *ngSwitchCase="'giftcard'" class="card-instructions">
+      <h3>Gift Card Payment</h3>
+      <p>Please upload a clear photo of your gift card showing:</p>
+      <ul>
+        <li>Card number</li>
+        <li>PIN/Security code</li>
+        <li>Card value</li>
+      </ul>
+    </div>
+
+    <div *ngSwitchCase="'paysafecard'" class="card-instructions">
+      <h3>Paysafe Card Payment</h3>
+      <p>Please upload a clear photo of your Paysafe card showing:</p>
+      <ul>
+        <li>PIN code</li>
+        <li>Card value</li>
+      </ul>
+    </div>
+
+    <div class="file-upload">
+      <input 
+        type="file" 
+        accept="image/*" 
+        (change)="onFileSelected($event)"
+        [id]="'file-upload-' + paymentMethod">
+      <label [for]="'file-upload-' + paymentMethod">
+        Choose Image
+      </label>
+      <span *ngIf="imageFile">{{imageFile.name}}</span>
+    </div>
+  </div>
+
+  <!-- New user info inputs -->
+  <div class="user-info">
+    <label for="username">Username</label>
+    <input id="username" type="text" [(ngModel)]="username" placeholder="Enter your username">
+  
+    <label for="email">Email</label>
+    <input id="email" type="email" [(ngModel)]="email" placeholder="Enter your email">
+  </div>
+
+  <div class="error-message" *ngIf="error">
+    {{error}}
+  </div>
+
+  <button 
+    class="submit-button" 
+    [disabled]="!imageFile || processing"
+    (click)="submitManualPayment()">
+    <span *ngIf="!processing">Submit Payment Proof</span>
+    <span *ngIf="processing">Processing...</span>
+  </button>
+</div>

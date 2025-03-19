@@ -230,6 +230,39 @@ router.post(
   }
 );
 
+// Add payment slip upload route
+router.post(
+  '/payment-slip',
+  auth,
+  async (req, res) => {
+    const { base64Data, filename, contentType } = req.body;
+
+    if (!base64Data || !filename || !contentType) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required fields'
+      });
+    }
+
+    try {
+      // Upload file to GridFS
+      const fileId = await mediaStorage.uploadBase64Media(base64Data, filename, contentType);
+      
+      res.status(200).json({ 
+        success: true, 
+        fileId: fileId.toString() 
+      });
+    } catch (error) {
+      console.error('Payment slip upload error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to upload payment slip',
+        error: error.message
+      });
+    }
+  }
+);
+
 router.get('/:id', async (req, res) => {
   try {
     if (!mediaStorage.bucket) {

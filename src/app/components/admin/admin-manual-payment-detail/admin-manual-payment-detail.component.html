@@ -1,0 +1,50 @@
+<div class="payment-detail" *ngIf="!loading && payment">
+  <h2>Manual Payment Verification</h2>
+
+  <div class="payment-info">
+    <div class="info-group">
+      <h3>User Information</h3>
+      <p><strong>Username:</strong> {{payment.username}}</p>
+      <p><strong>Email:</strong> {{payment.email}}</p>
+    </div>
+
+    <div class="info-group">
+      <h3>Payment Details</h3>
+      <p><strong>Plan:</strong> {{payment.plan}}</p>
+      <p><strong>Amount:</strong> €{{payment.amount}}</p>
+      <p><strong>Interval:</strong> {{payment.interval}}</p>
+    </div>
+
+    <div class="proof-image">
+      <h3>Payment Proof</h3>
+      <img [src]="getMediaUrl(payment.image)" 
+           alt="Payment proof" 
+           (click)="toggleImageModal()">
+    </div>
+
+    <div class="actions">
+      <button class="confirm-btn" (click)="confirmPayment()">
+        Confirm Payment
+      </button>
+      <button class="back-btn" routerLink="/admin/manual-payers">
+        Back to List
+      </button>
+    </div>
+
+    <div class="error-message" *ngIf="error">
+      {{error}}
+    </div>
+  </div>
+</div>
+
+<!-- Image Modal -->
+<div class="image-modal" *ngIf="showImageModal && payment" (click)="toggleImageModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <button class="close-modal" (click)="toggleImageModal()">×</button>
+    <img [src]="getMediaUrl(payment.image)" alt="Payment proof full size">
+  </div>
+</div>
+
+<div class="loading" *ngIf="loading">
+  Loading payment details...
+</div>

@@ -23,12 +23,16 @@ const adminSchema = new mongoose.Schema({
     canDeleteProfiles: { type: Boolean, default: true },
     canModerateContent: { type: Boolean, default: true },
     canManageSubscriptions: { type: Boolean, default: true },
-    canCreateAdmin: { type: Boolean, default: false }  // Add this line
+    canCreateAdmin: { type: Boolean, default: false }
   },
   lastLogin: {
     type: Date,
     default: null
-  }
+  },
+  manualPaymentData: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'ManualPaymentData'
+  }]
 }, { timestamps: true });
 
 // Hash password before saving

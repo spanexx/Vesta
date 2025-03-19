@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } 
 import { Router, RouterModule } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
 import { CommonModule } from '@angular/common';
+import { UserProfile } from '../../models/userProfile.model';
 
 @Component({
   selector: 'app-login',
@@ -30,12 +31,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Check if user is already logged in
-    this.authService.currentUser$.subscribe(user => {
-      if (user) {
-        this.router.navigate(['/']);
-      }
-    });
+    // No longer needed here
   }
 
   isFieldInvalid(fieldName: string): boolean {

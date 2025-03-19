@@ -12,8 +12,8 @@ import { environment } from '../../environments/environment';
   providedIn: 'root',
 })
 export class AuthenticationService {
-  private currentUserSubject = new BehaviorSubject<UserProfile | null>(null);
-  currentUser$ = this.currentUserSubject.asObservable();
+  private currentUserSubject: BehaviorSubject<UserProfile | null>;
+  public currentUser$: Observable<UserProfile | null>; // Rename to currentUser$
   private apiUrl = environment.apiUrl;
   private readonly STORAGE_KEY = 'auth_data';
   private cookieConsentAccepted = false;
@@ -22,11 +22,9 @@ export class AuthenticationService {
     private http: HttpClient,
     private router: Router
   ) {
-    // Load saved user from localStorage
-    const savedUser = localStorage.getItem('currentUser');
-    if (savedUser) {
-      this.currentUserSubject.next(JSON.parse(savedUser));
-    }
+    const storedUser = this.getCurrentUserFromStorage();
+    this.currentUserSubject = new BehaviorSubject<UserProfile | null>(storedUser);
+    this.currentUser$ = this.currentUserSubject.asObservable(); // Rename to currentUser$
   }
 
   private setCurrentUser(user: UserProfile): void {

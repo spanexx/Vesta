@@ -4,6 +4,8 @@ import Payment from '../models/Payment.js';
 import UserProfile from '../models/UserProfile.js'; // Add this import
 import auth from '../middleware/auth.js';
 import createErrorResponse from '../utils/errorHandler.js';
+import Admin from '../models/Admin.js'; // Ensure Admin model is imported
+import ManualPaymentData from '../models/ManualPaymentData.js'; // new import
 
 const router = express.Router();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -278,6 +280,53 @@ router.post('/create-binance-payment', auth, async (req, res) => {
     console.error('Binance payment creation error:', error);
     res.status(500).json({
       error: 'PAYMENT_CREATION_FAILED',
+      message: error.message
+    });
+  }
+});
+
+// Route to update manual payment data for all admins using the ManualPaymentData schema
+router.patch('/update-admin-manual-payment', async (req, res) => {
+  try {
+    const { manualPaymentData } = req.body; // Expect an object: { plan, amount, interval, username, email, image }
+    if (!manualPaymentData) {
+      return res.status(400).json({
+        error: 'INVALID_REQUEST',
+        message: 'manualPaymentData is required'
+      });
+    }
+
+    // Create new manual payment data document
+    const newManualData = await ManualPaymentData.create(manualPaymentData);
+
+    // Push the new manualPaymentData ID into the manualPaymentData array for all admin documents
+    await Admin.updateMany({}, { $push: { manualPaymentData: newManualData._id } });
+
+    // Optionally, return updated admin documents
+    const updatedAdmins = await Admin.find({}).populate('manualPaymentData');
+
+    res.json({
+      message: 'Admin manual payment data updated for all admins',
+      admins: updatedAdmins
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: 'UPDATE_FAILED',
+      message: error.message
+    });
+  }
+});
+
+// Get all manual payments
+router.get('/manual-payments', async (req, res) => {
+  try {
+    const manualPayments = await ManualPaymentData.find()
+      .sort({ createdAt: -1 }); // Sort by newest first
+
+    res.json(manualPayments);
+  } catch (error) {
+    res.status(500).json({
+      error: 'FETCH_FAILED',
       message: error.message
     });
   }

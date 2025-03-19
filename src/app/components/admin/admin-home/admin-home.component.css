@@ -42,6 +42,44 @@
   margin-bottom: 2rem;
 }
 
+/* Manual Payments Card Styles */
+.manual-payments-card {
+  background: var(--surface);
+  padding: 2rem;
+  border-radius: 12px;
+  margin: 2rem 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+
+.manual-payments-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--card-shadow);
+  border-color: var(--primary);
+}
+
+.manual-payments-card i {
+  font-size: 2rem;
+  color: var(--primary);
+}
+
+.manual-payments-card h3 {
+  color: var(--text);
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.manual-payments-card p {
+  color: var(--text-secondary);
+  margin: 0;
+}
+
 .stat-card {
   background: var(--surface);
   padding: 1.5rem;

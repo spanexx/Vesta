@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { AdminService, DashboardStats } from '../../../services/admin.service';
 
 @Component({
@@ -20,7 +20,7 @@ export class AdminHomeComponent implements OnInit {
     premiumUsers: 0
   };
 
-  constructor(private adminService: AdminService) {}
+  constructor(private adminService: AdminService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadDashboardStats();
@@ -31,5 +31,9 @@ export class AdminHomeComponent implements OnInit {
       next: (stats: DashboardStats) => this.stats = stats,
       error: (error: Error) => console.error('Error loading dashboard stats:', error)
     });
+  }
+
+  navigateToManualPayers(): void {
+    this.router.navigate(['/admin/manual-payers']);
   }
 }
