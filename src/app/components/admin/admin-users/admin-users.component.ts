@@ -70,6 +70,6 @@ export class AdminUsersComponent implements OnInit {
     if (user?.profilePicture) {
       return this.fileUploadService.getMediaUrl(user.profilePicture);
     }
-    return 'assets/default-profile.png';
+    return 'assets/avatar.jpg';
   }
 }

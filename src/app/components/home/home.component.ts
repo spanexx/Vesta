@@ -25,7 +25,7 @@ type Coordinates = [number, number];
     FormsModule,
     RouterModule,
     ScrollingModule,
-    LocationFilterComponent
+    LocationFilterComponent,
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
@@ -67,7 +67,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    console.log('Component initialized'); // Debug log
     this.initializeLocation();
     
     // Improve route parameter handling
@@ -77,7 +76,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     ]).pipe(
       takeUntil(this.destroy$),
       tap(([params, queryParams]) => {
-        console.log('Route changed:', { params, queryParams });
         this.isLoading = true;
         
         // Update filter
@@ -104,7 +102,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       })
     ).subscribe({
       next: (profiles) => {
-        console.log(`Loaded ${profiles.length} profiles`);
         this.userProfiles = profiles;
         this.profilesCache.next(profiles);
         this.isLoading = false;

@@ -63,11 +63,10 @@ export class ProfileService {
   }
 
   getAllProfiles(filters?: ProfileQueryParams): Observable<UserProfile[]> {
-    console.log('getAllProfiles called with filters:', filters); // Debug log
     return this.http.get<UserProfile[]>(`${authRoutes}/profiles`, {
       params: { ...filters }
     }).pipe(
-      tap(profiles => console.log('API response:', profiles)), // Debug log
+      tap(), // Debug log
       catchError(error => {
         console.error('Error fetching profiles:', error); // Error log
         return throwError(() => error);
@@ -335,6 +334,10 @@ export class ProfileService {
       `${profileRoutes}/${userId}/verification-documents`,
       { documentData, side }
     );
+  }
+
+  updateSubscription(userId: string, subscriptionData: any): Observable<UserProfile> {
+    return this.http.patch<UserProfile>(`${profileRoutes}/${userId}/subscription`, subscriptionData);
   }
 }
 

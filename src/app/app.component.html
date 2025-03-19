@@ -1,3 +1,12 @@
 <app-header></app-header>
 <router-outlet></router-outlet>
 <app-icon-menu></app-icon-menu>
+<div class="cookie-consent" *ngIf="showCookieConsent">
+  <div class="cookie-content">
+    <p>We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.</p>
+    <div class="cookie-buttons">
+      <button (click)="acceptCookies()">Accept</button>
+      <button (click)="declineCookies()">Decline</button>
+    </div>
+  </div>
+</div>

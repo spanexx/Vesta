@@ -1,9 +1,11 @@
-import { Component, ElementRef, HostListener } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
 import { ThemeService } from '../../services/theme.service';
 import { UserProfile } from '../../models/userProfile.model';
+import { ProfileService } from '../../services/profile.service';
+import { DEFAULT_AVATAR_DIMENSIONS } from '../../utils/image/image-optimization.util';
 
 @Component({
   selector: 'app-header',
@@ -12,13 +14,16 @@ import { UserProfile } from '../../models/userProfile.model';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   currentUser$ = this.authService.currentUser$;
   isDarkMode = false;
   isMenuOpen = false;
   user!: UserProfile;
   isFreeProfile = false; // Add this property
   isCurrentUser = false; // Add this property
+  profile: UserProfile | null = null;
+  userProfilePicture: string | null = null;
+  headerAvatarDims = DEFAULT_AVATAR_DIMENSIONS.header;
 
   roles = [
     { value: 'girlfriend', label: 'Girlfriend' },
@@ -32,7 +37,8 @@ export class HeaderComponent {
     private authService: AuthenticationService,
     private themeService: ThemeService,
     private router: Router,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private profileService: ProfileService  // Add this
   ) {
     this.themeService.darkMode$.subscribe(
       isDark => this.isDarkMode = isDark
@@ -51,13 +57,28 @@ export class HeaderComponent {
     });
 
     this.authService.currentUser$.subscribe(currentUser => {
-      console.log('Current User:', currentUser);
 
       if (currentUser) {
         this.isCurrentUser = true;
       }
 
   });
+
+    this.authService.currentUser$.subscribe(user => {
+      if (user) {
+        this.profileService.getProfileById(user._id).subscribe({
+          next: (profile) => {
+            this.profile = profile;
+            this.userProfilePicture = profile.profilePicture;
+          },
+          error: (error) => {
+            console.error('Failed to load profile:', error);
+          }
+        });
+      } else {
+        this.profile = null;
+      }
+    });
 }
 
   @HostListener('document:click', ['$event'])

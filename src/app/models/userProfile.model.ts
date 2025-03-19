@@ -64,6 +64,7 @@ export interface UserProfile {
     profileLevel: 'free' | 'standard' | 'premium' | 'vip';
     subscription?: {
         stripeSubscriptionId?: string;
+        startDate?: Date;
         currentPeriodEnd?: Date;
         status: 'active' | 'canceled' | 'expired';
     };

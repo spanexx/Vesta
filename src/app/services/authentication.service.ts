@@ -15,6 +15,8 @@ export class AuthenticationService {
   private currentUserSubject = new BehaviorSubject<UserProfile | null>(null);
   currentUser$ = this.currentUserSubject.asObservable();
   private apiUrl = environment.apiUrl;
+  private readonly STORAGE_KEY = 'auth_data';
+  private cookieConsentAccepted = false;
 
   constructor(
     private http: HttpClient,
@@ -47,7 +49,15 @@ export class AuthenticationService {
   };
   
     try {
-      localStorage.setItem('currentUser', JSON.stringify(minimalUser));
+      // Try cookies first, fall back to localStorage
+      if (this.cookieConsentAccepted) {
+        document.cookie = `currentUser=${JSON.stringify(user)};path=/;SameSite=Strict`;
+      }
+      // Always store in localStorage as fallback
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify({
+        user,
+        timestamp: new Date().getTime()
+      }));
       this.currentUserSubject.next(user);
     } catch (error: unknown) {
       // Type guard for DOMException
@@ -62,6 +72,28 @@ export class AuthenticationService {
         console.error('Error storing user data:', error);
       }
     }
+  }
+
+  public getCurrentUserFromStorage(): UserProfile | null {
+    try {
+      // Try getting from localStorage first
+      const stored = localStorage.getItem(this.STORAGE_KEY);
+      if (stored) {
+        const {user, timestamp} = JSON.parse(stored);
+        // Check if data is less than 24 hours old
+        if (new Date().getTime() - timestamp < 24 * 60 * 60 * 1000) {
+          return user;
+        }
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  }
+
+  public setCookieConsent(accepted: boolean): void {
+    this.cookieConsentAccepted = accepted;
+    localStorage.setItem('cookie_consent', String(accepted));
   }
 
   getToken(): string | null {
@@ -168,7 +200,6 @@ export class AuthenticationService {
         this.setCurrentUser(user);
       }),
       catchError(error => {
-        console.error('Failed to fetch current user:', error);
         return throwError(() => new Error('Failed to fetch user details'));
       })
     );
@@ -189,6 +220,10 @@ export class AuthenticationService {
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('currentUser');
+    localStorage.removeItem(this.STORAGE_KEY);
+    if (this.cookieConsentAccepted) {
+      document.cookie = 'currentUser=;path=/;expires=Thu, 01 Jan 1970 00:00:01 GMT';
+    }
     this.currentUserSubject.next(null);
     // Force page refresh
     window.location.reload();

@@ -29,7 +29,7 @@ export class PaymentService {
     serviceDetails: any
   ): Observable<PaymentIntent> {
     const payload = { amount, currency, serviceDetails };
-    console.log('Creating payment intent:', payload); // Add this for debugging
+    console.log('Creating payment intent:', payload);
     
     return this.http.post<PaymentIntent>(`${this.apiUrl}/create-payment-intent`, payload)
       .pipe(
@@ -54,6 +54,7 @@ export class PaymentService {
       interval,
       paymentMethodId
     };
+    console.log('Creating subscription:', payload);
     
     return this.http.post<SubscriptionIntent>(
       `${this.apiUrl}/create-subscription`,

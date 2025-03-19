@@ -103,6 +103,12 @@ input, select, textarea {
   color: var(--text);
 }
 
+.readonly-input {
+  background-color: var(--background);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
 .form-actions {
   display: flex;
   gap: 1rem;

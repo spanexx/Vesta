@@ -16,6 +16,17 @@
           <input type="email" formControlName="email" readonly>
         </div>
         <div class="form-group">
+          <label>Birthdate</label>
+          <input type="date" formControlName="birthdate" readonly>
+        </div>
+        <div class="form-group">
+          <label>Verified</label>
+          <select formControlName="verified">
+            <option [ngValue]="true">Yes</option>
+            <option [ngValue]="false">No</option>
+          </select>
+        </div>
+        <div class="form-group">
           <label>Status</label>
           <select formControlName="status">
             <option value="active">Active</option>
@@ -31,6 +42,72 @@
             <option value="premium">Premium</option>
             <option value="vip">VIP</option>
           </select>
+        </div>
+        <div class="form-group">
+          <label>Verification Status</label>
+          <select formControlName="verificationStatus">
+            <option value="unverified">Unverified</option>
+            <option value="pending">Pending</option>
+            <option value="reviewing">Reviewing</option>
+            <option value="verified">Verified</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section" formGroupName="physicalAttributes">
+      <h3>Physical Attributes</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Gender</label>
+          <select formControlName="gender">
+            <option value="female">Female</option>
+            <option value="male">Male</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Height (cm)</label>
+          <input type="number" formControlName="height">
+        </div>
+        <div class="form-group">
+          <label>Weight (kg)</label>
+          <input type="number" formControlName="weight">
+        </div>
+        <div class="form-group">
+          <label>Ethnicity</label>
+          <input type="text" formControlName="ethnicity">
+        </div>
+        <div class="form-group">
+          <label>Bust Size</label>
+          <input type="text" formControlName="bustSize">
+        </div>
+        <div class="form-group">
+          <label>Bust Type</label>
+          <select formControlName="bustType">
+            <option value="Natural">Natural</option>
+            <option value="Enhanced">Enhanced</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Pubic Hair</label>
+          <select formControlName="pubicHair">
+            <option value="Shaved">Shaved</option>
+            <option value="Trimmed">Trimmed</option>
+            <option value="Natural">Natural</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Features</label>
+          <div class="checkbox-group">
+            <label>
+              <input type="checkbox" formControlName="tattoos"> Has Tattoos
+            </label>
+            <label>
+              <input type="checkbox" formControlName="piercings"> Has Piercings
+            </label>
+          </div>
         </div>
       </div>
     </div>
@@ -88,7 +165,36 @@
       </div>
     </div>
 
-    <div class="form-section">
+    <div class="form-section" formGroupName="subscription">
+      <h3>Subscription</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Active</label>
+          <select formControlName="active">
+            <option [ngValue]="true">Yes</option>
+            <option [ngValue]="false">No</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Plan</label>
+          <select formControlName="plan">
+            <option value="basic">Basic</option>
+            <option value="premium">Premium</option>
+            <option value="vip">VIP</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Start Date</label>
+          <input type="date" formControlName="startDate">
+        </div>
+        <div class="form-group">
+          <label>End Date</label>
+          <input type="date" formControlName="endDate">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section" formGroupName="moderationFlags">
       <h3>Moderation</h3>
       <div class="form-grid">
         <div class="form-group">

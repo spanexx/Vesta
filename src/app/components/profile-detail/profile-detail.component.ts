@@ -27,6 +27,7 @@ import {
   getIncludedServices as getIncludedServicesUtil,
   getExtraServices as getExtraServicesUtil
 } from '../../utils/profile/profile-detail.util';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-profile-detail',
@@ -118,7 +119,6 @@ export class ProfileDetailComponent implements OnInit {
 
 
     this.authService.currentUser$.subscribe(currentUser => {
-      console.log('Current User:', currentUser);
       if (currentUser) {
         this.userId = currentUser._id;
       }
@@ -878,6 +878,6 @@ export class ProfileDetailComponent implements OnInit {
     if (this.profile?.profilePicture) {
       return this.fileUploadService.getMediaUrl(this.profile.profilePicture);
     }
-    return 'assets/default-profile.png';
+    return 'assets/avatar.jpg';
   }
 }

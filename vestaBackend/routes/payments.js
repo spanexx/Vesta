@@ -57,9 +57,23 @@ router.post('/create-payment-intent', auth, async (req, res) => {
 
     await payment.save();
 
+    // Update user's subscription
+    const subscriptionEndDate = new Date();
+    subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + 1); // Default to 1 month
+
+    // await UserProfile.findByIdAndUpdate(req.userId, {
+    //   subscription: {
+    //     stripeSubscriptionId: paymentIntent.id,
+    //     currentPeriodEnd: subscriptionEndDate,
+    //     startDate: new Date(), // Fix: Always set startDate 
+    //     status: 'active'
+    //   }
+    // });
+
     res.json({
       clientSecret: paymentIntent.client_secret,
-      paymentId: payment._id
+      paymentId: payment._id,
+      subscriptionEndDate
     });
   } catch (error) {
     console.error('Payment creation error:', error);
@@ -198,11 +212,30 @@ router.post('/create-subscription', auth, async (req, res) => {
 
     await payment.save();
 
+    // Update user profile with subscription data
+    await UserProfile.findByIdAndUpdate(
+      req.userId,
+      {
+        profileLevel: serviceDetails.plan.toLowerCase(),
+        subscription: {
+          stripeSubscriptionId: subscription.id,
+          startDate: new Date(),
+          currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+          status: 'active'
+        },
+        stripeCustomerId: customer.id
+      },
+      { new: true }
+    );
+
     res.json({
       clientSecret: subscription.latest_invoice.payment_intent.client_secret,
       subscriptionId: subscription.id,
-      paymentId: payment._id
+      paymentId: payment._id,
+      currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+      startDate: new Date()
     });
+
   } catch (error) {
     console.error('Subscription creation error:', error);
     res.status(500).json({
@@ -290,6 +323,21 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
             );
             console.log('Profile level updated for user:', payment.userId);
           }
+
+          const subscriptionEndDate = new Date();
+          subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + 1);
+
+          await UserProfile.findByIdAndUpdate(
+            payment.userId,
+            {
+              subscription: {
+                stripeSubscriptionId: paymentIntent.id,
+                currentPeriodEnd: subscriptionEndDate,
+                startDate: new Date(), // Fix: Add startDate here too
+                status: 'active'
+              }
+            }
+          );
         }
         break;
 
@@ -345,6 +393,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
           {
             'subscription.stripeSubscriptionId': updatedSubscription.id,
             'subscription.currentPeriodEnd': new Date(updatedSubscription.current_period_end * 1000),
+            'subscription.startDate': new Date(), // Fix: Add startDate here too
             'subscription.status': updatedSubscription.status === 'active' ? 'active' : 'canceled'
           }
         );

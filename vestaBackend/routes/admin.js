@@ -298,4 +298,44 @@ router.delete('/users/:userId/files/:fileType/:fileId', adminAuth, async (req, r
   }
 });
 
+router.get('/dashboard/stats', adminAuth, async (req, res) => {
+  try {
+    const [
+      totalUsers,
+      activeUsers,
+      pendingVerifications,
+      premiumUsers
+    ] = await Promise.all([
+      UserProfile.countDocuments({}),
+      UserProfile.countDocuments({ status: 'active' }),
+      UserProfile.countDocuments({ verificationStatus: 'pending' }),
+      UserProfile.countDocuments({ profileLevel: { $in: ['premium', 'vip'] } })
+    ]);
+
+    // Get total revenue (you'll need to implement this based on your payment model)
+    const totalRevenue = 0; // Placeholder
+    
+    // Get recent signups (last 7 days)
+    const lastWeek = new Date();
+    lastWeek.setDate(lastWeek.getDate() - 7);
+    const recentSignups = await UserProfile.countDocuments({ 
+      createdAt: { $gte: lastWeek } 
+    });
+
+    res.json({
+      totalUsers,
+      activeUsers,
+      pendingVerifications,
+      totalRevenue,
+      recentSignups,
+      premiumUsers
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: 'FETCH_FAILED',
+      message: error.message
+    });
+  }
+});
+
 export default router;

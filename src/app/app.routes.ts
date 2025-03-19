@@ -14,11 +14,12 @@ import { ActivationComponent } from './components/activation/activation.componen
 import { VideoPaymentComponent } from './components/video-payment/video-payment.component';
 import { adminGuard } from './guards/admin.guard';
 import { AdminLoginComponent } from './components/admin/admin-login/admin-login.component';
-import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
 import { AdminUsersComponent } from './components/admin/admin-users/admin-users.component';
 import { AdminModerationComponent } from './components/admin/admin-moderation/admin-moderation.component';
 import { AdminAnalyticsComponent } from './components/admin/admin-analytics/admin-analytics.component';
 import { AdminEditUserComponent } from './components/admin/admin-edit-user/admin-edit-user.component';
+import { AdminHomeComponent } from './components/admin/admin-home/admin-home.component';
+import { AdminLayoutComponent } from './components/admin/admin-layout/admin-layout.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -73,10 +74,12 @@ export const routes: Routes = [
   },
   { 
     path: 'admin',
+    component: AdminLayoutComponent,
     canActivate: [adminGuard],
     children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: AdminDashboardComponent },
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
+      { path: 'home', component: AdminHomeComponent },
+      { path: 'dashboard', redirectTo: 'home', pathMatch: 'full' },
       { path: 'users', component: AdminUsersComponent },
       { path: 'moderation', component: AdminModerationComponent },
       { path: 'analytics', component: AdminAnalyticsComponent },

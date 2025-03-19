@@ -28,7 +28,7 @@
   box-shadow: var(--card-shadow);
   display: flex;
   align-items: flex-start;
-  gap: 1.25rem;
+  gap: 1rem;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   overflow: hidden;
 }
@@ -47,8 +47,9 @@
 }
 
 .user-info {
+
   flex: 1;
-  min-width: 0;
+  min-width: 8rem;
   overflow: hidden;
 }
 
@@ -71,11 +72,14 @@
 }
 
 .user-info .status {
-  font-size: 0.7rem;
+
+  font-size: 0.9rem;
   padding: 0.25rem 0.75rem;
   border-radius: 1rem;
   display: inline-block;
 }
+
+
 
 .status.active {
   background: rgba(76, 175, 80, 0.1);
@@ -104,7 +108,7 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.2rem;
   font-size: 0.875rem;
   transition: all 0.2s ease;
 }

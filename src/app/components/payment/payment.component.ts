@@ -9,6 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
 import { ProfileService } from '../../services/profile.service';
 import { CryptoPaymentService, BinancePaymentResponse } from '../../services/crypto-payment.service'; // Add BinancePaymentResponse
+import { UserProfile } from '../../models/userProfile.model';
 
 interface PaymentDetails {
   amount: number;
@@ -22,6 +23,12 @@ interface PaymentDetails {
 interface TestPaymentDetails {
   amount: number;
   testType: string;
+}
+
+interface PaymentResult {
+  clientSecret: string;
+  paymentId: string;
+  subscriptionEndDate: Date;
 }
 
 @Component({
@@ -44,6 +51,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
   cryptoPaymentDetails: BinancePaymentResponse | null = null;  // Update type to use BinancePaymentResponse
   paymentTimeLeft: string = '';
   private paymentTimer: any;
+  profile: UserProfile | null = null;
 
   constructor(
     private paymentService: PaymentService,
@@ -149,6 +157,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
         plan: this.subscriptionDetails.plan,
         interval: this.subscriptionDetails.interval
       };
+      console.log('Service details:', serviceDetails);
 
       const result = await firstValueFrom(
         this.paymentService.createSubscription(
@@ -159,6 +168,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
           paymentMethod.id
         )
       );
+
 
       if (result.clientSecret) {
         const { error: confirmError } = await this.stripe.confirmCardPayment(
@@ -174,32 +184,33 @@ export class PaymentComponent implements OnInit, OnDestroy {
 
         this.completed = true;
 
-        // Update subscription status based on type
-        if (serviceDetails.type === 'video') {
-          // Calculate expiry date based on interval
-          const expiresAt = new Date();
-          if (this.subscriptionDetails.interval === 'year') {
-            expiresAt.setFullYear(expiresAt.getFullYear() + 1);
-          } else {
-            expiresAt.setMonth(expiresAt.getMonth() + 1);
-          }
-
-          await firstValueFrom(
-            this.profileService.updateField('videoSubscription', {
-              isSubscribed: true,
-              subscribedAt: new Date(),
-              expiresAt: expiresAt
-            })
-          );
+        // Calculate subscription end date based on interval
+        const endDate = new Date();
+        if (this.subscriptionDetails.interval === 'year') {
+          endDate.setFullYear(endDate.getFullYear() + 1);
         } else {
-          // Handle regular profile subscription
-          const profileLevel = this.subscriptionDetails.plan.toLowerCase();
-          await firstValueFrom(
-            this.profileService.updateField('profileLevel', profileLevel)
-          );
+          endDate.setMonth(endDate.getMonth() + 1);
         }
 
-        // Wait for a moment then redirect
+        // Update subscription data in profile
+        await firstValueFrom(
+          this.profileService.updateField('subscription', {
+            stripeSubscriptionId: result.subscriptionId,
+            startDate: new Date(),
+            currentPeriodEnd: endDate,
+            status: 'active'
+          })
+        );
+
+        // Update profile level
+        const profileLevel = this.subscriptionDetails.plan.toLowerCase();
+        await firstValueFrom(
+          this.profileService.updateField('profileLevel', profileLevel)
+        );
+
+        // Refresh user data
+        await this.authService.refreshCurrentUser();
+
         setTimeout(() => {
           if (this.userId) {
             this.router.navigate(['/profile', this.userId]);
@@ -315,6 +326,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
 
     try {
       if (this.subscriptionDetails) {
+        console.log('Initializing payment for subscription:', this.subscriptionDetails);
         await this.initializePayment();
       } else {
         await this.handlePayment();
@@ -325,7 +337,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
     }
   }
 
-  async handlePayment(testDetails?: TestPaymentDetails) {
+  private async handlePayment(testDetails?: TestPaymentDetails) {
     this.processing = true;
     this.error = '';
     
@@ -354,7 +366,8 @@ export class PaymentComponent implements OnInit, OnDestroy {
           paymentDetails.currency,
           paymentDetails.serviceDetails
         )
-      );
+      ) as PaymentResult;
+      console.log('Payment intent result:', result);
 
       if (!result) {
         throw new Error('Failed to create payment intent');
@@ -373,6 +386,21 @@ export class PaymentComponent implements OnInit, OnDestroy {
         this.error = paymentResult.error.message;
       } else if (paymentResult.paymentIntent.status === 'succeeded') {
         this.completed = true;
+        
+        // Update local profile with new subscription data
+        if (this.profile) {
+          console.log('paymentResult: ', paymentResult);
+          this.profile.subscription = {
+            stripeSubscriptionId: paymentResult.paymentIntent.id,
+            currentPeriodEnd: new Date(result.subscriptionEndDate),
+            startDate: new Date(),
+            status: 'active'
+          };
+        }
+
+        // Refresh the profile data
+        await this.authService.refreshCurrentUser();
+        
         // Use userId for navigation here too
         setTimeout(() => {
           if (this.userId) {

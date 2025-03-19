@@ -1,0 +1,66 @@
+<div class="admin-home">
+  <header class="dashboard-header">
+    <h1>Admin Dashboard</h1>
+    <div class="header-actions">
+      <button routerLink="/admin/users/new" class="add-btn">
+        <i class="fas fa-plus"></i> Add User
+      </button>
+    </div>
+  </header>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fas fa-users"></i></div>
+      <div class="stat-content">
+        <h3>Total Users</h3>
+        <p class="stat-value">{{stats.totalUsers}}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fas fa-clock"></i></div>
+      <div class="stat-content">
+        <h3>Pending Verifications</h3>
+        <p class="stat-value">{{stats.pendingVerifications}}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fas fa-crown"></i></div>
+      <div class="stat-content">
+        <h3>Premium Users</h3>
+        <p class="stat-value">{{stats.premiumUsers}}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+      <div class="stat-content">
+        <h3>Recent Signups</h3>
+        <p class="stat-value">{{stats.recentSignups}}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="quick-actions">
+    <h2>Quick Actions</h2>
+    <div class="actions-grid">
+      <a routerLink="/admin/users" class="action-card">
+        <i class="fas fa-users"></i>
+        <span>Manage Users</span>
+      </a>
+      <a routerLink="/admin/moderation" class="action-card">
+        <i class="fas fa-shield-alt"></i>
+        <span>Content Moderation</span>
+      </a>
+      <a routerLink="/admin/analytics" class="action-card">
+        <i class="fas fa-chart-bar"></i>
+        <span>View Analytics</span>
+      </a>
+      <a routerLink="/admin/settings" class="action-card">
+        <i class="fas fa-cog"></i>
+        <span>Settings</span>
+      </a>
+    </div>
+  </div>
+</div>

@@ -214,6 +214,7 @@ const userProfileSchema = new mongoose.Schema({
   },
   subscription: {
     stripeSubscriptionId: String,
+    startDate: { type: Date },
     currentPeriodEnd: Date,
     status: {
       type: String,

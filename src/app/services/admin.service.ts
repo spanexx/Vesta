@@ -1,9 +1,19 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, tap, catchError, throwError } from 'rxjs';
 import { adminRoutes } from '../../environments/apiRoutes';
 import { Admin, AdminLoginResponse, AdminCreateResponse, UserFileResponse } from '../models/admin.model';
 import { UserProfile } from '../models/userProfile.model';
+
+export interface DashboardStats {
+  totalUsers: number;
+  activeUsers: number;
+  pendingVerifications: number;
+  totalRevenue: number;
+  recentSignups: number;
+  premiumUsers: number;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +23,10 @@ export class AdminService {
   currentAdmin$ = this.currentAdminSubject.asObservable();
   private readonly ADMIN_TOKEN_KEY = 'adminToken';
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private router: Router  // Add router injection
+  ) {
     this.loadStoredAdmin();
   }
 
@@ -42,6 +55,10 @@ export class AdminService {
     localStorage.removeItem(this.ADMIN_TOKEN_KEY);
     localStorage.removeItem('currentAdmin');
     this.currentAdminSubject.next(null);
+    this.router.navigate(['/admin/login']).then(() => {
+      // Force page refresh to clear any cached data
+      window.location.reload();
+    });
   }
 
   createAdmin(adminData: Partial<Admin>): Observable<AdminCreateResponse> {
@@ -87,5 +104,9 @@ export class AdminService {
   hasPermission(permission: keyof Admin['permissions']): boolean {
     const admin = this.currentAdminSubject.value;
     return admin?.permissions[permission] || false;
+  }
+
+  getDashboardStats(): Observable<DashboardStats> {
+    return this.http.get<DashboardStats>(`${adminRoutes}/dashboard/stats`);
   }
 }
