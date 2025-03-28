@@ -2,7 +2,7 @@ export interface SubscriberVideo {
     videoId: string;
     userId: string;
     username: string;
-    profilePicture: string | null;
+    profilePicture: string;
     url: string;
     title: string;
     description: string;

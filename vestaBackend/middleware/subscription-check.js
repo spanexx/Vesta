@@ -26,7 +26,6 @@ const featureLimits = {
 export const checkUploadLimits = async (req, res, next) => {
   try {
     const profile = await UserProfile.findById(req.body.userId);
-    console.log('Req body:', req.body);
     if (!profile) {
       console.error('Profile not found');
       return res.status(404).json({

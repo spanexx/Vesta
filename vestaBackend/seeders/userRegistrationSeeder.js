@@ -11,7 +11,6 @@ const registerUser = async (email, password, birthdate) => {
       password,
       birthdate,
     });
-    console.log(`User ${email} registered successfully`);
     return response.data;
   } catch (error) {
     console.error(`Error registering user ${email}:`, error);
@@ -59,7 +58,6 @@ dropDatabase().then(() => {
     }
 
     const registeredUser = await registerUser(user.email, user.password, user.birthdate);
-    console.log(`User ${user.email} registered`);
   })).then(() => {
     console.log('All users registered');
   }).catch((error) => {

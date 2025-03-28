@@ -191,24 +191,80 @@ export class ActivationComponent implements OnInit {
       const contentType = file.type;
       const filename = `verification_${side}.${file.name.split('.').pop()}`;
 
-      this.fileUploadService.uploadVerificationDocument(
-        base64Data,
-        filename,
-        contentType,
-        this.profile!._id,
-        side
-      ).subscribe({
-        next: (updatedProfile: UserProfile) => {
-          this.profile = updatedProfile;
-          if (side === 'front') this.frontUploaded = true;
-          if (side === 'back') this.backUploaded = true;
-          this.uploading = false;
-        },
-        error: (error: HttpErrorResponse) => {
-          console.error('Error uploading document:', error);
-          this.uploading = false;
-        }
-      });
+      const uploadDocument = (retryCount = 3) => {
+        this.fileUploadService.uploadVerificationDocument(
+          base64Data,
+          filename,
+          contentType,
+          this.profile!._id,
+          side
+        ).subscribe({
+          next: (updatedProfile: UserProfile) => {
+            this.profile = updatedProfile;
+            if (side === 'front') this.frontUploaded = true;
+            if (side === 'back') this.backUploaded = true;
+            this.uploading = false;
+          },
+          error: (error: HttpErrorResponse) => {
+            console.error('Error uploading document:', error);
+            if (retryCount > 0) {
+              console.log(`Retrying upload... (${3 - retryCount + 1}/3)`);
+              uploadDocument(retryCount - 1);
+            } else {
+              alert('Failed to upload document after multiple attempts. Please try again later.');
+              this.uploading = false;
+            }
+          }
+        });
+      };
+
+      uploadDocument();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  uploadProfilePicture(event: any) {
+    const file = event.target.files[0];
+    if (!file || !this.profile) return;
+  
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File size must be less than 5MB');
+      return;
+    }
+  
+    this.uploading = true;
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      const base64Data = e.target.result;
+      const contentType = file.type;
+      const filename = `profile_picture.${file.name.split('.').pop()}`;
+  
+      const uploadPicture = (retryCount = 3) => {
+        this.fileUploadService.uploadProfilePicture(
+          base64Data,
+          filename,
+          contentType,
+          this.profile!._id
+        ).subscribe({
+          next: (updatedProfile: UserProfile) => {
+            this.profile = updatedProfile;
+            alert('Profile picture uploaded successfully!');
+            this.uploading = false;
+          },
+          error: (error: HttpErrorResponse) => {
+            console.error('Error uploading profile picture:', error);
+            if (retryCount > 0) {
+              console.log(`Retrying upload... (${3 - retryCount + 1}/3)`);
+              uploadPicture(retryCount - 1);
+            } else {
+              alert('Failed to upload profile picture after multiple attempts. Please try again later.');
+              this.uploading = false;
+            }
+          }
+        });
+      };
+  
+      uploadPicture();
     };
     reader.readAsDataURL(file);
   }

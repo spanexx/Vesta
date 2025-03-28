@@ -186,7 +186,6 @@ export class ProfileService {
   }
 
   updateField(fieldName: string, value: any): Observable<UserProfile> {
-    console.log(`Updating field ${fieldName} with value:`, value);
     
     // Special handling for rates field
     if (fieldName === 'rates') {
@@ -250,7 +249,6 @@ export class ProfileService {
       'Authorization',
       `Bearer ${this.authService.getToken()}`
     );
-    console.log("id", profileId, "fieldName", fieldName);
 
     return this.http.delete(`${profileRoutes}/${profileId}/field/${fieldName}`, { headers }).pipe(
       catchError(error => {

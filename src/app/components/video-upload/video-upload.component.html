@@ -61,7 +61,7 @@
       <div class="videos-grid">
         <div *ngFor="let video of allVideos" class="video-card">
           <div class="video-header">
-            <img [src]="video.profilePicture || 'assets/avatar.jpg'" 
+            <img [src]="getProfilePictureUrl(video.profilePicture) || 'assets/avatar.jpg'" 
                  alt="Profile picture" 
                  class="profile-pic">
             <span class="username" [routerLink]="['/profile', video.userId]" style="cursor: pointer;">{{video.username}}</span>

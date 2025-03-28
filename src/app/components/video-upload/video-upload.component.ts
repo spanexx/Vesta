@@ -56,6 +56,10 @@ export class VideoUploadComponent implements OnInit {
     this.loadAllVideos(); // This can still load for all users
   }
 
+  getProfilePictureUrl(profileId: string): string {
+    return this.fileUploadService.getMediaUrl(profileId)
+  }
+
   checkSubscription() {
       console.log('User:', this.currentUser$);
     this.videoService.checkSubscription()

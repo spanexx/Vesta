@@ -2,13 +2,11 @@ const axios = require('axios');
 
 const updateUserProfile = async (userId, profileData) => {
   try {
-    console.log(`Updating profile for user ${userId}...`);
     const response = await axios.put(`http://localhost:6388/api/profiles/${userId}`, profileData, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(`Profile for user ${userId} updated successfully`);
     return response.data;
   } catch (error) {
     console.error(`Error updating profile for user ${userId}:`, error);

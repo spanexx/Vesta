@@ -214,7 +214,6 @@ router.get('/filter', async (req, res) => {
     
     // Update query to search in the role array
     const profiles = await UserProfile.find({ role: { $in: [role] } });
-    console.log(`Found ${profiles.length} profiles with role ${role}`);
     
     res.json(profiles);
   } catch (error) {
@@ -231,8 +230,7 @@ router.get('/location', async (req, res) => {
   try {
     const { country, city } = req.query;
     const query = {};
-    console.log("Country", country);
-    console.log("City", city);
+    
     
     if (country) query['contact.country'] = { $regex: country, $options: 'i' };
     if (city) query['contact.city'] = { $regex: city, $options: 'i' };
@@ -555,7 +553,6 @@ router.delete('/:id', auth, async (req, res) => {
 router.delete('/:id/field/:fieldName', auth, async (req, res) => {
   try {
     const { id, fieldName } = req.params;
-  console.log("id", id, "fieldName", fieldName);
     // Check if user is authorized
     if (id !== req.userId) {
       return res.status(403).json({

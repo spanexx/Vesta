@@ -341,7 +341,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   private fetchProfiles(params?: ProfileQueryParams): void {
     this.isLoading = true;
     this.error = null;
-    console.log('Fetching profiles with params:', params); // Debug log
     
     this.profileService.getAllProfiles(params).subscribe({
       next: (profiles: UserProfile[]) => {
