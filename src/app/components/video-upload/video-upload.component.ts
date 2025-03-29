@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FileUploadService } from '../../services/file-upload.service';
 import { VideoService } from '../../services/video.service';
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom, Subscription, forkJoin } from 'rxjs';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { environment } from '../../../environments/environment';
 import { AuthenticationService } from '../../services/authentication.service';
@@ -12,6 +12,7 @@ import { SubscriberVideo } from '../../models/subscriberVideo.model';
 import { RouterModule } from '@angular/router';
 import { ProfileService } from '../../services/profile.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-video-upload',
@@ -20,7 +21,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     templateUrl: './video-upload.component.html',
     styleUrls: ['./video-upload.component.css']
 })
-export class VideoUploadComponent implements OnInit {
+export class VideoUploadComponent implements OnInit, OnDestroy {
   hasSubscription = false;
   currentVideo: any = null;
   selectedVideo: File | null = null;
@@ -31,7 +32,9 @@ export class VideoUploadComponent implements OnInit {
   uploadProgress = 0;
   currentUser$ = this.authService.currentUser$;
   allVideos: SubscriberVideo[] = [];
-  userId = ""
+  userId = "";
+  private subscriptions = new Subscription();
+  isLoading = false;
 
   constructor(
     private videoService: VideoService,
@@ -44,50 +47,48 @@ export class VideoUploadComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Subscribe to auth state
-    this.currentUser$.subscribe(user => {
-      if (user) {
-        this.userId = user._id; // Store userId when user logs in
-        this.checkSubscription();
-        this.getCurrentVideo();
-      }
-    });
+    this.loadUserAndVideoData();
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+  }
+
+  private loadUserAndVideoData() {
+    if (this.isLoading) return;
     
-    this.loadAllVideos(); // This can still load for all users
+    this.isLoading = true;
+    this.subscriptions.add(
+      this.currentUser$.pipe(take(1)).subscribe(user => {
+        if (user) {
+          this.userId = user._id;
+          
+          forkJoin({
+            subscription: this.videoService.checkSubscription().pipe(take(1)),
+            currentVideo: this.videoService.getCurrentVideo().pipe(take(1)),
+            allVideos: this.videoService.getAllVideos().pipe(take(1))
+          }).subscribe({
+            next: ({subscription, currentVideo, allVideos}) => {
+              this.hasSubscription = subscription.isSubscribed;
+              this.currentVideo = currentVideo;
+              this.allVideos = allVideos;
+              this.isLoading = false;
+            },
+            error: (error) => {
+              console.error('Error loading video data:', error);
+              this.error = 'Failed to load video data';
+              this.isLoading = false;
+            }
+          });
+        } else {
+          this.isLoading = false;
+        }
+      })
+    );
   }
 
   getProfilePictureUrl(profileId: string): string {
     return this.fileUploadService.getMediaUrl(profileId)
-  }
-
-  checkSubscription() {
-      console.log('User:', this.currentUser$);
-    this.videoService.checkSubscription()
-      .subscribe({
-        next: (res) => {
-          this.hasSubscription = res.isSubscribed;
-        },
-        error: (err) => {
-          this.error = 'Failed to check subscription status';
-          console.error(err);
-        }
-      });
-    
-  }
-
-  getCurrentVideo() {
-
-    this.videoService.getCurrentVideo()
-      .subscribe({
-        next: (res) => {
-          this.currentVideo = res.subscriberVideo;
-        },
-        error: (err) => {
-          this.error = 'Failed to get current video';
-          console.error(err);
-        }
-      });
-    
   }
 
   onVideoSelected(event: any) {
@@ -128,8 +129,7 @@ export class VideoUploadComponent implements OnInit {
         this.videoTitle = '';
         this.videoDescription = '';
         this.uploadProgress = 100;
-        this.getCurrentVideo();
-        this.loadAllVideos();
+        this.loadUserAndVideoData();
 
         this.snackBar.open('Video uploaded successfully!', 'Close', {
           duration: 3000,
@@ -182,18 +182,6 @@ export class VideoUploadComponent implements OnInit {
   navigateToLogin() {
     this.router.navigate(['/login'], {
       queryParams: { returnUrl: '/video-upload' }
-    });
-  }
-
-  loadAllVideos() {
-    this.videoService.getAllVideos().subscribe({
-      next: (videos) => {
-        this.allVideos = videos;
-      },
-      error: (err) => {
-        console.error('Error loading videos:', err);
-        this.error = 'Failed to load videos';
-      }
     });
   }
 

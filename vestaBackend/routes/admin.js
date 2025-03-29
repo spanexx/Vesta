@@ -1,3 +1,5 @@
+//admin.js
+
 import express from 'express';
 import Admin from '../models/Admin.js';
 import UserProfile from '../models/UserProfile.js';
@@ -337,5 +339,62 @@ router.get('/dashboard/stats', adminAuth, async (req, res) => {
     });
   }
 });
+
+
+// Update moderation flags for a user (admin access)
+router.patch('/profiles/:id/moderation', adminAuth, async (req, res) => {
+  try {
+    if (!req.admin.permissions.canModerateContent) {
+      return res.status(403).json({
+        error: 'FORBIDDEN',
+        message: 'You do not have permission to update moderation flags'
+      });
+    }
+
+    const { id } = req.params;
+    const { moderationFlags } = req.body;
+
+    // Ensure only allowed moderation fields are updated
+    const allowedFields = ['contentWarnings', 'lastReviewed', 'reviewerNotes', 'flaggedMedia'];
+    const filteredFlags = Object.keys(moderationFlags)
+      .filter(key => allowedFields.includes(key))
+      .reduce((obj, key) => {
+        obj[key] = moderationFlags[key];
+        return obj;
+      }, {});
+
+    // Validate flaggedMedia if it exists
+    if (filteredFlags.flaggedMedia) {
+      filteredFlags.flaggedMedia = filteredFlags.flaggedMedia.map(flag => ({
+        ...flag,
+        flaggedAt: flag.flaggedAt || new Date()
+      }));
+    }
+
+    const updatedProfile = await UserProfile.findByIdAndUpdate(
+      id,
+      { $set: { moderationFlags: filteredFlags } },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedProfile) {
+      return res.status(404).json({
+        error: 'PROFILE_NOT_FOUND',
+        message: 'Profile not found'
+      });
+    }
+
+    res.json({
+      message: 'Moderation flags updated successfully',
+      profile: updatedProfile
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: 'UPDATE_FAILED',
+      message: error.message
+    });
+  }
+});
+
 
 export default router;

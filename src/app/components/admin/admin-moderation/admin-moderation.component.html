@@ -1,0 +1,108 @@
+<div class="moderation-container">
+  <h2>Content Moderation</h2>
+  
+  <div class="content-grid">
+    <div *ngFor="let user of userFiles" class="content-card">
+      <div class="user-header" (click)="toggleUser(user.username)">
+        <div class="user-info">
+          <h3>{{user.username}}</h3>
+          <p>{{user.email}}</p>
+        </div>
+        <div class="header-actions">
+          <button class="moderate-btn" (click)="selectUser(user); $event.stopPropagation()">
+            <i class="fas fa-shield-alt"></i> Moderate
+          </button>
+          <i class="fas" [class.fa-chevron-down]="!isExpanded(user.username)" 
+             [class.fa-chevron-up]="isExpanded(user.username)"></i>
+        </div>
+      </div>
+
+      <div class="media-content" *ngIf="isExpanded(user.username)">
+        <!-- Images Section -->
+        <div class="media-section" *ngIf="user.images?.length">
+          <h4>Images ({{user.images.length}})</h4>
+          <div class="media-grid">
+            <div *ngFor="let image of user.images" class="media-item">
+              <img [src]="getMedia(image)" alt="User content">
+              <div class="media-actions">
+                <button (click)="deleteFile(user.username, 'images', image)" class="delete-btn">
+                  <i class="fas fa-trash"></i>
+                </button>
+                <button (click)="flagMedia(user, image, 'image')" class="flag-btn">
+                  <i class="fas fa-flag"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Videos Section -->
+        <div class="media-section" *ngIf="user.videos?.length">
+          <h4>Videos ({{user.videos.length}})</h4>
+          <div class="media-grid">
+            <div *ngFor="let video of user.videos" class="media-item">
+              <video [src]="getMedia(video)" controls></video>
+              <div class="media-actions">
+                <button (click)="deleteFile(user.username, 'videos', video)" class="delete-btn">
+                  <i class="fas fa-trash"></i>
+                </button>
+                <button (click)="flagMedia(user, video, 'video')" class="flag-btn">
+                  <i class="fas fa-flag"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Moderation Form -->
+  <div *ngIf="isFormVisible" class="moderation-form-overlay" (click)="closeForm()">
+    <div class="moderation-form-container" (click)="$event.stopPropagation()">
+      <div class="moderation-form-header">
+        <h3>Moderate User: {{selectedUser?.username}}</h3>
+        <button class="close-btn" (click)="closeForm()">×</button>
+      </div>
+
+      <div class="moderation-form">
+        <div class="form-group">
+          <label for="contentWarnings">Content Warnings:</label>
+          <input 
+            type="number" 
+            id="contentWarnings"
+            [(ngModel)]="selectedUser!.moderationFlags!.contentWarnings"
+            class="form-control"
+          >
+        </div>
+        <div class="form-group">
+          <label for="lastReviewed">Last Reviewed:</label>
+          <input 
+            type="date" 
+            id="lastReviewed"
+            [ngModel]="formatDate(selectedUser!.moderationFlags!.lastReviewed)"
+            (ngModelChange)="onLastReviewedChange(selectedUser, $event)"
+            class="form-control"
+          >
+        </div>
+        <div class="form-group">
+          <label for="reviewerNotes">Reviewer Notes:</label>
+          <textarea 
+            id="reviewerNotes"
+            [(ngModel)]="selectedUser!.moderationFlags!.reviewerNotes"
+            class="form-control"
+            rows="3"
+          ></textarea>
+        </div>
+        <div class="form-actions">
+          <button (click)="updateModeration()" class="save-btn">
+            Update Moderation Flags
+          </button>
+          <button (click)="closeForm()" class="cancel-btn">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,165 +1,222 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminService } from '../../../services/admin.service';
 import { UserFileResponse } from '../../../models/admin.model';
+import { UserProfile } from '../../../models/userProfile.model';
+import { FileUploadService } from '../../../services/file-upload.service';
+import { FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
+import { finalize, take } from 'rxjs/operators';
+
+interface ModerationFlags {
+  contentWarnings: number;
+  reviewerNotes: string;
+  lastReviewed: Date;
+  flaggedMedia?: { mediaId: string; mediaType: 'image' | 'video'; flaggedAt: Date }[];
+}
 
 @Component({
   selector: 'app-admin-moderation',
   standalone: true,
-  imports: [CommonModule],
-  template: `
-    <div class="moderation-container">
-      <h2>Content Moderation</h2>
-      
-      <div class="content-grid">
-        <div *ngFor="let user of userFiles" class="content-card">
-          <div class="user-info">
-            <h3>{{user.username}}</h3>
-            <p>{{user.email}}</p>
-          </div>
-          
-          <div class="media-section" *ngIf="user.images.length > 0">
-            <h4>Images ({{user.images.length}})</h4>
-            <div class="media-grid">
-              <div *ngFor="let image of user.images" class="media-item">
-                <img [src]="image" alt="User content">
-                <button (click)="deleteFile(user.username, 'images', image)" class="delete-btn">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="media-section" *ngIf="user.videos.length > 0">
-            <h4>Videos ({{user.videos.length}})</h4>
-            <div class="media-grid">
-              <div *ngFor="let video of user.videos" class="media-item">
-                <video [src]="video" controls></video>
-                <button (click)="deleteFile(user.username, 'videos', video)" class="delete-btn">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="media-section" *ngIf="user.verificationDocuments.length > 0">
-            <h4>Verification Documents</h4>
-            <div class="media-grid">
-              <div *ngFor="let doc of user.verificationDocuments" class="media-item">
-                <img [src]="doc" alt="Verification document">
-                <button (click)="deleteFile(user.username, 'documents', doc)" class="delete-btn">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  `,
-  styles: [`
-    .moderation-container {
-      padding: 2rem;
-    }
-
-    h2 {
-      color: var(--text);
-      margin-bottom: 2rem;
-    }
-
-    .content-grid {
-      display: grid;
-      gap: 2rem;
-    }
-
-    .content-card {
-      background: var(--surface);
-      padding: 1.5rem;
-      border-radius: 8px;
-      box-shadow: var(--card-shadow);
-    }
-
-    .user-info {
-      margin-bottom: 1.5rem;
-    }
-
-    .user-info h3 {
-      color: var(--text);
-      margin-bottom: 0.5rem;
-    }
-
-    .user-info p {
-      color: var(--text-secondary);
-    }
-
-    .media-section {
-      margin-top: 1.5rem;
-    }
-
-    .media-section h4 {
-      color: var(--text);
-      margin-bottom: 1rem;
-    }
-
-    .media-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 1rem;
-    }
-
-    .media-item {
-      position: relative;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .media-item img,
-    .media-item video {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-    }
-
-    .delete-btn {
-      position: absolute;
-      top: 0.5rem;
-      right: 0.5rem;
-      padding: 0.5rem;
-      background: var(--error);
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .delete-btn:hover {
-      opacity: 0.9;
-    }
-  `]
+  imports: [CommonModule, FormsModule],
+    templateUrl: './admin-moderation.component.html',
+    styleUrls: ['./admin-moderation.component.scss'],
 })
-export class AdminModerationComponent implements OnInit {
-  userFiles: UserFileResponse[] = [];
+export class AdminModerationComponent implements OnInit, OnDestroy {
+  private subscriptions = new Subscription();
+  userFiles: UserProfile[] = [];
+  selectedUser: UserProfile | null = null;
+  isFormVisible = false;
+  expandedUsers: { [key: string]: boolean } = {};
+  error: string | null = null;
+  isLoading = false;
 
-  constructor(private adminService: AdminService) {}
+  constructor(
+    private adminService: AdminService,
+    private fileUploadService: FileUploadService
+  ) {}
 
   ngOnInit(): void {
     this.loadUserFiles();
   }
 
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
+
   private loadUserFiles(): void {
-    this.adminService.getUserFiles().subscribe({
-      next: (files) => this.userFiles = files,
-      error: (error) => console.error('Failed to load user files:', error)
-    });
+    if (this.isLoading) return;
+
+    this.isLoading = true;
+    this.error = null;
+    
+    this.subscriptions.add(
+      this.adminService.getUserFiles().pipe(
+        take(1),
+        finalize(() => this.isLoading = false)
+      ).subscribe({
+        next: (files) => {
+          console.log('User files loaded:', files);
+          // Initialize moderation flags for each user if they don't exist
+          this.userFiles = files.map(user => ({
+            ...user,
+            moderationFlags: user.moderationFlags || {
+              contentWarnings: 0,
+              reviewerNotes: '',
+              lastReviewed: new Date()
+            }
+          }));
+        },
+        error: (error) => {
+          console.error('Failed to load user files:', error);
+          this.error = 'Failed to load user files. Please try again.';
+        }
+      })
+    );
   }
 
   deleteFile(userId: string, fileType: 'images' | 'videos' | 'documents', fileId: string): void {
     if (confirm('Are you sure you want to delete this file?')) {
-      this.adminService.deleteUserFile(userId, fileType, fileId).subscribe({
-        next: () => this.loadUserFiles(), // Reload files after deletion
-        error: (error) => console.error('Failed to delete file:', error)
-      });
+      this.subscriptions.add(
+        this.adminService.deleteUserFile(userId, fileType, fileId).subscribe({
+          next: () => this.loadUserFiles(), // Reload files after deletion
+          error: (error) => console.error('Failed to delete file:', error)
+        })
+      );
     }
+  }
+
+  updateFlags(userId: string): void {
+    const user = this.userFiles.find(u => u.username === userId);
+    if (!user) return;
+
+    const flags = {
+      contentWarnings: user.moderationFlags?.contentWarnings,
+      reviewerNotes: user.moderationFlags?.reviewerNotes,
+      lastReviewed: new Date()
+    };
+
+    this.subscriptions.add(
+      this.adminService.updateModerationFlags(userId, flags).subscribe({
+        next: () => {
+          // Optionally show success message
+          console.log('Moderation flags updated successfully');
+        },
+        error: (error) => console.error('Failed to update moderation flags:', error)
+      })
+    );
+  }
+
+  getMedia(fileId: string): string {
+    return this.fileUploadService.getMediaUrl(fileId);
+  }
+
+  // Helper method to safely get moderation flags
+  getModerationFlags(user: any) {
+    if (!user.moderationFlags) {
+      user.moderationFlags = {
+        contentWarnings: 0,
+        reviewerNotes: '',
+        lastReviewed: new Date()
+      };
+    }
+    return user.moderationFlags;
+  }
+
+  updateModeration(): void {
+    if (!this.selectedUser?._id || !this.selectedUser?.moderationFlags) return;
+
+    const flags: ModerationFlags = {
+      contentWarnings: this.selectedUser.moderationFlags.contentWarnings || 0,
+      reviewerNotes: this.selectedUser.moderationFlags.reviewerNotes || '',
+      lastReviewed: this.selectedUser.moderationFlags.lastReviewed || new Date()
+    };
+
+    this.subscriptions.add(
+      this.adminService.updateModerationFlags(this.selectedUser._id, flags).subscribe({
+        next: (updatedUser) => {
+          console.log('Moderation flags updated successfully', updatedUser);
+          this.loadUserFiles();
+          this.closeForm();
+        },
+        error: (error) => {
+          console.error('Failed to update moderation flags:', error);
+        }
+      })
+    );
+  }
+
+  flagMedia(user: UserProfile, mediaId: string, mediaType: 'image' | 'video'): void {
+    if (!user._id || !user.moderationFlags) return;
+
+    const flags = {
+      ...user.moderationFlags,
+      flaggedMedia: [
+        ...(user.moderationFlags.flaggedMedia || []),
+        {
+          mediaId,
+          mediaType,
+          flaggedAt: new Date()
+        }
+      ]
+    };
+
+    this.subscriptions.add(
+      this.adminService.updateModerationFlags(user._id, flags).subscribe({
+        next: (updatedUser) => {
+          console.log('Media flagged successfully', updatedUser);
+          this.loadUserFiles();
+        },
+        error: (error) => console.error('Failed to flag media:', error)
+      })
+    );
+  }
+
+  formatDate(date: Date | undefined): string {
+    if (!date) return '';
+    const d = new Date(date);
+    const year = d.getFullYear();
+    let month = '' + (d.getMonth() + 1);
+    let day = '' + d.getDate();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+  }
+
+  parseDate(dateString: string): Date | undefined {
+    if (!dateString) return undefined;
+    const parts = dateString.split('-');
+    if (parts.length !== 3) return undefined;
+    const year = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1; // Months are 0-indexed
+    const day = parseInt(parts[2], 10);
+    return new Date(year, month, day);
+  }
+
+  onLastReviewedChange(user: any, dateString: string): void {
+    const parsedDate = this.parseDate(dateString);
+    if (parsedDate) {
+      user.moderationFlags.lastReviewed = parsedDate;
+    }
+  }
+
+  selectUser(user: UserProfile): void {
+    this.selectedUser = user;
+    this.isFormVisible = true;
+  }
+
+  closeForm(): void {
+    this.selectedUser = null;
+    this.isFormVisible = false;
+  }
+
+  toggleUser(username: string): void {
+    this.expandedUsers[username] = !this.expandedUsers[username];
+  }
+
+  isExpanded(username: string): boolean {
+    return !!this.expandedUsers[username];
   }
 }

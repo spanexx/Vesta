@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminService } from '../../../services/admin.service';
 import { UserProfile } from '../../../models/userProfile.model';
@@ -6,6 +6,8 @@ import { Router } from '@angular/router';
 import { FileUploadService } from '../../../services/file-upload.service';
 import { AuthenticationService } from '../../../services/authentication.service';
 import { ProfileService } from '../../../services/profile.service';
+import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-admin-users',
@@ -14,10 +16,12 @@ import { ProfileService } from '../../../services/profile.service';
   templateUrl: './admin-users.component.html',
   styleUrls: ['./admin-users.component.css']
 })
-export class AdminUsersComponent implements OnInit {
+export class AdminUsersComponent implements OnInit, OnDestroy {
+  private subscriptions = new Subscription();
   users: UserProfile[] = [];
   profile: UserProfile | null = null;
   error = '';
+  isLoading = false;
 
   constructor(
     private adminService: AdminService,
@@ -29,28 +33,57 @@ export class AdminUsersComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUsers();
+    this.loadProfile();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   private loadProfile() {
-    this.authService.currentUser$.subscribe(user => {
-      if (user) {
-        this.profileService.getProfileById(user._id).subscribe({
-          next: (profile) => {
-            this.profile = profile;
-          },
-          error: (error) => {
-            this.error = 'Failed to load profile';
-          }
-        });
-      }
-    });
+    if (this.isLoading) return;
+    
+    this.subscriptions.add(
+      this.authService.currentUser$.pipe(take(1)).subscribe(user => {
+        if (user) {
+          this.isLoading = true;
+          this.subscriptions.add(
+            this.profileService.getProfileById(user._id).pipe(take(1)).subscribe({
+              next: (profile) => {
+                this.profile = profile;
+                this.isLoading = false;
+              },
+              error: (error) => {
+                this.error = 'Failed to load profile';
+                this.isLoading = false;
+              }
+            })
+          );
+        } else {
+          this.isLoading = false;
+          this.profile = null;
+        }
+      })
+    );
   }
 
   private loadUsers(): void {
-    this.adminService.getAllProfiles().subscribe({
-      next: (users) => this.users = users,
-      error: (error) => console.error('Failed to load users:', error)
-    });
+    if (this.isLoading) return;
+    
+    this.isLoading = true;
+    this.subscriptions.add(
+      this.adminService.getAllProfiles().pipe(take(1)).subscribe({
+        next: (users) => {
+          this.users = users;
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Failed to load users:', error);
+          this.error = 'Failed to load users';
+          this.isLoading = false;
+        }
+      })
+    );
   }
 
   editUser(user: UserProfile): void {

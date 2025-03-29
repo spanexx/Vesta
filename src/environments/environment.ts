@@ -12,5 +12,18 @@ export const environment = {
         secretKey: 'YOUR_BINANCE_SECRET_KEY',
         apiUrl: 'https://api.binance.com/api/v1',
         merchantId: 'YOUR_MERCHANT_ID'
-    }
+    },
+    // csp: {
+    //     allowUnsafeEval: true, // Set to false in production
+    //     allowUnsafeInline: true, // Set to false in production
+    //     allowBybit: true,
+    //     trustedDomains: [
+    //         'https://*.bybit.com',
+    //         'wss://*.bybit.com'
+    //     ]
+    // },
+    // bybit: {
+    //     apiKey: 'YOUR_BYBIT_API_KEY',
+    //     apiEndpoint: 'https://api.bybit.com'
+    // }
 };

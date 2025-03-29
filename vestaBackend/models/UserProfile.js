@@ -252,6 +252,12 @@ const userProfileSchema = new mongoose.Schema({
     contentWarnings: { type: Number, default: 0 },
     lastReviewed: { type: Date },
     reviewerNotes: { type: String, trim: true },
+    flaggedMedia: [{
+      mediaId: { type: String },
+      mediaType: { type: String, enum: ['image', 'video'] },
+      reason: { type: String },
+      flaggedAt: { type: Date, default: Date.now }
+    }]
   },
   images: {
     type: [String],

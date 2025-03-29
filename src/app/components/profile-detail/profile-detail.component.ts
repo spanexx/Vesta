@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ProfileService } from '../../services/profile.service';
@@ -10,7 +10,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { CurrencyConversionService, SupportedCurrency } from '../../services/currency-conversion.service';
 import { generateWhatsAppLink } from '../../utils/whatsapp.util';
 import { ScrollingModule } from '@angular/cdk/scrolling';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, of, finalize, take, catchError, takeUntil, Subject } from 'rxjs';
 import { ProfileSkeletonComponent } from './components/profile-skeleton/profile-skeleton.component';
 import { ProfileGalleryComponent } from './components/profile-gallery/profile-gallery.component';
 import { Rates, EditingState, RoleSelections, ServiceSelections, ServiceUpdate, ServiceAccumulator, RateType, EditableFields } from '../../models/profile.types';
@@ -29,6 +29,11 @@ import {
 } from '../../utils/profile/profile-detail.util';
 import { NgOptimizedImage } from '@angular/common';
 
+interface ApiError {
+  message: string;
+  statusCode?: number;
+}
+
 @Component({
   selector: 'app-profile-detail',
   standalone: true,
@@ -45,11 +50,15 @@ import { NgOptimizedImage } from '@angular/common';
   templateUrl: './profile-detail.component.html',
   styleUrls: ['./profile-detail.component.css']
 })
-export class ProfileDetailComponent implements OnInit {
+export class ProfileDetailComponent implements OnInit, OnDestroy {
   private loadingSubject = new BehaviorSubject<boolean>(true);
   loading$ = this.loadingSubject.asObservable();
   profile$ = new BehaviorSubject<UserProfile | null>(null);
   isCurrentUser$ = new BehaviorSubject<boolean>(false);
+
+  // Add new properties
+  private destroy$ = new Subject<void>();
+  private isUpdating = false;
 
   // Add helper method
   getAsyncBoolean(observable$: BehaviorSubject<boolean>): boolean {
@@ -109,18 +118,15 @@ export class ProfileDetailComponent implements OnInit {
     private authService: AuthenticationService,
     public fileUploadService: FileUploadService,
     private currencyConversionService: CurrencyConversionService
-  ) {}
+  ) {
+    this.initializeSubscriptions();
+  }
 
-  ngOnInit() {
-    this.route.params.subscribe(params => {
-      const id = params['id'];
-      this.loadProfile(id);
-    });
-
-    
-
-
-    this.authService.currentUser$.subscribe(currentUser => {
+  private initializeSubscriptions(): void {
+    // Move subscriptions from ngOnInit
+    this.authService.currentUser$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(currentUser => {
       if (currentUser) {
         this.userId = currentUser._id;
       }
@@ -129,16 +135,45 @@ export class ProfileDetailComponent implements OnInit {
       }
     });
 
-    this.authService.currentUser$.subscribe(user => {
+    this.authService.currentUser$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(user => {
       this.isAuthenticated = !!user;
+      this.currentUser = user;
     });
+  }
 
-    this.authService.currentUser$.subscribe(user => this.currentUser = user);
+  ngOnInit() {
+    this.route.params.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(params => {
+      const id = params['id'];
+      this.loadProfile(id);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private loadProfile(id: string) {
+    if (this.isLoading || this.isUpdating) return;
+    
     this.isLoading = true;
-    this.profileService.getProfileById(id).subscribe({
+    this.error = '';
+
+    this.profileService.getProfileById(id).pipe(
+      take(1),
+      catchError((error: HttpErrorResponse) => {
+        const apiError: ApiError = error.error || { message: 'Unknown error occurred' };
+        this.error = apiError.message;
+        throw error;
+      }),
+      finalize(() => {
+        this.isLoading = false;
+      })
+    ).subscribe({
       next: (profile) => {
         this.profile = {
           ...profile,
@@ -431,7 +466,10 @@ export class ProfileDetailComponent implements OnInit {
   }
 
   saveField(fieldName: string) {
-    if (!this.profile) return;
+    if (!this.profile || this.isUpdating) return;
+
+    this.isUpdating = true;
+    this.error = '';
 
     let valueToSend: any = this.editingState.currentValue;
 
@@ -439,10 +477,12 @@ export class ProfileDetailComponent implements OnInit {
     if (fieldName === 'physicalAttributes.gender') {
       if (!valueToSend || valueToSend === '') {
         this.error = 'Please select a gender';
+        this.isUpdating = false;
         return;
       }
       if (!['female', 'male', 'other'].includes(valueToSend)) {
         this.error = 'Invalid gender value';
+        this.isUpdating = false;
         return;
       }
     }
@@ -450,10 +490,12 @@ export class ProfileDetailComponent implements OnInit {
     if (fieldName === 'physicalAttributes.pubicHair') {
       if (!valueToSend || valueToSend === '') {
         this.error = 'Please select a style';
+        this.isUpdating = false;
         return;
       }
       if (!['Shaved', 'Trimmed', 'Natural'].includes(valueToSend)) {
         this.error = 'Invalid style value';
+        this.isUpdating = false;
         return;
       }
     }
@@ -470,6 +512,7 @@ export class ProfileDetailComponent implements OnInit {
       const rateValue = parseFloat(this.editingState.currentValue as string);
       if (isNaN(rateValue) || rateValue < 0) {
         this.error = 'Please enter a valid rate';
+        this.isUpdating = false;
         return;
       }
       valueToSend = rateValue;
@@ -484,6 +527,7 @@ export class ProfileDetailComponent implements OnInit {
       }
       if ((valueToSend as string[]).length === 0) {
         this.error = 'Please select at least one role';
+        this.isUpdating = false;
         return;
       }
       console.log('Sending role array:', valueToSend); // Debug log
@@ -493,6 +537,7 @@ export class ProfileDetailComponent implements OnInit {
     if (fieldName === 'physicalAttributes.ethnicity') {
       if (!valueToSend) {
         this.error = 'Please select an ethnicity';
+        this.isUpdating = false;
         return;
       }
       console.log('Sending ethnicity value:', valueToSend); // Add logging
@@ -519,6 +564,7 @@ export class ProfileDetailComponent implements OnInit {
 
       if (serviceUpdate.included.length === 0) {
         this.error = 'Please select at least one service';
+        this.isUpdating = false;
         return;
       }
     }
@@ -529,6 +575,7 @@ export class ProfileDetailComponent implements OnInit {
         valueToSend = parseFloat(this.editingState.currentValue as string);
         if (isNaN(valueToSend)) {
           this.error = 'Please enter a valid number';
+          this.isUpdating = false;
           return;
         }
       } else if (fieldName.includes('tattoos') || fieldName.includes('piercings')) {
@@ -546,6 +593,7 @@ export class ProfileDetailComponent implements OnInit {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(valueToSend)) {
         this.error = 'Please enter a valid email address';
+        this.isUpdating = false;
         return;
       }
     }
@@ -555,11 +603,22 @@ export class ProfileDetailComponent implements OnInit {
       const phoneRegex = /^\+?[\d\s-]+$/;
       if (!phoneRegex.test(valueToSend)) {
         this.error = 'Please enter a valid phone number';
+        this.isUpdating = false;
         return;
       }
     }
 
-    this.profileService.updateField(fieldName, valueToSend).subscribe({
+    this.profileService.updateField(fieldName, valueToSend).pipe(
+      take(1),
+      catchError((error: HttpErrorResponse) => {
+        const apiError: ApiError = error.error || { message: `Failed to update ${fieldName}` };
+        this.error = apiError.message;
+        throw error;
+      }),
+      finalize(() => {
+        this.isUpdating = false;
+      })
+    ).subscribe({
       next: (updatedProfile) => {
         console.log('Profile after update:', updatedProfile); // Add logging
         
@@ -647,11 +706,12 @@ export class ProfileDetailComponent implements OnInit {
   }
 
   updateCurrency() {
-    if (!this.rates) return;
-    
+    if (!this.rates || this.isUpdating) return;
+
+    this.isUpdating = true;
     const previousCurrency = this.rates.currency as SupportedCurrency;
     const newCurrency = this.selectedCurrency;
-    
+
     // First convert rates
     const convertedRates = {
       incall: Object.fromEntries(
@@ -682,8 +742,8 @@ export class ProfileDetailComponent implements OnInit {
 
     // Update both rates and services in one batch
     Promise.all([
-      this.profileService.updateField('rates', convertedRates).toPromise(),
-      this.profileService.updateField('services', convertedServices).toPromise()
+      this.profileService.updateField('rates', convertedRates).pipe(take(1)).toPromise(),
+      this.profileService.updateField('services', convertedServices).pipe(take(1)).toPromise()
     ]).then(([ratesUpdate, servicesUpdate]) => {
       if (ratesUpdate && servicesUpdate) {
         this.profile = { 
@@ -701,12 +761,15 @@ export class ProfileDetailComponent implements OnInit {
         this.selectedCurrency = newCurrency;
         console.log('Currency and related prices updated successfully');
       }
-    }).catch(error => {
+    }).catch((error: HttpErrorResponse) => {
       // Revert changes on error
       this.selectedCurrency = previousCurrency;
       this.rates.currency = previousCurrency;
+      const apiError: ApiError = error.error || { message: 'Failed to update currency and prices' };
+      this.error = apiError.message;
       console.error('Error updating currency and prices:', error);
-      this.error = 'Failed to update currency and prices. Please try again.';
+    }).finally(() => {
+      this.isUpdating = false;
     });
   }
 
@@ -894,5 +957,13 @@ export class ProfileDetailComponent implements OnInit {
       return this.fileUploadService.getMediaUrl(this.profile.profilePicture);
     }
     return 'assets/avatar.jpg';
+  }
+
+  // Add helper method for error handling
+  private handleApiError(error: HttpErrorResponse, defaultMessage: string): string {
+    if (error.error?.message) {
+      return error.error.message;
+    }
+    return defaultMessage;
   }
 }

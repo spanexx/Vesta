@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { AdminService } from '../../../services/admin.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserProfile } from '../../../models/userProfile.model';
 import { FileUploadService } from '../../../services/file-upload.service';
+import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-admin-edit-user',
@@ -12,9 +14,8 @@ import { FileUploadService } from '../../../services/file-upload.service';
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './admin-edit-user.component.html',
   styleUrls: ['./admin-edit-user.component.css']
-
 })
-export class AdminEditUserComponent implements OnInit {
+export class AdminEditUserComponent implements OnInit, OnDestroy {
   userForm: FormGroup;
   isLoading = false;
   isSaving = false;
@@ -22,6 +23,7 @@ export class AdminEditUserComponent implements OnInit {
   userId!: string;
   profile: UserProfile | null = null;
   previewUrl: string | null = null;
+  private subscriptions = new Subscription();
 
   constructor(
     private fb: FormBuilder,
@@ -95,54 +97,34 @@ export class AdminEditUserComponent implements OnInit {
 
   ngOnInit(): void {
     this.userId = this.route.snapshot.params['userId'];
-    this.loadUser();
+    if (this.userId) {
+      this.loadUser();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   private loadUser(): void {
+    if (this.isLoading) return;
+
     this.isLoading = true;
-    this.adminService.getAllProfiles().subscribe({
-      next: (users) => {
-        const user = users.find(u => u._id === this.userId);
-        if (user) {
-          this.profile = user;
-
-          // Format the date to YYYY-MM-DD
-          const birthdate = user.birthdate ? new Date(user.birthdate).toISOString().split('T')[0] : '';
-
-          this.userForm.patchValue({
-            username: user.username,
-            email: user.email,
-            birthdate: birthdate,
-            verified: user.verified,
-            status: user.status,
-            role: user.role,
-            profileLevel: user.profileLevel,
-            verificationStatus: user.verificationStatus,
-            services: user.services || { included: [], extra: {} },
-            rates: user.rates || { incall: {}, outcall: {} },
-            physicalAttributes: user.physicalAttributes || {},
-            availableToMeet: user.availableToMeet || {},
-            contact: user.contact || {},
-            subscription: {
-              active: user.subscription?.status === 'active',
-              plan: user.profileLevel || '',
-              startDate: user.subscription?.startDate ? new Date(user.subscription.startDate).toISOString().split('T')[0] : '',
-              endDate: user.subscription?.currentPeriodEnd ? new Date(user.subscription.currentPeriodEnd).toISOString().split('T')[0] : ''
-            },
-            moderationFlags: {
-              contentWarnings: user.moderationFlags?.contentWarnings || '',
-              reviewerNotes: user.moderationFlags?.reviewerNotes || '',
-              lastReviewed: user.moderationFlags?.lastReviewed ? new Date(user.moderationFlags.lastReviewed).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
-            }
-          });
+    this.subscriptions.add(
+      this.adminService.getAllProfiles().pipe(take(1)).subscribe({
+        next: (users) => {
+          const user = users.find(u => u._id === this.userId);
+          if (user) {
+            this.initializeForm(user);
+          }
+          this.isLoading = false;
+        },
+        error: (error) => {
+          this.error = 'Failed to load user';
+          this.isLoading = false;
         }
-        this.isLoading = false;
-      },
-      error: (error) => {
-        this.error = 'Failed to load user';
-        this.isLoading = false;
-      }
-    });
+      })
+    );
   }
 
   getMediaUrl(fileId: string): string {
@@ -166,7 +148,7 @@ export class AdminEditUserComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.userForm.invalid || this.isSaving) return;
+    if (this.userForm.invalid || this.isSaving || this.isLoading) return;
 
     // Show confirmation dialog with changes summary
     const changes = this.getChangedFields();
@@ -181,25 +163,17 @@ export class AdminEditUserComponent implements OnInit {
     }
 
     this.isSaving = true;
-
-    // Format dates before sending to API
-    const updateData = {
-      ...changes,
-      moderationFlags: {
-        ...this.userForm.get('moderationFlags')?.value,
-        lastReviewed: new Date()
-      }
-    };
-
-    this.adminService.updateUserProfile(this.userId, updateData).subscribe({
-      next: () => {
-        this.router.navigate(['/admin/users']);
-      },
-      error: (error) => {
-        this.error = error.message || 'Failed to update user';
-        this.isSaving = false;
-      }
-    });
+    this.subscriptions.add(
+      this.adminService.updateUserProfile(this.userId, changes).subscribe({
+        next: () => {
+          this.router.navigate(['/admin/users']);
+        },
+        error: (error) => {
+          this.error = error.message || 'Failed to update user';
+          this.isSaving = false;
+        }
+      })
+    );
   }
 
   private getChangedFields(): any {
@@ -257,5 +231,38 @@ export class AdminEditUserComponent implements OnInit {
 
   onCancel(): void {
     this.router.navigate(['/admin/users']);
+  }
+
+  // Helper method to initialize form with user data
+  private initializeForm(user: UserProfile): void {
+    // Format the date to YYYY-MM-DD
+    const birthdate = user.birthdate ? new Date(user.birthdate).toISOString().split('T')[0] : '';
+
+    this.userForm.patchValue({
+      username: user.username,
+      email: user.email,
+      birthdate: birthdate,
+      verified: user.verified,
+      status: user.status,
+      role: user.role,
+      profileLevel: user.profileLevel,
+      verificationStatus: user.verificationStatus,
+      services: user.services || { included: [], extra: {} },
+      rates: user.rates || { incall: {}, outcall: {} },
+      physicalAttributes: user.physicalAttributes || {},
+      availableToMeet: user.availableToMeet || {},
+      contact: user.contact || {},
+      subscription: {
+        active: user.subscription?.status === 'active',
+        plan: user.profileLevel || '',
+        startDate: user.subscription?.startDate ? new Date(user.subscription.startDate).toISOString().split('T')[0] : '',
+        endDate: user.subscription?.currentPeriodEnd ? new Date(user.subscription.currentPeriodEnd).toISOString().split('T')[0] : ''
+      },
+      moderationFlags: {
+        contentWarnings: user.moderationFlags?.contentWarnings || '',
+        reviewerNotes: user.moderationFlags?.reviewerNotes || '',
+        lastReviewed: user.moderationFlags?.lastReviewed ? new Date(user.moderationFlags.lastReviewed).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
+      }
+    });
   }
 }

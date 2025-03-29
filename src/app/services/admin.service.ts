@@ -73,8 +73,8 @@ export class AdminService {
     );
   }
 
-  getUserFiles(): Observable<UserFileResponse[]> {
-    return this.http.get<UserFileResponse[]>(`${adminRoutes}/users/files`).pipe(
+  getUserFiles(): Observable<UserProfile[]> {
+    return this.http.get<UserProfile[]>(`${adminRoutes}/users/files`).pipe(
       catchError(error => throwError(() => new Error(error.error?.message || 'Failed to fetch user files')))
     );
   }
@@ -85,7 +85,7 @@ export class AdminService {
     );
   }
 
-  deleteUserFile(userId: string, fileType: 'images' | 'videos' | 'documents', fileId: string): Observable<any> {
+  deleteUserFile(userId: string, fileType: 'images' | 'videos' | 'documents' | 'subscriberVideo', fileId: string): Observable<any> {
     return this.http.delete(`${adminRoutes}/users/${userId}/files/${fileType}/${fileId}`).pipe(
       catchError(error => throwError(() => new Error(error.error?.message || 'Failed to delete file')))
     );
@@ -108,5 +108,28 @@ export class AdminService {
 
   getDashboardStats(): Observable<DashboardStats> {
     return this.http.get<DashboardStats>(`${adminRoutes}/dashboard/stats`);
+  }
+
+  updateModerationFlags(userId: string, moderationFlags: { 
+    contentWarnings: number; 
+    lastReviewed: Date; 
+    reviewerNotes: string;
+    flaggedMedia?: {
+      mediaId: string;
+      mediaType: 'image' | 'video';
+      reason?: string;
+      flaggedAt?: Date;
+    }[];
+  }): Observable<UserProfile> {
+    if (!userId) {
+      return throwError(() => new Error('User ID is required'));
+    }
+    
+    return this.http.patch<UserProfile>(
+      `${adminRoutes}/profiles/${userId}/moderation`, 
+      { moderationFlags }
+    ).pipe(
+      catchError(error => throwError(() => new Error(error.error?.message || 'Failed to update moderation flags')))
+    );
   }
 }

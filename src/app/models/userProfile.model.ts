@@ -73,7 +73,7 @@ export interface UserProfile {
         subscribedAt?: Date;
         expiresAt?: Date;
     };
-    subscriberVideo?: {
+    subscriberVideo: {
         url?: string;
         uploadedAt?: Date;
         title?: string;
@@ -84,11 +84,7 @@ export interface UserProfile {
     workingTime?: string;
     termsAccepted: boolean;
     verificationStatus: 'pending' | 'reviewing' | 'verified' | 'rejected';
-    moderationFlags?: {
-        contentWarnings: number;
-        lastReviewed?: Date;
-        reviewerNotes?: string;
-    };
+    moderationFlags: ModerationFlags;
     images: string[];
     videos: string[];
     profilePicture: string | null;
@@ -101,4 +97,18 @@ export interface UserProfile {
     viewerlikes: number;
     createdAt?: Date;
     updatedAt?: Date;
+}
+
+export interface ModerationFlags {
+  contentWarnings: number;
+  lastReviewed: Date;
+  reviewerNotes: string;
+  flaggedMedia?: FlaggedMedia[];
+}
+
+export interface FlaggedMedia {
+  mediaId: string;
+  mediaType: 'image' | 'video';
+  reason?: string;
+  flaggedAt?: Date;
 }

@@ -1,1 +1,1 @@
-delete data from the database
+localhost/:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received

@@ -13,6 +13,7 @@ import videoUploadRoutes from './routes/videoUpload.js'; // Add this import
 import mediaRouter from './routes/media.js';
 import adminRoutes from './routes/admin.js';
 import { createMainAdmin } from './seeders/adminSeeder.js';
+import { securityHeaders } from './middleware/securityHeaders.js';
 
 import { Server } from 'socket.io';
 import { createServer } from 'http';
@@ -37,11 +38,14 @@ const app = express();
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
   crossOriginEmbedderPolicy: false,
+  contentSecurityPolicy: false // We're handling CSP in securityHeaders middleware
 }));
 
 // Update CORS configuration
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:4200',
+  origin: [
+    process.env.FRONTEND_URL || 'http://localhost:4200',
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   exposedHeaders: ['Content-Length', 'Content-Range'],
@@ -91,6 +95,9 @@ app.use('/files', (err, req, res, next) => {
     message: 'File not found'
   });
 });
+
+// Add security headers middleware before routes
+app.use(securityHeaders);
 
 // Database connection
 mongoose.connect(process.env.MONGODB_URI)

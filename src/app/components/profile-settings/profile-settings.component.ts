@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProfileService } from '../../services/profile.service';
@@ -6,8 +6,9 @@ import { UserProfile } from '../../models/userProfile.model';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FileUploadService } from '../../services/file-upload.service';
 import { Role, RoleOption } from '../../models/role.model';
-import { forkJoin, lastValueFrom, map } from 'rxjs';
+import { forkJoin, lastValueFrom, map, Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { take, switchMap, finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-profile-settings',
@@ -16,7 +17,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   templateUrl: './profile-settings.component.html',
   styleUrls: ['./profile-settings.component.css']
 })
-export class ProfileSettingsComponent implements OnInit {
+export class ProfileSettingsComponent implements OnInit, OnDestroy {
   profile: UserProfile | null = null;
   isLoading = false;
   error = '';
@@ -48,6 +49,7 @@ export class ProfileSettingsComponent implements OnInit {
     { value: 'pornstar', label: 'Pornstar' },
     { value: 'onenight', label: 'One Night' }
   ];
+  private subscriptions: Subscription = new Subscription();
 
   constructor(
     private profileService: ProfileService,
@@ -57,12 +59,32 @@ export class ProfileSettingsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.loadProfile();
-    this.authService.currentUser$.subscribe(user => {
-      if (user) {
-        this.userId = user._id;
-      }
-    });
+    if (this.isLoading) return;
+    this.isLoading = true;
+    this.subscriptions.add(
+      this.authService.currentUser$.pipe(
+        take(1),
+        switchMap(user => {
+          if (user) {
+            return this.profileService.getProfileById(user._id).pipe(take(1));
+          }
+          throw new Error('No user found');
+        }),
+        finalize(() => { this.isLoading = false; })
+      ).subscribe({
+        next: (profile) => {
+          this.profile = profile;
+        },
+        error: (error: any) => {
+          console.error('Failed to load profile:', error);
+          this.error = 'Failed to load profile: ' + (error?.message || 'Unknown error');
+        }
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   initializeProfile(profile: UserProfile): UserProfile {
@@ -391,7 +413,22 @@ export class ProfileSettingsComponent implements OnInit {
   updatePhysicalAttribute(attribute: string, value: any) {
     if (!this.profile?.physicalAttributes) return;
 
-    // Add validation for bust size
+    // Added validations for weight and height
+    if (attribute === 'weight') {
+      const weightNum = parseFloat(value);
+      if (isNaN(weightNum) || weightNum < 35) {
+        this.error = 'Weight must be at least 35 kg';
+        return;
+      }
+    }
+    if (attribute === 'height') {
+      const heightNum = parseFloat(value);
+      if (isNaN(heightNum) || heightNum < 140) {
+        this.error = 'Height must be at least 140 cm';
+        return;
+      }
+    }
+
     if (attribute === 'bustSize') {
       const bustSizePattern = /^[0-9]{2}[A-K]$/;
       if (!bustSizePattern.test(value)) {

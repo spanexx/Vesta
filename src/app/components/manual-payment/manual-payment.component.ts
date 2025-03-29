@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaymentService } from '../../services/payment.service';
 import { FileUploadService } from '../../services/file-upload.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-manual-payment',
@@ -12,7 +13,9 @@ import { FileUploadService } from '../../services/file-upload.service';
   templateUrl: './manual-payment.component.html',
   styleUrls: ['./manual-payment.component.scss']
 })
-export class ManualPaymentComponent implements OnInit {
+export class ManualPaymentComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+
   paymentMethod: 'crypto' | 'giftcard' | 'paysafecard' = 'crypto';
   subscriptionDetails: any;
   imageFile: File | null = null;
@@ -35,7 +38,7 @@ export class ManualPaymentComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
       if (params['plan'] && params['amount'] && params['interval']) {
         this.subscriptionDetails = {
           plan: params['plan'],
@@ -46,6 +49,11 @@ export class ManualPaymentComponent implements OnInit {
         this.router.navigate(['/pricing']);
       }
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   onFileSelected(event: any) {
