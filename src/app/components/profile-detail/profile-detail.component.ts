@@ -51,6 +51,9 @@ interface ApiError {
   styleUrls: ['./profile-detail.component.css']
 })
 export class ProfileDetailComponent implements OnInit, OnDestroy {
+  // Add debug flag
+  private debug = true;
+
   private loadingSubject = new BehaviorSubject<boolean>(true);
   loading$ = this.loadingSubject.asObservable();
   profile$ = new BehaviorSubject<UserProfile | null>(null);
@@ -144,11 +147,19 @@ export class ProfileDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.initializeSubscriptions();
+    
+    // Add debug logging
+    if (this.debug) console.log('ProfileDetail: Initializing');
+    
     this.route.params.pipe(
       takeUntil(this.destroy$)
     ).subscribe(params => {
+      if (this.debug) console.log('ProfileDetail: Route params', params);
       const id = params['id'];
-      this.loadProfile(id);
+      if (id) {
+        this.loadProfile(id);
+      }
     });
   }
 
@@ -158,23 +169,19 @@ export class ProfileDetailComponent implements OnInit, OnDestroy {
   }
 
   private loadProfile(id: string) {
-    if (this.isLoading || this.isUpdating) return;
-    
+    if (this.debug) console.log('ProfileDetail: Loading profile', id);
     this.isLoading = true;
     this.error = '';
 
     this.profileService.getProfileById(id).pipe(
       take(1),
-      catchError((error: HttpErrorResponse) => {
-        const apiError: ApiError = error.error || { message: 'Unknown error occurred' };
-        this.error = apiError.message;
-        throw error;
-      }),
       finalize(() => {
         this.isLoading = false;
+        if (this.debug) console.log('ProfileDetail: Load complete');
       })
     ).subscribe({
       next: (profile) => {
+        if (this.debug) console.log('ProfileDetail: Profile loaded', profile);
         this.profile = {
           ...profile,
           role: profile.role?.length ? profile.role : ['onenight'],
@@ -211,9 +218,8 @@ export class ProfileDetailComponent implements OnInit, OnDestroy {
         });
       },
       error: (error) => {
+        console.error('ProfileDetail: Error loading profile', error);
         this.error = 'Failed to load profile';
-        this.isLoading = false;
-        console.error('Error loading profile:', error);
       }
     });
   }

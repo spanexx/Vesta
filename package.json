@@ -26,6 +26,7 @@
     "@types/crypto-js": "^4.2.2",
     "@types/stripe": "^8.0.416",
     "crypto-js": "^4.2.0",
+    "dotenv": "^16.4.7",
     "geoip-lite": "^1.4.10",
     "geolib": "^3.3.4",
     "rxjs": "~7.8.0",
