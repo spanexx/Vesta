@@ -32,9 +32,18 @@ export class IconMenuComponent {
     }
   }
 
-  toggleDropdown(event: Event) {
-    event.stopPropagation(); // Prevent event from bubbling up
+  toggleDropdown(event: MouseEvent | KeyboardEvent) {
+    if (event.type === 'keydown') {
+      const keyboardEvent = event as KeyboardEvent;
+      if (keyboardEvent.key !== 'Enter' && keyboardEvent.key !== ' ') {
+        return; // Only proceed for Enter or Space
+      }
+      event.preventDefault(); // Prevent default space scroll
+    }
     this.isDropdownOpen = !this.isDropdownOpen;
+    if (event.stopPropagation) { 
+      event.stopPropagation();
+    }
   }
 
   closeMenu() {

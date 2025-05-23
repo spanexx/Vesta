@@ -1,7 +1,7 @@
 <!-- Main container -->
 <div class="home-container">
   <!-- Mobile filter toggle -->
-  <button class="filter-toggle" [class.show-filters]="showFilters" (click)="toggleFilters()">
+  <button class="filter-toggle" [class.show-filters]="showFilters" (click)="toggleFilters()" [attr.aria-expanded]="showFilters" aria-controls="filtersSidebar">
     <i class="fas fa-filter"></i>
     <span>Filters</span>
   </button>
@@ -11,7 +11,7 @@
   
   <div class="home-layout">
     <!-- Sidebar -->
-    <aside class="filters-sidebar" [class.show-filters]="showFilters">
+    <aside class="filters-sidebar" [class.show-filters]="showFilters" id="filtersSidebar">
       <button class="close-filters" (click)="toggleFilters()" *ngIf="showFilters">
         <i class="fas fa-times"></i>
       </button>

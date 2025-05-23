@@ -40,6 +40,19 @@
   cursor: pointer;
   padding: 0.5rem;
   display: none;
+  transition: background-color 0.3s ease, border-radius 0.3s ease; /* Added for smooth transition */
+}
+
+/* Added hover and focus styles for menu-button */
+.menu-button:hover {
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+.menu-button:focus {
+  outline: 2px solid var(--primary, #ea64b8); /* Using --primary from global styles */
+  outline-offset: 1px;
+  border-radius: 4px;
 }
 
 .role-menu {
@@ -235,6 +248,16 @@
     color: #fff;
   }
 }
+
+/* Added dark mode hover and focus for menu-button */
+:host-context(.dark-mode) .menu-button:hover {
+  background-color: #333; /* Dark mode hover background */
+}
+
+:host-context(.dark-mode) .menu-button:focus {
+  outline-color: var(--accent, #c864ea); /* Using --accent for dark mode focus, fallback if not defined */
+}
+
 
 :host-context(.dark-mode) .logout-button {
   color: #fff;

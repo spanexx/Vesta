@@ -1,14 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
 
+/* normalize.css is imported via angular.json */
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Playfair', sans-serif;
+  /* Default font-family moved to body for better inheritance */
 }
 
 :root {
+  /* Responsive Typography */
+  --font-size-base: clamp(1rem, 0.95rem + 0.25vw, 1.25rem); /* Scales between 16px and 20px */
+  --font-size-lg: clamp(1.25rem, 1rem + 1vw, 2rem);
+  --font-size-sm: clamp(0.875rem, 0.8rem + 0.15vw, 1rem);
+
+  /* Existing variables */
   --primary: #ea64b8;
   --primary-light: rgba(234, 100, 184, 0.1);
   --surface: #ffffff;
@@ -23,10 +31,80 @@
 }
 
 body {
-  background-color: var(--background);
+  font-family: 'Poppins', sans-serif; /* Sensible default font stack */
+  line-height: 1.6;
+  font-size: var(--font-size-base);
   color: var(--text);
+  background-color: var(--background);
   transition: var(--transition);
 }
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  line-height: 1.2;
+  font-family: 'Playfair Display', serif; /* Headings font */
+}
+
+h1 { font-size: clamp(2rem, 1.5rem + 2.5vw, 4rem); }
+h2 { font-size: clamp(1.75rem, 1.25rem + 2vw, 3.5rem); }
+h3 { font-size: clamp(1.5rem, 1rem + 1.5vw, 3rem); }
+h4 { font-size: clamp(1.25rem, 0.9rem + 1vw, 2.5rem); }
+h5 { font-size: clamp(1.1rem, 0.8rem + 0.5vw, 2rem); }
+h6 { font-size: clamp(1rem, 0.75rem + 0.25vw, 1.75rem); }
+
+
+/* Basic Layout Utilities */
+.container {
+  width: 90%;
+  max-width: 1200px; /* Or your preferred max width */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -8px; /* Adjust gutter as needed */
+  margin-right: -8px;
+}
+
+.col {
+  flex: 1 0 auto; /* Default: auto-size column */
+  padding-left: 8px;
+  padding-right: 8px;
+  box-sizing: border-box;
+}
+
+/* Example responsive column: full width on small screens, 50% on medium+ */
+.col-responsive {
+  flex-basis: 100%;
+}
+
+@media (min-width: 768px) {
+  .col-responsive {
+    flex-basis: 50%;
+  }
+}
+
+/* Global Focus Styles */
+/* Ensure high contrast and visibility for focus styles */
+a:focus,
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid var(--primary); /* Example focus color - ensure it matches your theme or is highly visible */
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--primary-light); /* Optional: softer glow */
+}
+
+/* Remove default outline if you are providing a custom one, but ensure it's clear */
+*:focus-visible {
+  /* You can use :focus-visible for more targeted focus styling if browser support allows */
+  /* For now, relying on the above :focus styles for broader compatibility */
+}
+
 
 body.dark-mode {
   --surface: #1e1e1e;
@@ -136,4 +214,14 @@ body.dark-mode .overlay {
 .success-snackbar .mat-simple-snackbar-action,
 .error-snackbar .mat-simple-snackbar-action {
   color: white;
+}
+
+/* Ensure focus styles are adapted for dark mode if needed */
+body.dark-mode a:focus,
+body.dark-mode button:focus,
+body.dark-mode input:focus,
+body.dark-mode select:focus,
+body.dark-mode textarea:focus {
+  outline-color: var(--accent); /* Using accent color for dark mode focus */
+  box-shadow: 0 0 0 2px rgba(200, 100, 234, 0.25); /* Adjusted glow for dark mode */
 }

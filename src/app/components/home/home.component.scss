@@ -58,12 +58,14 @@
   }
 }
 
+/*
 .profiles-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 1.5rem;
   padding: 1rem;
 }
+*/
 
 .profile-card {
   flex: 1 1 300px; // Grow, shrink, basis
@@ -133,9 +135,7 @@
           color: var(--text);
           font-size: 0.9rem;
           
-          &:focus {
-            outline: none;
-          }
+          /* Removed outline: none; to allow global focus styles to apply */
         }
       }
     }
@@ -371,12 +371,14 @@
   box-shadow: 0 4px 16px var(--shadow);
 }
 
+/*
 .profiles-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 1.5rem;
   margin: -0.75rem; // Compensate for padding in profile cards
 }
+*/
 
 .profile-card {
   flex: 1 1 280px;

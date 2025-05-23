@@ -89,3 +89,45 @@
 .menu-item span {
   font-size: 0.9rem;
 }
+
+/* Active menu item styles */
+.menu-item.active-menu-item {
+  background-color: #f0e6f7; /* Light purple */
+  color: #9d3acb; /* Darker purple */
+  font-weight: 600; /* Slightly bolder */
+}
+
+.menu-item.active-menu-item:hover {
+  background-color: #e6d9f0; /* Slightly different hover for active */
+}
+
+:host-context(.dark-mode) .menu-item.active-menu-item {
+  background-color: #3a2d42; /* Dark mode active background */
+  color: #e1aeff; /* Dark mode active text */
+}
+
+:host-context(.dark-mode) .menu-item.active-menu-item:hover {
+  background-color: #4c3a58;
+}
+
+@media (max-width: 767px) {
+  .icon-menu {
+    top: auto;
+    bottom: 20px;
+    right: 20px;
+    transform: none;
+  }
+
+  .dropdown-menu {
+    bottom: 60px; /* Position above the main icon */
+    top: auto;
+    right: 0; /* Align with main icon's right edge */
+    left: auto;
+    transform: translateY(10px) scale(0.95); /* Initial state for animation */
+    transform-origin: bottom right;
+  }
+
+  .dropdown-menu.show {
+    transform: translateY(0) scale(1);
+  }
+}
