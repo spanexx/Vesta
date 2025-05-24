@@ -28,9 +28,8 @@ interface ProfilePictureResponse {
 @Injectable({
   providedIn: 'root'
 })
-export class FileUploadService {
-  private apiUrl = environment.apiUrl;
-  private mediaBaseUrl = `${environment.baseUrl}/media`; // Update to match server endpoint
+export class FileUploadService {  private apiUrl = environment.apiUrl;
+  private mediaBaseUrl = environment.mediaUrl; // Use mediaUrl from environment
   private baseUrl = environment.baseUrl; // Use baseUrl directly from environment
   constructor(private http: HttpClient) {}
 
