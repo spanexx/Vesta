@@ -70,6 +70,13 @@ This checklist will help ensure your Vesta application is properly deployed on R
 2. **404 Errors for Media Uploads**
    - Check that the `/api/media` endpoints are properly registered in your server
    - Verify your frontend is using the correct URL (`https://vesta-btp1.onrender.com/api/media`)
+   - If the verification document upload endpoint is failing with 404:
+     - Check that the route is properly defined in `/routes/media.js`
+     - Ensure the route is registered at `/api/media` in server.js
+     - Test the endpoint with the `test-media-upload.ps1` script
+   - If authentication is failing:
+     - Check that the auth middleware is correctly applied to the route
+     - Verify that tokens are being correctly passed from the frontend
 
 3. **Authentication Issues**
    - Reset the admin password using the reset script
