@@ -34,6 +34,9 @@ dotenv.config();
 
 const app = express();
 
+// Trust proxy - needed for X-Forwarded-For headers in production environments like Render
+app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
