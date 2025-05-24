@@ -1,28 +1,7 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
-import { LoginComponent } from './components/login/login.component';
-import { RegisterComponent } from './components/register/register.component';
-import { UpdateProfileComponent } from './components/update-profile/update-profile.component';
-import { ProfileDetailComponent } from './components/profile-detail/profile-detail.component';
-import { LogoutComponent } from './components/logout/logout.component';
-import { authGuard } from './guards/auth.guard';
-import { ProfileSettingsComponent } from './components/profile-settings/profile-settings.component';
-import { PaymentComponent } from './components/payment/payment.component';
-import { PricingComponent } from './components/pricing/pricing.component';
-import { VideoUploadComponent } from './components/video-upload/video-upload.component';
-import { ActivationComponent } from './components/activation/activation.component';
-import { VideoPaymentComponent } from './components/video-payment/video-payment.component';
-import { adminGuard } from './guards/admin.guard';
-import { AdminLoginComponent } from './components/admin/admin-login/admin-login.component';
-import { AdminUsersComponent } from './components/admin/admin-users/admin-users.component';
-import { AdminModerationComponent } from './components/admin/admin-moderation/admin-moderation.component';
-import { AdminAnalyticsComponent } from './components/admin/admin-analytics/admin-analytics.component';
-import { AdminEditUserComponent } from './components/admin/admin-edit-user/admin-edit-user.component';
-import { AdminHomeComponent } from './components/admin/admin-home/admin-home.component';
-import { AdminLayoutComponent } from './components/admin/admin-layout/admin-layout.component';
-import { ManualPaymentComponent } from './components/manual-payment/manual-payment.component';
-import { AdminManualPayersComponent } from './components/admin/admin-manual-payers/admin-manual-payers.component';
-import { AdminManualPaymentDetailComponent } from './components/admin/admin-manual-payment-detail/admin-manual-payment-detail.component';
+import { NotFoundComponent } from './components/not-found/not-found.component';
+import { ROUTES } from './core/constants/routes.constants';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -80,8 +59,7 @@ export const routes: Routes = [
   { 
     path: 'admin/login', 
     component: AdminLoginComponent 
-  },
-  { 
+  },  { 
     path: 'admin',
     component: AdminLayoutComponent,
     canActivate: [adminGuard],
@@ -96,5 +74,8 @@ export const routes: Routes = [
       { path: 'manual-payers', component: AdminManualPayersComponent },
       { path: 'manual-payers/:id', component: AdminManualPaymentDetailComponent }
     ]
-  }
+  },
+  
+  // This wildcard route should always be the last route
+  { path: '**', component: NotFoundComponent }
 ];

@@ -73,7 +73,7 @@ export class LoginComponent implements OnInit {
         if (rememberMe) {
           localStorage.setItem('rememberedEmail', email);
         }
-        this.router.navigate(['/']);
+        this.router.navigate(['/settings']);
       },
       error: (error) => {
         this.isLoading = false;

@@ -1,0 +1,285 @@
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 17076)","service":"vesta-backend","timestamp":"2025-04-06T18:04:54.280Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 19032)","service":"vesta-backend","timestamp":"2025-04-06T18:09:20.388Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 14812)","service":"vesta-backend","timestamp":"2025-04-06T18:10:28.407Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 6032)","service":"vesta-backend","timestamp":"2025-04-06T18:10:55.205Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 21172)","service":"vesta-backend","timestamp":"2025-04-06T18:12:13.818Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 17380)","service":"vesta-backend","timestamp":"2025-04-06T18:12:19.300Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 13292)","service":"vesta-backend","timestamp":"2025-04-06T18:14:53.414Z"}
+{"address":null,"code":"EADDRINUSE","errno":-4091,"level":"error","message":"Uncaught Exception: bind EADDRINUSE null:6388","port":6388,"service":"vesta-backend","stack":"Error: bind EADDRINUSE null:6388\n    at listenOnPrimaryHandle (node:net:2018:18)\n    at shared (node:internal/cluster/child:157:3)\n    at Worker.<anonymous> (node:internal/cluster/child:110:7)\n    at process.onInternalMessage (node:internal/cluster/utils:49:5)\n    at process.emit (node:events:530:35)\n    at process.emit (node:domain:489:12)\n    at emit (node:internal/child_process:949:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:91:21)","syscall":"bind","timestamp":"2025-04-06T18:21:31.891Z"}
+{"address":null,"code":"EADDRINUSE","errno":-4091,"level":"error","message":"Uncaught Exception: bind EADDRINUSE null:6388","port":6388,"service":"vesta-backend","stack":"Error: bind EADDRINUSE null:6388\n    at listenOnPrimaryHandle (node:net:2018:18)\n    at shared (node:internal/cluster/child:157:3)\n    at Worker.<anonymous> (node:internal/cluster/child:110:7)\n    at process.onInternalMessage (node:internal/cluster/utils:49:5)\n    at process.emit (node:events:530:35)\n    at process.emit (node:domain:489:12)\n    at emit (node:internal/child_process:949:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:91:21)","syscall":"bind","timestamp":"2025-04-06T18:21:31.897Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-06T18:21:31.895Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-06T18:21:31.898Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-06T18:21:31.899Z"}
+{"address":null,"code":"EADDRINUSE","errno":-4091,"level":"error","message":"Uncaught Exception: bind EADDRINUSE null:6388","port":6388,"service":"vesta-backend","stack":"Error: bind EADDRINUSE null:6388\n    at listenOnPrimaryHandle (node:net:2018:18)\n    at shared (node:internal/cluster/child:157:3)\n    at Worker.<anonymous> (node:internal/cluster/child:110:7)\n    at process.onInternalMessage (node:internal/cluster/utils:49:5)\n    at process.emit (node:events:530:35)\n    at process.emit (node:domain:489:12)\n    at emit (node:internal/child_process:949:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:91:21)","syscall":"bind","timestamp":"2025-04-06T18:21:31.897Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-06T18:21:31.905Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-06T18:21:31.910Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-06T18:21:31.911Z"}
+{"address":null,"code":"EADDRINUSE","errno":-4091,"level":"error","message":"Uncaught Exception: bind EADDRINUSE null:6388","port":6388,"service":"vesta-backend","stack":"Error: bind EADDRINUSE null:6388\n    at listenOnPrimaryHandle (node:net:2018:18)\n    at shared (node:internal/cluster/child:157:3)\n    at Worker.<anonymous> (node:internal/cluster/child:110:7)\n    at process.onInternalMessage (node:internal/cluster/utils:49:5)\n    at process.emit (node:events:530:35)\n    at process.emit (node:domain:489:12)\n    at emit (node:internal/child_process:949:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:91:21)","syscall":"bind","timestamp":"2025-04-06T18:21:31.892Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-06T18:21:31.906Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-06T18:21:31.909Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-06T18:21:31.911Z"}
+{"address":null,"code":"EADDRINUSE","errno":-4091,"level":"error","message":"Uncaught Exception: bind EADDRINUSE null:6388","port":6388,"service":"vesta-backend","stack":"Error: bind EADDRINUSE null:6388\n    at listenOnPrimaryHandle (node:net:2018:18)\n    at shared (node:internal/cluster/child:157:3)\n    at Worker.<anonymous> (node:internal/cluster/child:110:7)\n    at process.onInternalMessage (node:internal/cluster/utils:49:5)\n    at process.emit (node:events:530:35)\n    at process.emit (node:domain:489:12)\n    at emit (node:internal/child_process:949:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:91:21)","syscall":"bind","timestamp":"2025-04-06T18:21:31.890Z"}
+{"address":null,"code":"EADDRINUSE","errno":-4091,"level":"error","message":"Uncaught Exception: bind EADDRINUSE null:6388","port":6388,"service":"vesta-backend","stack":"Error: bind EADDRINUSE null:6388\n    at listenOnPrimaryHandle (node:net:2018:18)\n    at shared (node:internal/cluster/child:157:3)\n    at Worker.<anonymous> (node:internal/cluster/child:110:7)\n    at process.onInternalMessage (node:internal/cluster/utils:49:5)\n    at process.emit (node:events:530:35)\n    at process.emit (node:domain:489:12)\n    at emit (node:internal/child_process:949:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:91:21)","syscall":"bind","timestamp":"2025-04-06T18:21:31.895Z"}
+{"address":null,"code":"EADDRINUSE","errno":-4091,"level":"error","message":"Uncaught Exception: bind EADDRINUSE null:6388","port":6388,"service":"vesta-backend","stack":"Error: bind EADDRINUSE null:6388\n    at listenOnPrimaryHandle (node:net:2018:18)\n    at shared (node:internal/cluster/child:157:3)\n    at Worker.<anonymous> (node:internal/cluster/child:110:7)\n    at process.onInternalMessage (node:internal/cluster/utils:49:5)\n    at process.emit (node:events:530:35)\n    at process.emit (node:domain:489:12)\n    at emit (node:internal/child_process:949:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:91:21)","syscall":"bind","timestamp":"2025-04-06T18:21:31.906Z"}
+{"address":null,"code":"EADDRINUSE","errno":-4091,"level":"error","message":"Uncaught Exception: bind EADDRINUSE null:6388","port":6388,"service":"vesta-backend","stack":"Error: bind EADDRINUSE null:6388\n    at listenOnPrimaryHandle (node:net:2018:18)\n    at shared (node:internal/cluster/child:157:3)\n    at Worker.<anonymous> (node:internal/cluster/child:110:7)\n    at process.onInternalMessage (node:internal/cluster/utils:49:5)\n    at process.emit (node:events:530:35)\n    at process.emit (node:domain:489:12)\n    at emit (node:internal/child_process:949:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:91:21)","syscall":"bind","timestamp":"2025-04-06T18:21:31.904Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-06T18:21:31.899Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-06T18:21:31.902Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-06T18:21:31.903Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-06T18:21:31.910Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-06T18:21:31.914Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-06T18:21:31.916Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-06T18:21:31.910Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-06T18:21:31.914Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-06T18:21:31.916Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-06T18:21:31.901Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-06T18:21:31.904Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-06T18:21:31.906Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-06T18:21:31.897Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-06T18:21:31.901Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-06T18:21:31.903Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-06T18:21:34.442Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-06T18:21:34.442Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-06T18:21:34.442Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-06T18:21:34.456Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-06T18:21:34.466Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-06T18:21:34.624Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-06T18:21:34.695Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-06T18:21:35.012Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-06T18:21:44.450Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-06T18:21:44.477Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-06T18:21:44.538Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-06T18:21:44.601Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-06T18:21:44.664Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-06T18:21:44.683Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-06T18:21:44.710Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-06T18:21:45.018Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 1884)","service":"vesta-backend","timestamp":"2025-04-06T18:22:32.274Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 29808)","service":"vesta-backend","timestamp":"2025-04-06T18:22:32.276Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 29672)","service":"vesta-backend","timestamp":"2025-04-06T18:22:32.270Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 18548)","service":"vesta-backend","timestamp":"2025-04-06T18:22:32.286Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 8392)","service":"vesta-backend","timestamp":"2025-04-06T18:22:32.313Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 9884)","service":"vesta-backend","timestamp":"2025-04-06T18:22:32.286Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 14164)","service":"vesta-backend","timestamp":"2025-04-06T18:22:32.304Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 26420)","service":"vesta-backend","timestamp":"2025-04-06T18:22:32.312Z"}
+{"address":"::","code":"EADDRINUSE","errno":-4091,"level":"error","message":"Uncaught Exception: listen EADDRINUSE: address already in use :::6388","port":6388,"service":"vesta-backend","stack":"Error: listen EADDRINUSE: address already in use :::6388\n    at Server.setupListenHandle [as _listen2] (node:net:1937:16)\n    at listenInCluster (node:net:1994:12)\n    at Server.listen (node:net:2099:7)\n    at file:///C:/Users/shuga/OneDrive/Desktop/Vesta/vesta-repo/Vesta/vestaBackend/server.js:230:12\n    at ModuleJob.run (node:internal/modules/esm/module_job:271:25)\n    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5)","syscall":"listen","timestamp":"2025-04-06T18:22:38.680Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-06T18:22:38.686Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-06T18:22:38.689Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-06T18:22:38.690Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-06T18:22:40.496Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-06T18:22:50.512Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 3936)","service":"vesta-backend","timestamp":"2025-04-06T18:26:03.775Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 3984)","service":"vesta-backend","timestamp":"2025-04-06T18:26:03.776Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 31700)","service":"vesta-backend","timestamp":"2025-04-06T18:26:03.777Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 23300)","service":"vesta-backend","timestamp":"2025-04-06T18:26:03.775Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 15136)","service":"vesta-backend","timestamp":"2025-04-06T18:26:03.777Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 25028)","service":"vesta-backend","timestamp":"2025-04-06T18:26:03.776Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 14404)","service":"vesta-backend","timestamp":"2025-04-06T18:26:03.776Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 20236)","service":"vesta-backend","timestamp":"2025-04-06T18:26:03.777Z"}
+{"address":"::","code":"EADDRINUSE","errno":-4091,"level":"error","message":"Uncaught Exception: listen EADDRINUSE: address already in use :::6388","port":6388,"service":"vesta-backend","stack":"Error: listen EADDRINUSE: address already in use :::6388\n    at Server.setupListenHandle [as _listen2] (node:net:1937:16)\n    at listenInCluster (node:net:1994:12)\n    at Server.listen (node:net:2099:7)\n    at file:///C:/Users/shuga/OneDrive/Desktop/Vesta/vesta-repo/Vesta/vestaBackend/server.js:230:12\n    at ModuleJob.run (node:internal/modules/esm/module_job:271:25)\n    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5)","syscall":"listen","timestamp":"2025-04-06T18:27:12.016Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-06T18:27:12.021Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-06T18:27:12.024Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-06T18:27:12.025Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-06T18:27:14.436Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-06T18:27:24.452Z"}
+{"address":"::","code":"EADDRINUSE","errno":-4091,"level":"error","message":"Uncaught Exception: listen EADDRINUSE: address already in use :::6388","port":6388,"service":"vesta-backend","stack":"Error: listen EADDRINUSE: address already in use :::6388\n    at Server.setupListenHandle [as _listen2] (node:net:1937:16)\n    at listenInCluster (node:net:1994:12)\n    at Server.listen (node:net:2099:7)\n    at file:///C:/Users/shuga/OneDrive/Desktop/Vesta/vesta-repo/Vesta/vestaBackend/server.js:230:12\n    at ModuleJob.run (node:internal/modules/esm/module_job:271:25)\n    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5)","syscall":"listen","timestamp":"2025-04-06T18:30:43.224Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-06T18:30:43.230Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-06T18:30:43.232Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-06T18:30:43.232Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-06T18:30:46.662Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-06T18:30:56.671Z"}
+{"address":"::","code":"EADDRINUSE","errno":-4091,"level":"error","message":"Uncaught Exception: listen EADDRINUSE: address already in use :::6388","port":6388,"service":"vesta-backend","stack":"Error: listen EADDRINUSE: address already in use :::6388\n    at Server.setupListenHandle [as _listen2] (node:net:1937:16)\n    at listenInCluster (node:net:1994:12)\n    at Server.listen (node:net:2099:7)\n    at file:///C:/Users/shuga/OneDrive/Desktop/Vesta/vesta-repo/Vesta/vestaBackend/server.js:244:12\n    at ModuleJob.run (node:internal/modules/esm/module_job:271:25)\n    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5)","syscall":"listen","timestamp":"2025-04-06T18:31:11.726Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-06T18:31:11.730Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-06T18:31:11.735Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-06T18:31:11.736Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-06T18:31:13.324Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-06T18:31:23.340Z"}
+{"address":"::","code":"EADDRINUSE","errno":-4091,"level":"error","message":"Uncaught Exception: listen EADDRINUSE: address already in use :::6388","port":6388,"service":"vesta-backend","stack":"Error: listen EADDRINUSE: address already in use :::6388\n    at Server.setupListenHandle [as _listen2] (node:net:1937:16)\n    at listenInCluster (node:net:1994:12)\n    at Server.listen (node:net:2099:7)\n    at file:///C:/Users/shuga/OneDrive/Desktop/Vesta/vesta-repo/Vesta/vestaBackend/server.js:244:12\n    at ModuleJob.run (node:internal/modules/esm/module_job:271:25)\n    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5)","syscall":"listen","timestamp":"2025-04-06T18:31:44.738Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-06T18:31:44.740Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-06T18:31:44.742Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-06T18:31:44.742Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-06T18:31:46.409Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-06T18:31:56.419Z"}
+{"address":"::","code":"EADDRINUSE","errno":-4091,"level":"error","message":"Uncaught Exception: listen EADDRINUSE: address already in use :::6388","port":6388,"service":"vesta-backend","stack":"Error: listen EADDRINUSE: address already in use :::6388\n    at Server.setupListenHandle [as _listen2] (node:net:1937:16)\n    at listenInCluster (node:net:1994:12)\n    at Server.listen (node:net:2099:7)\n    at initializeServer (file:///C:/Users/shuga/OneDrive/Desktop/Vesta/vesta-repo/Vesta/vestaBackend/server.js:252:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","syscall":"listen","timestamp":"2025-04-06T18:33:35.830Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-06T18:33:35.834Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-06T18:33:35.835Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-06T18:33:35.846Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-06T18:33:35.847Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-06T18:33:45.863Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 7744)","service":"vesta-backend","timestamp":"2025-04-06T18:36:05.283Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 17392)","service":"vesta-backend","timestamp":"2025-04-06T18:36:05.283Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 18424)","service":"vesta-backend","timestamp":"2025-04-06T18:36:05.286Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 18480)","service":"vesta-backend","timestamp":"2025-04-06T18:36:05.393Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 25664)","service":"vesta-backend","timestamp":"2025-04-06T18:36:05.790Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 20600)","service":"vesta-backend","timestamp":"2025-04-06T18:36:05.820Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 32724)","service":"vesta-backend","timestamp":"2025-04-06T18:36:06.938Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 7856)","service":"vesta-backend","timestamp":"2025-04-06T18:36:07.017Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 30448)","service":"vesta-backend","timestamp":"2025-04-07T06:26:12.060Z"}
+{"level":"error","message":"Uncaught Exception: metrics.requestLatency.record is not a function","service":"vesta-backend","stack":"TypeError: metrics.requestLatency.record is not a function\n    at ServerResponse.<anonymous> (file:///C:/Users/shuga/OneDrive/Desktop/Vesta/vesta-repo/Vesta/vestaBackend/utils/monitoring.js:64:28)\n    at ServerResponse.emit (node:events:530:35)\n    at ServerResponse.emit (node:domain:489:12)\n    at onFinish (node:_http_outgoing:1081:10)\n    at afterWrite (node:internal/streams/writable:710:5)\n    at afterWriteTick (node:internal/streams/writable:696:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)","timestamp":"2025-04-07T06:26:23.187Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-07T06:26:23.188Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-07T06:26:23.192Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-07T06:26:23.194Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-07T06:26:23.237Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-07T06:26:33.246Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 30120)","service":"vesta-backend","timestamp":"2025-04-07T06:30:05.421Z"}
+{"level":"error","message":"Uncaught Exception: metrics.requestLatency.update is not a function","service":"vesta-backend","stack":"TypeError: metrics.requestLatency.update is not a function\n    at ServerResponse.<anonymous> (file:///C:/Users/shuga/OneDrive/Desktop/Vesta/vesta-repo/Vesta/vestaBackend/utils/monitoring.js:68:28)\n    at ServerResponse.emit (node:events:530:35)\n    at ServerResponse.emit (node:domain:489:12)\n    at onFinish (node:_http_outgoing:1081:10)\n    at afterWrite (node:internal/streams/writable:710:5)\n    at afterWriteTick (node:internal/streams/writable:696:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)","timestamp":"2025-04-07T06:30:16.918Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-07T06:30:16.919Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-07T06:30:16.924Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-07T06:30:16.926Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-07T06:30:16.946Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-07T06:30:26.958Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 31392)","service":"vesta-backend","timestamp":"2025-04-07T06:32:29.131Z"}
+{"level":"error","message":"Uncaught Exception: metrics.requestLatency.record is not a function","service":"vesta-backend","stack":"TypeError: metrics.requestLatency.record is not a function\n    at ServerResponse.<anonymous> (file:///C:/Users/shuga/OneDrive/Desktop/Vesta/vesta-repo/Vesta/vestaBackend/utils/monitoring.js:67:28)\n    at ServerResponse.emit (node:events:530:35)\n    at ServerResponse.emit (node:domain:489:12)\n    at onFinish (node:_http_outgoing:1081:10)\n    at afterWrite (node:internal/streams/writable:710:5)\n    at afterWriteTick (node:internal/streams/writable:696:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)","timestamp":"2025-04-07T06:32:40.827Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-07T06:32:40.828Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-07T06:32:40.837Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-07T06:32:40.839Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-07T06:32:40.902Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-07T06:32:50.907Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 26884)","service":"vesta-backend","timestamp":"2025-04-07T06:37:17.641Z"}
+{"level":"error","message":"Uncaught Exception: metrics.requestLatency.set is not a function","service":"vesta-backend","stack":"TypeError: metrics.requestLatency.set is not a function\n    at ServerResponse.<anonymous> (file:///C:/Users/shuga/OneDrive/Desktop/Vesta/vesta-repo/Vesta/vestaBackend/utils/monitoring.js:67:28)\n    at ServerResponse.emit (node:events:530:35)\n    at ServerResponse.emit (node:domain:489:12)\n    at onFinish (node:_http_outgoing:1081:10)\n    at afterWrite (node:internal/streams/writable:710:5)\n    at afterWriteTick (node:internal/streams/writable:696:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)","timestamp":"2025-04-07T06:38:30.891Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-07T06:38:30.899Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-07T06:38:30.963Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-07T06:38:30.974Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-07T06:38:31.000Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-07T06:38:41.004Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 12956)","service":"vesta-backend","timestamp":"2025-04-07T06:39:51.901Z"}
+{"level":"error","message":"Uncaught Exception: Cannot read properties of undefined (reading 'value')","service":"vesta-backend","stack":"TypeError: Cannot read properties of undefined (reading 'value')\n    at ServerResponse.<anonymous> (file:///C:/Users/shuga/OneDrive/Desktop/Vesta/vesta-repo/Vesta/vestaBackend/utils/monitoring.js:84:42)\n    at ServerResponse.emit (node:events:530:35)\n    at ServerResponse.emit (node:domain:489:12)\n    at onFinish (node:_http_outgoing:1081:10)\n    at afterWrite (node:internal/streams/writable:710:5)\n    at afterWriteTick (node:internal/streams/writable:696:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)","timestamp":"2025-04-07T06:40:01.143Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-07T06:40:01.143Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-07T06:40:01.155Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-07T06:40:01.161Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-07T06:40:01.198Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-07T06:40:11.203Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 28864)","service":"vesta-backend","timestamp":"2025-04-07T06:41:42.781Z"}
+{"level":"error","message":"Uncaught Exception: metrics.errorRate.mark is not a function","service":"vesta-backend","stack":"TypeError: metrics.errorRate.mark is not a function\n    at ServerResponse.<anonymous> (file:///C:/Users/shuga/OneDrive/Desktop/Vesta/vesta-repo/Vesta/vestaBackend/server.js:60:25)\n    at ServerResponse.emit (node:events:530:35)\n    at ServerResponse.emit (node:domain:489:12)\n    at onFinish (node:_http_outgoing:1081:10)\n    at callback (node:internal/streams/writable:766:21)\n    at afterWrite (node:internal/streams/writable:710:5)\n    at afterWriteTick (node:internal/streams/writable:696:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)","timestamp":"2025-04-07T06:42:38.841Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-07T06:42:38.842Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-07T06:42:38.845Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-07T06:42:38.846Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-07T06:42:38.861Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-07T06:42:48.860Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 7016)","service":"vesta-backend","timestamp":"2025-04-07T06:44:25.767Z"}
+{"level":"error","message":"Uncaught Exception: metrics.errorRate.mark is not a function","service":"vesta-backend","stack":"TypeError: metrics.errorRate.mark is not a function\n    at ServerResponse.<anonymous> (file:///C:/Users/shuga/OneDrive/Desktop/Vesta/vesta-repo/Vesta/vestaBackend/server.js:60:25)\n    at ServerResponse.emit (node:events:530:35)\n    at ServerResponse.emit (node:domain:489:12)\n    at onFinish (node:_http_outgoing:1081:10)\n    at callback (node:internal/streams/writable:766:21)\n    at afterWrite (node:internal/streams/writable:710:5)\n    at afterWriteTick (node:internal/streams/writable:696:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)","timestamp":"2025-04-07T06:44:29.559Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-07T06:44:29.559Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-07T06:44:29.562Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-07T06:44:29.563Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-07T06:44:29.575Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-07T06:44:39.583Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 10956)","service":"vesta-backend","timestamp":"2025-04-07T06:46:46.995Z"}
+{"level":"error","message":"Uncaught Exception: metrics.errorRate.mark is not a function","service":"vesta-backend","stack":"TypeError: metrics.errorRate.mark is not a function\n    at ServerResponse.<anonymous> (file:///C:/Users/shuga/OneDrive/Desktop/Vesta/vesta-repo/Vesta/vestaBackend/server.js:60:25)\n    at ServerResponse.emit (node:events:530:35)\n    at ServerResponse.emit (node:domain:489:12)\n    at onFinish (node:_http_outgoing:1081:10)\n    at callback (node:internal/streams/writable:766:21)\n    at afterWrite (node:internal/streams/writable:710:5)\n    at afterWriteTick (node:internal/streams/writable:696:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)","timestamp":"2025-04-07T06:47:03.314Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-07T06:47:03.314Z"}
+{"level":"error","message":"Uncaught Exception: metrics.errorRate.mark is not a function","service":"vesta-backend","stack":"TypeError: metrics.errorRate.mark is not a function\n    at ServerResponse.<anonymous> (file:///C:/Users/shuga/OneDrive/Desktop/Vesta/vesta-repo/Vesta/vestaBackend/server.js:60:25)\n    at ServerResponse.emit (node:events:530:35)\n    at ServerResponse.emit (node:domain:489:12)\n    at onFinish (node:_http_outgoing:1081:10)\n    at callback (node:internal/streams/writable:766:21)\n    at afterWrite (node:internal/streams/writable:710:5)\n    at afterWriteTick (node:internal/streams/writable:696:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)","timestamp":"2025-04-07T06:47:03.355Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-07T06:47:03.355Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-07T06:47:03.357Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-07T06:47:03.357Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-07T06:47:03.357Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-07T06:47:03.357Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-07T06:47:03.380Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-07T06:47:03.381Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-07T06:47:13.390Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 17536)","service":"vesta-backend","timestamp":"2025-04-07T06:49:46.337Z"}
+{"level":"error","message":"Uncaught Exception: metrics.errorRate.mark is not a function","service":"vesta-backend","stack":"TypeError: metrics.errorRate.mark is not a function\n    at ServerResponse.<anonymous> (file:///C:/Users/shuga/OneDrive/Desktop/Vesta/vesta-repo/Vesta/vestaBackend/server.js:60:25)\n    at ServerResponse.emit (node:events:530:35)\n    at ServerResponse.emit (node:domain:489:12)\n    at onFinish (node:_http_outgoing:1081:10)\n    at callback (node:internal/streams/writable:766:21)\n    at afterWrite (node:internal/streams/writable:710:5)\n    at afterWriteTick (node:internal/streams/writable:696:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)","timestamp":"2025-04-07T06:50:00.242Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-07T06:50:00.243Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-07T06:50:00.246Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-07T06:50:00.247Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-07T06:50:00.255Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-07T06:50:10.256Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 13468)","service":"vesta-backend","timestamp":"2025-04-07T06:53:29.373Z"}
+{"level":"error","message":"Uncaught Exception: metrics.errorRate.mark is not a function","service":"vesta-backend","stack":"TypeError: metrics.errorRate.mark is not a function\n    at ServerResponse.<anonymous> (file:///C:/Users/shuga/OneDrive/Desktop/Vesta/vesta-repo/Vesta/vestaBackend/server.js:60:25)\n    at ServerResponse.emit (node:events:530:35)\n    at ServerResponse.emit (node:domain:489:12)\n    at onFinish (node:_http_outgoing:1081:10)\n    at callback (node:internal/streams/writable:766:21)\n    at afterWrite (node:internal/streams/writable:710:5)\n    at afterWriteTick (node:internal/streams/writable:696:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)","timestamp":"2025-04-07T06:53:34.561Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-07T06:53:34.562Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-07T06:53:34.564Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-07T06:53:34.565Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-07T06:53:34.572Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-07T06:53:44.572Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 19436)","service":"vesta-backend","timestamp":"2025-04-07T06:56:00.159Z"}
+{"level":"warn","message":"Slow request: GET /67e598dcd3e3a7ae405ecc1c took 2019ms","service":"vesta-backend","timestamp":"2025-04-07T07:21:10.496Z"}
+{"level":"warn","message":"Slow request: GET /profiles took 1045ms","service":"vesta-backend","timestamp":"2025-04-07T08:09:27.730Z"}
+{"level":"warn","message":"Slow request: GET /67e53d2f96e686d914b04967 took 1824ms","service":"vesta-backend","timestamp":"2025-04-07T08:09:27.829Z"}
+{"level":"warn","message":"Slow request: GET /67e59b551a00e7234a3e5bcb took 1294ms","service":"vesta-backend","timestamp":"2025-04-07T08:36:32.911Z"}
+{"level":"warn","message":"Slow request: GET /67e66e6a8e403f84827c0549 took 1024ms","service":"vesta-backend","timestamp":"2025-04-07T08:36:33.130Z"}
+{"level":"warn","message":"Slow request: GET /67e598dcd3e3a7ae405ecc1c took 1535ms","service":"vesta-backend","timestamp":"2025-04-07T08:36:33.136Z"}
+{"level":"warn","message":"Slow request: GET /67e66e6c8e403f84827c054d took 1724ms","service":"vesta-backend","timestamp":"2025-04-07T08:36:33.333Z"}
+{"level":"warn","message":"Slow request: GET /67e59885d3e3a7ae405ecc04 took 1834ms","service":"vesta-backend","timestamp":"2025-04-07T08:36:33.413Z"}
+{"level":"warn","message":"Slow request: GET /67e598dcd3e3a7ae405ecc1c took 1551ms","service":"vesta-backend","timestamp":"2025-04-07T09:18:53.980Z"}
+{"level":"warn","message":"Slow request: GET /67e59885d3e3a7ae405ecc04 took 2677ms","service":"vesta-backend","timestamp":"2025-04-07T10:56:58.629Z"}
+{"level":"warn","message":"Slow request: GET /67e66e6a8e403f84827c0545 took 2407ms","service":"vesta-backend","timestamp":"2025-04-07T11:09:41.663Z"}
+{"level":"warn","message":"Slow request: GET /67e59b551a00e7234a3e5bcb took 3480ms","service":"vesta-backend","timestamp":"2025-04-07T11:09:42.196Z"}
+{"level":"warn","message":"Slow request: GET /67e59885d3e3a7ae405ecc04 took 4429ms","service":"vesta-backend","timestamp":"2025-04-07T11:09:43.139Z"}
+{"level":"warn","message":"Slow request: GET /67e66e6c8e403f84827c054d took 4409ms","service":"vesta-backend","timestamp":"2025-04-07T11:09:43.140Z"}
+{"level":"warn","message":"Slow request: GET /67e66e6a8e403f84827c0537 took 1526ms","service":"vesta-backend","timestamp":"2025-04-07T11:09:43.784Z"}
+{"level":"warn","message":"Slow request: GET /67e66e6a8e403f84827c053d took 4679ms","service":"vesta-backend","timestamp":"2025-04-07T11:09:43.808Z"}
+{"level":"warn","message":"Slow request: GET /67e59885d3e3a7ae405ecc04 took 1396ms","service":"vesta-backend","timestamp":"2025-04-07T11:12:30.674Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-07T11:14:48.593Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-07T11:14:49.495Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-07T11:14:49.803Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-07T11:14:49.903Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-07T11:14:59.919Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 18216)","service":"vesta-backend","timestamp":"2025-04-07T11:15:16.811Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 26396)","service":"vesta-backend","timestamp":"2025-04-07T12:26:24.596Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-07T12:31:20.127Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-07T12:31:20.151Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-07T12:31:20.157Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-07T12:31:20.186Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 25968)","service":"vesta-backend","timestamp":"2025-04-07T12:31:28.562Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-07T12:31:30.195Z"}
+{"address":"::","code":"EADDRINUSE","errno":-4091,"level":"error","message":"Uncaught Exception: listen EADDRINUSE: address already in use :::6388","port":6388,"service":"vesta-backend","stack":"Error: listen EADDRINUSE: address already in use :::6388\n    at Server.setupListenHandle [as _listen2] (node:net:1937:16)\n    at listenInCluster (node:net:1994:12)\n    at Server.listen (node:net:2099:7)\n    at initializeServer (file:///C:/Users/shuga/OneDrive/Desktop/Vesta/vesta-repo/Vesta/vestaBackend/server.js:387:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","syscall":"listen","timestamp":"2025-04-07T12:38:48.315Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-07T12:38:48.324Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-07T12:38:48.325Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-07T12:38:48.332Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-07T12:38:48.332Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-07T12:38:58.339Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-07T12:39:17.408Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-07T12:39:17.441Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-07T12:39:17.453Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-07T12:39:17.481Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-07T12:39:27.494Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 23572)","service":"vesta-backend","timestamp":"2025-04-07T20:12:12.611Z"}
+{"level":"warn","message":"Slow request: GET /67e598dcd3e3a7ae405ecc1c took 1210ms","service":"vesta-backend","timestamp":"2025-04-07T20:13:56.196Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-07T20:16:50.496Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-07T20:16:50.574Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-07T20:16:50.611Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-07T20:16:50.692Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-07T20:17:00.705Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 23544)","service":"vesta-backend","timestamp":"2025-04-07T20:17:01.746Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-07T20:19:14.398Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-07T20:19:14.404Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-07T20:19:14.406Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-07T20:19:14.422Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-07T20:19:24.427Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 27224)","service":"vesta-backend","timestamp":"2025-04-07T20:19:27.281Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-07T20:21:26.927Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-07T20:21:26.934Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-07T20:21:26.937Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-07T20:21:26.956Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-07T20:21:36.960Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 18904)","service":"vesta-backend","timestamp":"2025-04-07T20:22:28.153Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-07T20:27:11.266Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-07T20:27:11.305Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-07T20:27:11.317Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-07T20:27:11.344Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 25408)","service":"vesta-backend","timestamp":"2025-04-07T20:27:20.761Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-07T20:27:21.356Z"}
+{"level":"warn","message":"Slow request: GET /67e66f5c8e403f84827c0576 took 1139ms","service":"vesta-backend","timestamp":"2025-04-07T20:27:58.547Z"}
+{"level":"warn","message":"Slow request: GET /67e66f5c8e403f84827c056f took 1680ms","service":"vesta-backend","timestamp":"2025-04-07T20:27:59.095Z"}
+{"level":"warn","message":"Slow request: GET /67e66f5c8e403f84827c057c took 1910ms","service":"vesta-backend","timestamp":"2025-04-07T20:27:59.323Z"}
+{"level":"warn","message":"Slow request: GET /67e66f5d8e403f84827c0584 took 2456ms","service":"vesta-backend","timestamp":"2025-04-07T20:27:59.872Z"}
+{"level":"info","message":"Received shutdown signal","service":"vesta-backend","timestamp":"2025-04-07T20:33:16.849Z"}
+{"level":"info","message":"HTTP server closed","service":"vesta-backend","timestamp":"2025-04-07T20:33:16.914Z"}
+{"level":"info","message":"Socket.IO connections closed","service":"vesta-backend","timestamp":"2025-04-07T20:33:16.929Z"}
+{"level":"info","message":"MongoDB connection closed","service":"vesta-backend","timestamp":"2025-04-07T20:33:16.992Z"}
+{"level":"info","message":"Forcing process exit","service":"vesta-backend","timestamp":"2025-04-07T20:33:27.003Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 18996)","service":"vesta-backend","timestamp":"2025-04-07T20:34:06.645Z"}
+{"level":"warn","message":"Slow request: GET /67e66e6a8e403f84827c0537 took 1128ms","service":"vesta-backend","timestamp":"2025-04-07T20:43:36.392Z"}
+{"level":"warn","message":"Slow request: GET /67e59b551a00e7234a3e5bcb took 1193ms","service":"vesta-backend","timestamp":"2025-04-07T20:43:36.431Z"}
+{"level":"warn","message":"Slow request: GET /67e66e6a8e403f84827c0545 took 1199ms","service":"vesta-backend","timestamp":"2025-04-07T20:43:36.441Z"}
+{"level":"warn","message":"Slow request: GET /67e59885d3e3a7ae405ecc04 took 1271ms","service":"vesta-backend","timestamp":"2025-04-07T20:43:36.503Z"}
+{"level":"warn","message":"Slow request: GET /67e66e6c8e403f84827c054d took 1263ms","service":"vesta-backend","timestamp":"2025-04-07T20:43:36.521Z"}
+{"level":"warn","message":"Slow request: GET /67e66e6a8e403f84827c0549 took 1013ms","service":"vesta-backend","timestamp":"2025-04-07T20:50:44.662Z"}
+{"level":"warn","message":"Slow request: GET /67e66e6a8e403f84827c0537 took 1015ms","service":"vesta-backend","timestamp":"2025-04-07T20:50:44.674Z"}
+{"level":"warn","message":"Slow request: GET /67e59885d3e3a7ae405ecc04 took 1072ms","service":"vesta-backend","timestamp":"2025-04-07T20:50:44.714Z"}
+{"level":"warn","message":"Slow request: GET /67e59b551a00e7234a3e5bcb took 1116ms","service":"vesta-backend","timestamp":"2025-04-07T20:50:44.760Z"}
+{"level":"warn","message":"Slow request: GET /67e66e6a8e403f84827c0545 took 1144ms","service":"vesta-backend","timestamp":"2025-04-07T20:50:44.795Z"}
+{"level":"warn","message":"Slow request: GET /67e66e6c8e403f84827c054d took 1142ms","service":"vesta-backend","timestamp":"2025-04-07T20:50:44.795Z"}
+{"level":"warn","message":"Slow request: GET /67e66f5d8e403f84827c0584 took 1233ms","service":"vesta-backend","timestamp":"2025-04-08T06:23:43.720Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 28992)","service":"vesta-backend","timestamp":"2025-04-19T15:30:43.000Z"}
+{"level":"info","message":"Server running in production mode on port 6388 (PID: 20832)","service":"vesta-backend","timestamp":"2025-05-23T07:45:51.998Z"}
+{"level":"warn","message":"Slow request: GET /67e598dcd3e3a7ae405ecc1c took 1210ms","service":"vesta-backend","timestamp":"2025-05-23T08:08:17.281Z"}
+{"level":"warn","message":"Slow request: GET /67e66f5c8e403f84827c056f took 1045ms","service":"vesta-backend","timestamp":"2025-05-23T08:12:03.106Z"}
+{"level":"warn","message":"Slow request: GET /67e66f5d8e403f84827c0584 took 1430ms","service":"vesta-backend","timestamp":"2025-05-23T08:12:03.596Z"}

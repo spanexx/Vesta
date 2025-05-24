@@ -1,0 +1,90 @@
+// filepath: c:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\src\app\app.routes.ts
+import { Routes } from '@angular/router';
+import { HomeComponent } from './components/home/home.component';
+import { NotFoundComponent } from './components/not-found/not-found.component';
+import { ROUTES } from './core/constants/routes.constants';
+
+export const routes: Routes = [
+  // Home route
+  { 
+    path: ROUTES.HOME, 
+    component: HomeComponent,
+    data: {
+      title: 'Home'
+    }
+  },
+  
+  // Auth Module (lazy loaded)
+  { 
+    path: ROUTES.LOGIN, 
+    loadChildren: () => import('./modules/auth/auth.module').then(m => m.AuthModule)
+  },
+  { 
+    path: ROUTES.REGISTER, 
+    loadChildren: () => import('./modules/auth/auth.module').then(m => m.AuthModule)
+  },
+  { 
+    path: ROUTES.LOGOUT, 
+    loadChildren: () => import('./modules/auth/auth.module').then(m => m.AuthModule)
+  },
+  { 
+    path: ROUTES.ACTIVATION, 
+    loadChildren: () => import('./modules/auth/auth.module').then(m => m.AuthModule)
+  },
+  
+  // Profile Module (lazy loaded)
+  { 
+    path: ROUTES.PROFILE, 
+    loadChildren: () => import('./modules/profile/profile.module').then(m => m.ProfileModule)
+  },
+  { 
+    path: ROUTES.UPDATE_PROFILE, 
+    redirectTo: 'profile/update', 
+    pathMatch: 'full'
+  },
+  { 
+    path: ROUTES.SETTINGS, 
+    redirectTo: 'profile/settings', 
+    pathMatch: 'full'
+  },
+  
+  // Payment Module (lazy loaded)
+  { 
+    path: ROUTES.PAYMENT, 
+    loadChildren: () => import('./modules/payment/payment.module').then(m => m.PaymentModule)
+  },
+  { 
+    path: ROUTES.PRICING, 
+    redirectTo: 'payment/pricing', 
+    pathMatch: 'full'
+  },
+  { 
+    path: ROUTES.VIDEO_PAYMENT, 
+    redirectTo: 'payment/video', 
+    pathMatch: 'full'
+  },
+  { 
+    path: ROUTES.MANUAL_PAYMENT, 
+    redirectTo: 'payment/manual', 
+    pathMatch: 'full'
+  },
+  
+  // Video Module (lazy loaded)
+  { 
+    path: ROUTES.VIDEO_UPLOAD, 
+    loadChildren: () => import('./modules/video/video.module').then(m => m.VideoModule)
+  },
+  
+  // Admin Module (lazy loaded)
+  { 
+    path: ROUTES.ADMIN, 
+    loadChildren: () => import('./modules/admin/admin.module').then(m => m.AdminModule)
+  },
+  { 
+    path: ROUTES.ADMIN_LOGIN, 
+    loadChildren: () => import('./modules/admin/admin.module').then(m => m.AdminModule)
+  },
+  
+  // This wildcard route should always be the last route
+  { path: ROUTES.NOT_FOUND, component: NotFoundComponent }
+];

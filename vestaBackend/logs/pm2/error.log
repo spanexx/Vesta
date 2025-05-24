@@ -1,0 +1,472 @@
+2025-04-06T20:21:31: (node:2344) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:21:31: (node:2668) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:21:31: (node:26368) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:21:31: (node:22296) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:21:31: (node:5288) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:21:31: (node:22560) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:21:31: (node:2248) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:21:31: (node:8200) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+Error: bind EADDRINUSE null:6388
+    at listenOnPrimaryHandle (node:net:2018:18)
+    at shared (node:internal/cluster/child:157:3)
+    at Worker.<anonymous> (node:internal/cluster/child:110:7)
+    at process.onInternalMessage (node:internal/cluster/utils:49:5)
+    at process.emit (node:events:530:35)
+    at process.emit (node:domain:489:12)
+    at emit (node:internal/child_process:949:14)
+    at process.processTicksAndRejections (node:internal/process/task_queues:91:21)
+Error: bind EADDRINUSE null:6388
+    at listenOnPrimaryHandle (node:net:2018:18)
+    at shared (node:internal/cluster/child:157:3)
+    at Worker.<anonymous> (node:internal/cluster/child:110:7)
+    at process.onInternalMessage (node:internal/cluster/utils:49:5)
+    at process.emit (node:events:530:35)
+    at process.emit (node:domain:489:12)
+    at emit (node:internal/child_process:949:14)
+    at process.processTicksAndRejections (node:internal/process/task_queues:91:21)
+Error: bind EADDRINUSE null:6388
+    at listenOnPrimaryHandle (node:net:2018:18)
+    at shared (node:internal/cluster/child:157:3)
+    at Worker.<anonymous> (node:internal/cluster/child:110:7)
+    at process.onInternalMessage (node:internal/cluster/utils:49:5)
+    at process.emit (node:events:530:35)
+    at process.emit (node:domain:489:12)
+    at emit (node:internal/child_process:949:14)
+    at process.processTicksAndRejections (node:internal/process/task_queues:91:21)
+Error: bind EADDRINUSE null:6388
+    at listenOnPrimaryHandle (node:net:2018:18)
+    at shared (node:internal/cluster/child:157:3)
+    at Worker.<anonymous> (node:internal/cluster/child:110:7)
+    at process.onInternalMessage (node:internal/cluster/utils:49:5)
+    at process.emit (node:events:530:35)
+    at process.emit (node:domain:489:12)
+    at emit (node:internal/child_process:949:14)
+    at process.processTicksAndRejections (node:internal/process/task_queues:91:21)
+Error: bind EADDRINUSE null:6388
+    at listenOnPrimaryHandle (node:net:2018:18)
+    at shared (node:internal/cluster/child:157:3)
+    at Worker.<anonymous> (node:internal/cluster/child:110:7)
+    at process.onInternalMessage (node:internal/cluster/utils:49:5)
+    at process.emit (node:events:530:35)
+    at process.emit (node:domain:489:12)
+    at emit (node:internal/child_process:949:14)
+    at process.processTicksAndRejections (node:internal/process/task_queues:91:21)
+Error: bind EADDRINUSE null:6388
+    at listenOnPrimaryHandle (node:net:2018:18)
+    at shared (node:internal/cluster/child:157:3)
+    at Worker.<anonymous> (node:internal/cluster/child:110:7)
+    at process.onInternalMessage (node:internal/cluster/utils:49:5)
+    at process.emit (node:events:530:35)
+    at process.emit (node:domain:489:12)
+    at emit (node:internal/child_process:949:14)
+    at process.processTicksAndRejections (node:internal/process/task_queues:91:21)
+Error: bind EADDRINUSE null:6388
+    at listenOnPrimaryHandle (node:net:2018:18)
+    at shared (node:internal/cluster/child:157:3)
+    at Worker.<anonymous> (node:internal/cluster/child:110:7)
+    at process.onInternalMessage (node:internal/cluster/utils:49:5)
+    at process.emit (node:events:530:35)
+    at process.emit (node:domain:489:12)
+    at emit (node:internal/child_process:949:14)
+    at process.processTicksAndRejections (node:internal/process/task_queues:91:21)
+Error: bind EADDRINUSE null:6388
+    at listenOnPrimaryHandle (node:net:2018:18)
+    at shared (node:internal/cluster/child:157:3)
+    at Worker.<anonymous> (node:internal/cluster/child:110:7)
+    at process.onInternalMessage (node:internal/cluster/utils:49:5)
+    at process.emit (node:events:530:35)
+    at process.emit (node:domain:489:12)
+    at emit (node:internal/child_process:949:14)
+    at process.processTicksAndRejections (node:internal/process/task_queues:91:21)
+2025-04-06T20:21:34: Error creating main admin: MongoNotConnectedError: Client must be connected before running operations
+    at autoConnect (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:95:19)
+    at executeOperation (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:38:40)
+    at FindCursor._initialize (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\find_cursor.js:61:73)
+    at FindCursor.cursorInit (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:633:38)
+    at FindCursor.fetchBatch (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:667:24)
+    at FindCursor.next (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:347:28)
+    at Collection.findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\collection.js:277:34)
+    at NativeCollection.<computed> [as findOne] (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\drivers\node-mongodb-native\collection.js:246:33)
+    at model.Query._findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:2661:45)
+    at model.Query.exec (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:4456:80) {
+  errorLabelSet: Set(0) {}
+}
+2025-04-06T20:21:34: Error creating main admin: MongoNotConnectedError: Client must be connected before running operations
+    at autoConnect (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:95:19)
+    at executeOperation (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:38:40)
+    at FindCursor._initialize (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\find_cursor.js:61:73)
+    at FindCursor.cursorInit (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:633:38)
+    at FindCursor.fetchBatch (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:667:24)
+    at FindCursor.next (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:347:28)
+    at Collection.findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\collection.js:277:34)
+    at NativeCollection.<computed> [as findOne] (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\drivers\node-mongodb-native\collection.js:246:33)
+    at model.Query._findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:2661:45)
+    at model.Query.exec (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:4456:80) {
+  errorLabelSet: Set(0) {}
+}
+2025-04-06T20:21:34: Error creating main admin: MongoNotConnectedError: Client must be connected before running operations
+    at autoConnect (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:95:19)
+    at executeOperation (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:38:40)
+    at FindCursor._initialize (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\find_cursor.js:61:73)
+    at FindCursor.cursorInit (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:633:38)
+    at FindCursor.fetchBatch (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:667:24)
+    at FindCursor.next (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:347:28)
+    at Collection.findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\collection.js:277:34)
+    at NativeCollection.<computed> [as findOne] (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\drivers\node-mongodb-native\collection.js:246:33)
+    at model.Query._findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:2661:45)
+    at model.Query.exec (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:4456:80) {
+  errorLabelSet: Set(0) {}
+}
+2025-04-06T20:21:34: Error creating main admin: MongoNotConnectedError: Client must be connected before running operations
+    at autoConnect (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:95:19)
+    at executeOperation (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:38:40)
+    at FindCursor._initialize (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\find_cursor.js:61:73)
+    at FindCursor.cursorInit (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:633:38)
+    at FindCursor.fetchBatch (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:667:24)
+    at FindCursor.next (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:347:28)
+    at Collection.findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\collection.js:277:34)
+    at NativeCollection.<computed> [as findOne] (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\drivers\node-mongodb-native\collection.js:246:33)
+    at model.Query._findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:2661:45)
+    at model.Query.exec (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:4456:80) {
+  errorLabelSet: Set(0) {}
+}
+2025-04-06T20:21:34: Error creating main admin: MongoNotConnectedError: Client must be connected before running operations
+    at autoConnect (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:95:19)
+    at executeOperation (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:38:40)
+    at FindCursor._initialize (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\find_cursor.js:61:73)
+    at FindCursor.cursorInit (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:633:38)
+    at FindCursor.fetchBatch (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:667:24)
+    at FindCursor.next (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:347:28)
+    at Collection.findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\collection.js:277:34)
+    at NativeCollection.<computed> [as findOne] (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\drivers\node-mongodb-native\collection.js:246:33)
+    at model.Query._findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:2661:45)
+    at model.Query.exec (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:4456:80) {
+  errorLabelSet: Set(0) {}
+}
+2025-04-06T20:21:34: Error creating main admin: MongoNotConnectedError: Client must be connected before running operations
+    at autoConnect (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:95:19)
+    at executeOperation (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:38:40)
+    at FindCursor._initialize (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\find_cursor.js:61:73)
+    at FindCursor.cursorInit (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:633:38)
+    at FindCursor.fetchBatch (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:667:24)
+    at FindCursor.next (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:347:28)
+    at Collection.findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\collection.js:277:34)
+    at NativeCollection.<computed> [as findOne] (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\drivers\node-mongodb-native\collection.js:246:33)
+    at model.Query._findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:2661:45)
+    at model.Query.exec (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:4456:80) {
+  errorLabelSet: Set(0) {}
+}
+2025-04-06T20:21:34: Error creating main admin: MongoNotConnectedError: Client must be connected before running operations
+    at autoConnect (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:95:19)
+    at executeOperation (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:38:40)
+    at FindCursor._initialize (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\find_cursor.js:61:73)
+    at FindCursor.cursorInit (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:633:38)
+    at FindCursor.fetchBatch (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:667:24)
+    at FindCursor.next (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:347:28)
+    at Collection.findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\collection.js:277:34)
+    at NativeCollection.<computed> [as findOne] (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\drivers\node-mongodb-native\collection.js:246:33)
+    at model.Query._findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:2661:45)
+    at model.Query.exec (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:4456:80) {
+  errorLabelSet: Set(0) {}
+}
+2025-04-06T20:21:34: Error creating main admin: MongoNotConnectedError: Client must be connected before running operations
+    at autoConnect (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:95:19)
+    at executeOperation (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:38:40)
+    at FindCursor._initialize (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\find_cursor.js:61:73)
+    at FindCursor.cursorInit (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:633:38)
+    at FindCursor.fetchBatch (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:667:24)
+    at FindCursor.next (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:347:28)
+    at Collection.findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\collection.js:277:34)
+    at NativeCollection.<computed> [as findOne] (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\drivers\node-mongodb-native\collection.js:246:33)
+    at model.Query._findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:2661:45)
+    at model.Query.exec (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:4456:80) {
+  errorLabelSet: Set(0) {}
+}
+2025-04-06T20:21:34: Error creating main admin: MongoNotConnectedError: Client must be connected before running operations
+    at autoConnect (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:95:19)
+    at executeOperation (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:38:40)
+    at FindCursor._initialize (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\find_cursor.js:61:73)
+    at FindCursor.cursorInit (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:633:38)
+    at FindCursor.fetchBatch (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:667:24)
+    at FindCursor.next (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:347:28)
+    at Collection.findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\collection.js:277:34)
+    at NativeCollection.<computed> [as findOne] (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\drivers\node-mongodb-native\collection.js:246:33)
+    at model.Query._findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:2661:45)
+    at model.Query.exec (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:4456:80) {
+  errorLabelSet: Set(0) {}
+}
+2025-04-06T20:21:34: Error creating main admin: MongoNotConnectedError: Client must be connected before running operations
+    at autoConnect (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:95:19)
+    at executeOperation (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:38:40)
+    at FindCursor._initialize (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\find_cursor.js:61:73)
+    at FindCursor.cursorInit (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:633:38)
+    at FindCursor.fetchBatch (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:667:24)
+    at FindCursor.next (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:347:28)
+    at Collection.findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\collection.js:277:34)
+    at NativeCollection.<computed> [as findOne] (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\drivers\node-mongodb-native\collection.js:246:33)
+    at model.Query._findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:2661:45)
+    at model.Query.exec (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:4456:80) {
+  errorLabelSet: Set(0) {}
+}
+2025-04-06T20:21:34: Error creating main admin: MongoNotConnectedError: Client must be connected before running operations
+    at autoConnect (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:95:19)
+    at executeOperation (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:38:40)
+    at FindCursor._initialize (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\find_cursor.js:61:73)
+    at FindCursor.cursorInit (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:633:38)
+    at FindCursor.fetchBatch (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:667:24)
+    at FindCursor.next (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:347:28)
+    at Collection.findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\collection.js:277:34)
+    at NativeCollection.<computed> [as findOne] (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\drivers\node-mongodb-native\collection.js:246:33)
+    at model.Query._findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:2661:45)
+    at model.Query.exec (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:4456:80) {
+  errorLabelSet: Set(0) {}
+}
+2025-04-06T20:21:34: Error creating main admin: MongoNotConnectedError: Client must be connected before running operations
+    at autoConnect (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:95:19)
+    at executeOperation (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:38:40)
+    at FindCursor._initialize (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\find_cursor.js:61:73)
+    at FindCursor.cursorInit (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:633:38)
+    at FindCursor.fetchBatch (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:667:24)
+    at FindCursor.next (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:347:28)
+    at Collection.findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\collection.js:277:34)
+    at NativeCollection.<computed> [as findOne] (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\drivers\node-mongodb-native\collection.js:246:33)
+    at model.Query._findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:2661:45)
+    at model.Query.exec (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:4456:80) {
+  errorLabelSet: Set(0) {}
+}
+2025-04-06T20:21:34: Error creating main admin: MongoNotConnectedError: Client must be connected before running operations
+    at autoConnect (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:95:19)
+    at executeOperation (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:38:40)
+    at FindCursor._initialize (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\find_cursor.js:61:73)
+    at FindCursor.cursorInit (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:633:38)
+    at FindCursor.fetchBatch (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:667:24)
+    at FindCursor.next (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:347:28)
+    at Collection.findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\collection.js:277:34)
+    at NativeCollection.<computed> [as findOne] (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\drivers\node-mongodb-native\collection.js:246:33)
+    at model.Query._findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:2661:45)
+    at model.Query.exec (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:4456:80) {
+  errorLabelSet: Set(0) {}
+}
+2025-04-06T20:21:34: Error creating main admin: MongoNotConnectedError: Client must be connected before running operations
+    at autoConnect (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:95:19)
+    at executeOperation (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:38:40)
+    at FindCursor._initialize (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\find_cursor.js:61:73)
+    at FindCursor.cursorInit (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:633:38)
+    at FindCursor.fetchBatch (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:667:24)
+    at FindCursor.next (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:347:28)
+    at Collection.findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\collection.js:277:34)
+    at NativeCollection.<computed> [as findOne] (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\drivers\node-mongodb-native\collection.js:246:33)
+    at model.Query._findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:2661:45)
+    at model.Query.exec (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:4456:80) {
+  errorLabelSet: Set(0) {}
+}
+2025-04-06T20:21:35: Error creating main admin: MongoNotConnectedError: Client must be connected before running operations
+    at autoConnect (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:95:19)
+    at executeOperation (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:38:40)
+    at FindCursor._initialize (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\find_cursor.js:61:73)
+    at FindCursor.cursorInit (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:633:38)
+    at FindCursor.fetchBatch (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:667:24)
+    at FindCursor.next (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:347:28)
+    at Collection.findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\collection.js:277:34)
+    at NativeCollection.<computed> [as findOne] (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\drivers\node-mongodb-native\collection.js:246:33)
+    at model.Query._findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:2661:45)
+    at model.Query.exec (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:4456:80) {
+  errorLabelSet: Set(0) {}
+}
+2025-04-06T20:21:35: Error creating main admin: MongoNotConnectedError: Client must be connected before running operations
+    at autoConnect (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:95:19)
+    at executeOperation (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\operations\execute_operation.js:38:40)
+    at FindCursor._initialize (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\find_cursor.js:61:73)
+    at FindCursor.cursorInit (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:633:38)
+    at FindCursor.fetchBatch (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:667:24)
+    at FindCursor.next (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\cursor\abstract_cursor.js:347:28)
+    at Collection.findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongodb\lib\collection.js:277:34)
+    at NativeCollection.<computed> [as findOne] (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\drivers\node-mongodb-native\collection.js:246:33)
+    at model.Query._findOne (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:2661:45)
+    at model.Query.exec (C:\Users\shuga\OneDrive\Desktop\Vesta\vesta-repo\Vesta\vestaBackend\node_modules\mongoose\lib\query.js:4456:80) {
+  errorLabelSet: Set(0) {}
+}
+2025-04-06T20:22:32: (node:9884) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:22:32: (node:29808) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:22:32: (node:29672) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:22:32: (node:1884) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:22:32: (node:26420) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:22:32: (node:18548) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:22:32: (node:14164) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:22:32: (node:8392) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:26:03: (node:14404) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:26:03: (node:20236) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:26:03: (node:23300) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:26:03: (node:15136) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:26:03: (node:25028) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:26:03: (node:3936) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:26:03: (node:3984) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:26:03: (node:31700) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:36:03: (node:7744) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:36:03: (node:25664) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:36:03: (node:17392) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:36:03: (node:32724) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:36:03: (node:18480) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:36:03: (node:7856) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:36:03: (node:18424) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-04-06T20:36:04: (node:20600) NOTE: The AWS SDK for JavaScript (v2) is in maintenance mode.
+ SDK releases are limited to address critical bug fixes and security issues only.
+
+Please migrate your code to use AWS SDK for JavaScript (v3).
+For more information, check the blog post at https://a.co/cUPnyil
+(Use `node --trace-warnings ...` to show where the warning was created)

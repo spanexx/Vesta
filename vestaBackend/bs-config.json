@@ -1,0 +1,30 @@
+{
+  "port": 3000,
+  "files": ["./dist/**/*.{html,htm,css,js}"],
+  "server": {
+    "baseDir": "./dist",
+    "routes": {
+      "/node_modules": "node_modules"
+    },
+    "middleware": {
+      "0": null
+    }
+  },
+  "browser": "default",
+  "reloadDelay": 1000,
+  "reloadDebounce": 1000,
+  "injectChanges": false,
+  "https": false,
+  "ghostMode": false,
+  "logLevel": "info",
+  "logPrefix": "BS",
+  "logConnections": false,
+  "logFileChanges": true,
+  "logSnippet": false,
+  "notify": false,
+  "open": false,
+  "ui": false,
+  "watchOptions": {
+    "ignored": ["node_modules", "logs"]
+  }
+}
