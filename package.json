@@ -6,6 +6,8 @@
     "build": "ng build",
     "build:prod": "ng build --configuration=production",
     "build:deploy": "chmod +x ./build.sh && ./build.sh",
+    "deploy:render": "powershell -command \"Invoke-RestMethod -Uri 'https://api.render.com/deploy/srv-YOUR_SERVICE_ID?key=YOUR_DEPLOY_HOOK_KEY' -Method POST\"",
+    "deploy:admin-reset": "cd vestaBackend && node scripts/reset-admin.js",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -30,6 +32,7 @@
     "dotenv": "^16.4.7",
     "geoip-lite": "^1.4.10",
     "geolib": "^3.3.4",
+    "render": "^0.1.4",
     "rxjs": "~7.8.0",
     "stripe": "^17.7.0",
     "tslib": "^2.3.0",

@@ -1,6 +1,19 @@
+#!/bin/bash
+
+# This script resets the admin password or creates a new admin account if one doesn't exist
+# To run this on Render:
+# 1. SSH into your Render service using the web terminal
+# 2. Create this file using nano or another editor
+# 3. Make it executable with: chmod +x reset-admin.sh
+# 4. Run it: ./reset-admin.sh
+
+echo "Resetting admin account..."
+
+# Create a temporary reset script
+cat > reset-admin.js << 'EOL'
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import Admin from '../models/Admin.js';
+import Admin from './models/Admin.js';
 import bcrypt from 'bcryptjs';
 
 dotenv.config();
@@ -46,7 +59,6 @@ async function resetAdminPassword() {
     console.log('Admin credentials:');
     console.log(`Email: ${adminEmail}`);
     console.log(`Password: ${process.env.MAIN_ADMIN_PASSWORD || 'adminpassword123'}`);
-    console.log('Please use these credentials to log in');
 
   } catch (error) {
     console.error('Error:', error);
@@ -54,7 +66,17 @@ async function resetAdminPassword() {
     // Close MongoDB connection
     await mongoose.connection.close();
     console.log('MongoDB connection closed');
+    process.exit(0);
   }
 }
 
 resetAdminPassword();
+EOL
+
+# Run the script
+node reset-admin.js
+
+# Clean up
+rm reset-admin.js
+
+echo "Admin reset process completed."
