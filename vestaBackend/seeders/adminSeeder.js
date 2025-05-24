@@ -1,18 +1,39 @@
 import Admin from '../models/Admin.js';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import bcrypt from 'bcryptjs';
 
 dotenv.config();
 
 export async function createMainAdmin() {
   try {
-    const existingAdmin = await Admin.findOne({ email: process.env.MAIN_ADMIN_EMAIL });
+    console.log('Checking for main admin account...');
+    
+    // Check if default admin credentials are set
+    const adminEmail = process.env.MAIN_ADMIN_EMAIL || 'admin@vesta.com';
+    const adminUsername = process.env.MAIN_ADMIN_USERNAME || 'mainadmin';
+    const adminPassword = process.env.MAIN_ADMIN_PASSWORD || 'securePass123';
+    
+    console.log(`Looking for admin with email: ${adminEmail}`);
+    
+    // Check if admin exists - try both finding by email and username
+    let existingAdmin = await Admin.findOne({ email: adminEmail });
     
     if (!existingAdmin) {
+      console.log('Admin not found by email, checking by username...');
+      existingAdmin = await Admin.findOne({ username: adminUsername });
+    }
+    
+    if (!existingAdmin) {
+      console.log('No admin account found. Creating new admin account...');
+      
+      // Hash password manually to ensure it works
+      const hashedPassword = await bcrypt.hash(adminPassword, 12);
+      
       const mainAdmin = new Admin({
-        username: process.env.MAIN_ADMIN_USERNAME || 'mainadmin',
-        email: process.env.MAIN_ADMIN_EMAIL || 'admin@vesta.com',
-        password: process.env.MAIN_ADMIN_PASSWORD || 'adminpassword123',
+        username: adminUsername,
+        email: adminEmail,
+        password: hashedPassword,
         permissions: {
           canEditProfiles: true,
           canDeleteProfiles: true,
@@ -23,14 +44,19 @@ export async function createMainAdmin() {
       });
 
       await mainAdmin.save();
-      console.log('Main admin created successfully');
+      console.log('✅ Main admin created successfully with credentials:');
+      console.log(`   Username: ${adminUsername}`);
+      console.log(`   Email: ${adminEmail}`);
+      console.log(`   Password: ${adminPassword}`);
       return mainAdmin;
     } else {
-      console.log('Main admin already exists');
+      console.log('✅ Main admin already exists:');
+      console.log(`   Username: ${existingAdmin.username}`);
+      console.log(`   Email: ${existingAdmin.email}`);
       return existingAdmin;
     }
   } catch (error) {
-    console.error('Error creating main admin:', error);
+    console.error('❌ Error creating main admin:', error);
     throw error;
   }
 }

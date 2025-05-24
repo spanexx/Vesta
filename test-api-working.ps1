@@ -18,7 +18,8 @@ function Test-Endpoint {
     )
     
     Write-Host "Testing $Name endpoint: $Url" -ForegroundColor Yellow
-      try {
+    
+    try {
         Invoke-RestMethod -Uri $Url -Method $Method -ErrorAction Stop
         Write-Host "✓ Success: Endpoint is accessible" -ForegroundColor Green
         return $true

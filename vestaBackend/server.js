@@ -118,14 +118,17 @@ app.use(securityHeaders);
 // Database connection
 mongoose.connect(process.env.MONGODB_URI)
   .then(async () => {
-    console.log('Connected to MongoDB');
+    console.log('✅ Connected to MongoDB');
+    console.log('Initializing admin account...');
     try {
+      // Create main admin account if it doesn't exist
       await createMainAdmin();
+      console.log('Admin initialization completed');
     } catch (error) {
-      console.error('Error creating main admin:', error);
+      console.error('❌ Error during admin initialization:', error);
     }
   })
-  .catch(err => console.error('MongoDB connection error:', err));
+  .catch(err => console.error('❌ MongoDB connection error:', err));
 
 // Routes
 app.use('/api/auth', authRoutes);
