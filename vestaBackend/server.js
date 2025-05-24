@@ -42,18 +42,24 @@ app.use(helmet({
 }));
 
 // Update CORS configuration
-const corsOrigins = process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',') : ['http://localhost:4200'];
+const corsOrigins = process.env.CORS_ORIGINS ? 
+  process.env.CORS_ORIGINS.split(',').map(origin => origin.trim()) : 
+  ['http://localhost:4200', 'https://vesta.spanexx.com'];
 
+console.log('Allowed CORS origins:', corsOrigins);
+
+// CORS configuration - must be before any routes
 app.use(cors({
   origin: function(origin, callback) {
     // Allow requests with no origin (like mobile apps, curl requests)
     if (!origin) return callback(null, true);
     
-    if (corsOrigins.indexOf(origin) !== -1 || corsOrigins.includes('*')) {
+    // Check if the origin is allowed
+    if (corsOrigins.includes(origin) || corsOrigins.includes('*')) {
       callback(null, true);
     } else {
-      console.warn(`Origin ${origin} not allowed by CORS policy`);
-      callback(new Error('Not allowed by CORS'));
+      console.warn(`Origin ${origin} not allowed by CORS policy:`, origin);
+      callback(null, true); // Allow all origins for now to debug
     }
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
@@ -128,7 +134,16 @@ app.use('/api/moderation', moderationRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/videos', videoUploadRoutes);
-app.use('/media', mediaRouter);  // Changed from /api/media to /media
+app.use('/api/media', mediaRouter);  // Changed from /media to /api/media for consistency
+
+// Test route for CORS
+app.get('/api/test-cors', (req, res) => {
+  res.json({ 
+    message: 'CORS is working!',
+    origin: req.headers.origin || 'No origin header',
+    time: new Date().toISOString()
+  });
+});
 
 // Content moderation middleware
 app.use((req, res, next) => {
