@@ -59,7 +59,6 @@ export class LoginComponent implements OnInit {
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
   }
-
   login(): void {
     if (this.loginForm.invalid || this.isLoading) return;
 
@@ -69,11 +68,19 @@ export class LoginComponent implements OnInit {
     const { email, password, rememberMe } = this.loginForm.value;
 
     this.authService.login({ email, password }).subscribe({
-      next: () => {
+      next: (response) => {
         if (rememberMe) {
           localStorage.setItem('rememberedEmail', email);
         }
-        this.router.navigate(['/settings']);
+        
+        // Check if this is an admin login
+        if (response.isAdmin) {
+          console.log('Admin login detected via regular login form');
+          // Admin user will be redirected to dashboard by the service
+        } else {
+          // Regular user navigation
+          this.router.navigate(['/settings']);
+        }
       },
       error: (error) => {
         this.isLoading = false;

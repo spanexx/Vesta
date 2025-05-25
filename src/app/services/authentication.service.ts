@@ -120,7 +120,6 @@ export class AuthenticationService {
       })
     );
   }
-
   /**
    * Log in a user.
    * @param user The user credentials (email and password).
@@ -131,14 +130,29 @@ export class AuthenticationService {
       tap(response => {
         if (response.token) {
           this.setToken(response.token);
-          // After successful login, fetch the current user
-          this.getCurrentUser().subscribe({
-            next: () => this.router.navigate(['/']),
-            error: (error) => {
-              console.error('Error fetching user:', error);
-              this.logout();
+          
+          // Check if this is an admin login
+          if (response.isAdmin) {
+            // Store admin info in localStorage
+            localStorage.setItem('isAdmin', 'true');
+            localStorage.setItem('adminUsername', response.adminUsername || '');
+            if (response.permissions) {
+              localStorage.setItem('adminPermissions', JSON.stringify(response.permissions));
             }
-          });
+            
+            // Redirect to admin dashboard
+            this.router.navigate(['/admin/dashboard']);
+          } else {
+            // Regular user login
+            // After successful login, fetch the current user
+            this.getCurrentUser().subscribe({
+              next: () => this.router.navigate(['/']),
+              error: (error) => {
+                console.error('Error fetching user:', error);
+                this.logout();
+              }
+            });
+          }
         }
       }),
       catchError((error) => {
@@ -214,16 +228,49 @@ export class AuthenticationService {
 
   /**
    * Log out the current user.
-   */
-  logout(): void {
+   */  logout(): void {
+    // Clear all auth data
     localStorage.removeItem('token');
     localStorage.removeItem('currentUser');
     localStorage.removeItem(this.STORAGE_KEY);
+    
+    // Clear admin-specific data
+    localStorage.removeItem('isAdmin');
+    localStorage.removeItem('adminUsername');
+    localStorage.removeItem('adminPermissions');
+    localStorage.removeItem('adminToken');
+    
     if (this.cookieConsentAccepted) {
       document.cookie = 'currentUser=;path=/;expires=Thu, 01 Jan 1970 00:00:01 GMT';
     }
+    
     this.currentUserSubject.next(null);
     // Force page refresh
     window.location.reload();
+  }
+  
+  /**
+   * Check if the current user is an admin
+   * @returns boolean indicating if the user is an admin
+   */
+  isAdmin(): boolean {
+    return localStorage.getItem('isAdmin') === 'true';
+  }
+  
+  /**
+   * Get admin permissions
+   * @returns Admin permissions object or null if not an admin
+   */
+  getAdminPermissions(): any {
+    const permissionsString = localStorage.getItem('adminPermissions');
+    if (permissionsString) {
+      try {
+        return JSON.parse(permissionsString);
+      } catch (e) {
+        console.error('Error parsing admin permissions:', e);
+        return null;
+      }
+    }
+    return null;
   }
 }

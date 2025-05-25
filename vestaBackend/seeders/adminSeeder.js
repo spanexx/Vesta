@@ -23,17 +23,14 @@ export async function createMainAdmin() {
       console.log('Admin not found by email, checking by username...');
       existingAdmin = await Admin.findOne({ username: adminUsername });
     }
-    
-    if (!existingAdmin) {
+      if (!existingAdmin) {
       console.log('No admin account found. Creating new admin account...');
       
-      // Hash password manually to ensure it works
-      const hashedPassword = await bcrypt.hash(adminPassword, 12);
-      
+      // Don't hash password here, let the mongoose model middleware handle it
       const mainAdmin = new Admin({
         username: adminUsername,
         email: adminEmail,
-        password: hashedPassword,
+        password: adminPassword, // The model's pre-save hook will hash this
         permissions: {
           canEditProfiles: true,
           canDeleteProfiles: true,

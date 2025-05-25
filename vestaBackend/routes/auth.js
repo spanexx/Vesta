@@ -2,6 +2,7 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import geoip from 'geoip-lite';
+import mongoose from 'mongoose';
 import UserProfile from '../models/UserProfile.js';
 import createErrorResponse from '../utils/errorHandler.js';
 import authMiddleware from '../middleware/auth.js';  // Add this import
@@ -91,23 +92,84 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log(`Login attempt for email: ${email}`);
 
-    // Find the user and include the password field explicitly
-    const user = await UserProfile.findOne({ email }).select('+password');
-
-    // Check if user exists and if password is correct
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      return createErrorResponse(res, 401, 'LOGIN_FAILED', 'Invalid credentials');
+    // First check if this is an admin login
+    const Admin = mongoose.model('Admin');
+    const admin = await Admin.findOne({ email }).select('+password');
+    
+    if (admin) {
+      console.log(`Found admin account: ${admin.username}`);
+      
+      // Test password match
+      const isPasswordValid = await bcrypt.compare(password, admin.password);
+      console.log(`Admin password validation result: ${isPasswordValid}`);
+      
+      if (isPasswordValid) {
+        console.log(`Admin login successful: ${email}`);
+        
+        // Update last login timestamp
+        admin.lastLogin = new Date();
+        await admin.save();
+        
+        // Sign JWT token for admin
+        const adminToken = jwt.sign(
+          { 
+            userId: admin._id,
+            isAdmin: true,
+            adminId: admin._id
+          },
+          process.env.JWT_SECRET,
+          { expiresIn: '24h' }
+        );
+        
+        return res.json({
+          token: adminToken,
+          isAdmin: true,
+          adminUsername: admin.username,
+          permissions: admin.permissions
+        });
+      } else {
+        console.log(`Admin password invalid for: ${email}`);
+      }
+    } else {
+      console.log(`No admin found with email: ${email}`);
     }
 
-    // Sign JWT token
+    // If not admin or admin password incorrect, check regular user
+    const user = await UserProfile.findOne({ email }).select('+password');    // Check if user exists and if password is correct
+    if (!user) {
+      console.log(`No user found with email: ${email}`);
+      return createErrorResponse(res, 401, 'LOGIN_FAILED', 'Invalid credentials');
+    }
+    
+    // Test user password
+    const isUserPasswordValid = await bcrypt.compare(password, user.password);
+    console.log(`User password validation result: ${isUserPasswordValid}`);
+    
+    if (!isUserPasswordValid) {
+      console.log(`User password invalid for: ${email}`);
+      return createErrorResponse(res, 401, 'LOGIN_FAILED', 'Invalid credentials');
+    }
+    
+    // Sign JWT token for regular user
     const token = jwt.sign(
-      { userId: user._id },
+      { 
+        userId: user._id,
+        isAdmin: false
+      },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
 
-    return res.json({ token });
+    // Update user's last login timestamp
+    user.lastLogin = new Date();
+    await user.save();
+
+    return res.json({ 
+      token,
+      isAdmin: false
+    });
   } catch (error) {
     console.error('Error logging in user:', error);
     return createErrorResponse(res, 500, 'LOGIN_FAILED', 'Login failed', error);

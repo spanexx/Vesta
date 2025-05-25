@@ -12,9 +12,26 @@ const router = express.Router();
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log('Admin login attempt:', { email, password });
+    
     const admin = await Admin.findOne({ email }).select('+password');
 
-    if (!admin || !(await admin.validatePassword(password))) {
+    if (!admin) {
+      console.log(`No admin found with email: ${email}`);
+      return res.status(401).json({
+        error: 'INVALID_CREDENTIALS',
+        message: 'Invalid email or password'
+      });
+    }
+    
+    console.log(`Admin found: ${admin.username} (${admin.email})`);
+    
+    // Validate password
+    const isPasswordValid = await admin.validatePassword(password);
+    console.log(`Password validation result: ${isPasswordValid}`);
+    
+    if (!isPasswordValid) {
+      console.log(`Invalid password for admin: ${email}`);
       return res.status(401).json({
         error: 'INVALID_CREDENTIALS',
         message: 'Invalid email or password'
@@ -31,6 +48,8 @@ router.post('/login', async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
+
+    console.log('Admin logged in successfully:', { adminId: admin._id, token });
 
     res.json({
       token,

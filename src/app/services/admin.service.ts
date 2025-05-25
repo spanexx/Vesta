@@ -18,8 +18,7 @@ export interface DashboardStats {
 @Injectable({
   providedIn: 'root'
 })
-export class AdminService {
-  private currentAdminSubject = new BehaviorSubject<Admin | null>(null);
+export class AdminService {  private currentAdminSubject = new BehaviorSubject<Admin | null>(null);
   currentAdmin$ = this.currentAdminSubject.asObservable();
   private readonly ADMIN_TOKEN_KEY = 'adminToken';
 

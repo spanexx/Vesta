@@ -9,6 +9,7 @@ export function adminInterceptor(req: HttpRequest<any>, next: HttpHandlerFn): Ob
   const adminService = inject(AdminService);
   const router = inject(Router);
   const token = adminService.getToken();
+  console.log('Admin interceptor', token);
   
   // Only add token for admin API requests
   if (req.url.includes('/api/admin') && token) {

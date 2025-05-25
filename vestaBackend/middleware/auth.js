@@ -14,6 +14,8 @@ const authMiddleware = (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.userId = decoded.userId;
+    req.isAdmin = decoded.isAdmin || false;
+    if (decoded.adminId) req.adminId = decoded.adminId;
     next();
   } catch (error) {
     res.status(401).json({ 

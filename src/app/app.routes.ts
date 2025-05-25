@@ -24,6 +24,8 @@ import { ManualPaymentComponent } from './components/manual-payment/manual-payme
 import { AdminManualPayersComponent } from './components/admin/admin-manual-payers/admin-manual-payers.component';
 import { AdminManualPaymentDetailComponent } from './components/admin/admin-manual-payment-detail/admin-manual-payment-detail.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
+import { UnauthorizedComponent } from './components/shared/unauthorized/unauthorized.component';
+import { permissionGuard } from './guards/permission.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -76,7 +78,6 @@ export const routes: Routes = [
    component: ManualPaymentComponent,
     canActivate: [authGuard]
   },
-
   // Admin routes
   { 
     path: 'admin/login', 
@@ -90,13 +91,17 @@ export const routes: Routes = [
       { path: 'home', component: AdminHomeComponent },
       { path: 'dashboard', redirectTo: 'home', pathMatch: 'full' },
       { path: 'users', component: AdminUsersComponent },
-      { path: 'moderation', component: AdminModerationComponent },
+      { path: 'moderation', component: AdminModerationComponent, canActivate: [() => permissionGuard('canModerateContent')] },
       { path: 'analytics', component: AdminAnalyticsComponent },
-      { path: 'users/:userId/edit', component: AdminEditUserComponent },
+      { path: 'users/:userId/edit', component: AdminEditUserComponent, canActivate: [() => permissionGuard('canEditProfiles')] },
       { path: 'manual-payers', component: AdminManualPayersComponent },
-      { path: 'manual-payers/:id', component: AdminManualPaymentDetailComponent }
+      { path: 'manual-payers/:id', component: AdminManualPaymentDetailComponent },
+      { path: 'unauthorized', component: UnauthorizedComponent }
     ]
   },
+  
+  // Unauthorized route for regular users
+  { path: 'unauthorized', component: UnauthorizedComponent },
   
   // This wildcard route should always be the last route
   { path: '**', component: NotFoundComponent }

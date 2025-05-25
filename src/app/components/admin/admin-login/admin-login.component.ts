@@ -43,7 +43,8 @@ export class AdminLoginComponent implements OnInit {
     const { email, password } = this.loginForm.value;
 
     this.adminService.login(email, password).subscribe({
-      next: () => {
+      next: (res) => {
+        console.log('Admin login successful:', res);
         this.router.navigate(['/admin/dashboard']);
       },
       error: (error) => {
