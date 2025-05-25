@@ -3,6 +3,7 @@
 import express from 'express';
 import Admin from '../models/Admin.js';
 import UserProfile from '../models/UserProfile.js';
+import Payment from '../models/Payment.js';
 import { adminAuth } from '../middleware/adminAuth.js';
 import jwt from 'jsonwebtoken';
 
@@ -450,8 +451,12 @@ router.get('/dashboard/stats', adminAuth, async (req, res) => {
       UserProfile.countDocuments({ profileLevel: { $in: ['premium', 'vip'] } })
     ]);
 
-    // Get total revenue (you'll need to implement this based on your payment model)
-    const totalRevenue = 0; // Placeholder
+    // Calculate total revenue from completed payments
+    const revenueData = await Payment.aggregate([
+      { $match: { status: 'completed' } },
+      { $group: { _id: null, totalRevenue: { $sum: '$amount' } } }
+    ]);
+    const totalRevenue = revenueData.length > 0 ? revenueData[0].totalRevenue : 0;
     
     // Get recent signups (last 7 days)
     const lastWeek = new Date();
