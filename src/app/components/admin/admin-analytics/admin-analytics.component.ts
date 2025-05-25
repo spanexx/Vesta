@@ -101,7 +101,7 @@ import { AdminService, DashboardStats } from '../../../services/admin.service'; 
 
     .metric-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      box-shadow: var(--card-shadow); /* Adjusted to use theme variable for consistency */
     }
 
     .metric-card h3 {
@@ -116,7 +116,7 @@ import { AdminService, DashboardStats } from '../../../services/admin.service'; 
       font-size: 1.5rem;
       color: var(--text);
       margin: 0.5rem 0;
-      font-weight: 500;
+      font-weight: 600; /* Changed from 500 to 600 */
     }
     
     .metric-value small {
