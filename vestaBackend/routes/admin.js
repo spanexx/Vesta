@@ -99,6 +99,7 @@ router.post('/users/:userId/verify/approve', adminAuth, async (req, res) => {
 
     userProfile.verificationStatus = 'verified';
     userProfile.verified = true; // General verified flag
+    userProfile.status = 'active'; // Optionally set status to active if needed
     await userProfile.save();
 
     res.status(200).json({

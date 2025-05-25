@@ -182,14 +182,19 @@ export class ActivationComponent implements OnInit {
     if (file.size > 5 * 1024 * 1024) {
       alert('File size must be less than 5MB');
       return;
-    }
-
-    this.uploading = true;
+    }    this.uploading = true;
     const reader = new FileReader();
     reader.onload = (e: any) => {
       const base64Data = e.target.result;
-      const contentType = file.type;
-      const filename = `verification_${side}.${file.name.split('.').pop()}`;
+      const contentType = file.type || 'image/jpeg'; // Ensure contentType has a default
+      const filename = `verification_${side}.${file.name.split('.').pop() || 'jpg'}`;
+
+      console.log('File details before upload:', {
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        contentType: contentType
+      });
 
       const uploadDocument = (retryCount = 3) => {
         this.fileUploadService.uploadVerificationDocument(
@@ -197,25 +202,29 @@ export class ActivationComponent implements OnInit {
           filename,
           contentType,
           this.profile!._id,
-          side
-        ).subscribe({
+          side        ).subscribe({
           next: (response: { verificationStatus: string; verificationDocuments: any[] }) => {
             if (this.profile) {
-              this.profile.verificationStatus = response.verificationStatus;
+              // Type check to ensure valid verification status
+              const validStatus = ['pending', 'reviewing', 'verified', 'rejected'].includes(response.verificationStatus) 
+                ? response.verificationStatus as 'pending' | 'reviewing' | 'verified' | 'rejected'
+                : 'pending'; // Default to 'pending' if status is invalid
+                
+              this.profile.verificationStatus = validStatus;
               this.profile.verificationDocuments = response.verificationDocuments;
               // Manually trigger change detection if needed, though direct assignment should work
             }
             if (side === 'front') this.frontUploaded = true;
             if (side === 'back') this.backUploaded = true;
             this.uploading = false;
-          },
-          error: (error: HttpErrorResponse) => {
+          },          error: (error: HttpErrorResponse) => {
             console.error('Error uploading document:', error);
             if (retryCount > 0) {
               console.log(`Retrying upload... (${3 - retryCount + 1}/3)`);
               uploadDocument(retryCount - 1);
             } else {
-              alert('Failed to upload document after multiple attempts. Please try again later.');
+              const errorMessage = error.error?.message || 'Failed to upload document. Please try again later.';
+              alert(`Upload failed: ${errorMessage}`);
               this.uploading = false;
             }
           }

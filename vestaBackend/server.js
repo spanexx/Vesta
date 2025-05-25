@@ -12,6 +12,7 @@ import paymentRoutes from './routes/payments.js';  // Add this import
 import videoUploadRoutes from './routes/videoUpload.js'; // Add this import
 import mediaRouter from './routes/media.js';
 import adminRoutes from './routes/admin.js';
+import identityVerificationRoutes from './routes/identityVerification.js';
 import { createMainAdmin } from './seeders/adminSeeder.js';
 import { securityHeaders } from './middleware/securityHeaders.js';
 
@@ -115,6 +116,16 @@ app.use('/files', (err, req, res, next) => {
   });
 });
 
+// Add request logging middleware
+app.use((req, res, next) => {
+  console.log(`📝 ${new Date().toISOString()} | ${req.method} ${req.originalUrl}`);
+  if (req.method === 'POST' || req.method === 'PUT') {
+    console.log('Request headers:', req.headers);
+    console.log('Request body keys:', Object.keys(req.body));
+  }
+  next();
+});
+
 // Add security headers middleware before routes
 app.use(securityHeaders);
 
@@ -141,6 +152,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/videos', videoUploadRoutes);
 app.use('/api/media', mediaRouter);  // Changed from /media to /api/media for consistency
+app.use('/api/identity', identityVerificationRoutes);  // Add identity verification routes
 
 // Test route for CORS
 app.get('/api/test-cors', (req, res) => {

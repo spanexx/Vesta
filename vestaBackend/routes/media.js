@@ -8,6 +8,14 @@ import auth from '../middleware/auth.js';
 
 const router = express.Router();
 
+// Add logging middleware for all media routes
+router.use((req, res, next) => {
+  console.log(`🔍 Media route hit: ${req.method} ${req.originalUrl}`);
+  console.log('Request params:', req.params);
+  console.log('Request path:', req.path);
+  next();
+});
+
 /**
  * POST /media/upload-images
  * Expects a JSON payload with:
@@ -130,19 +138,79 @@ router.post(
   '/verification-documents/:userId/:side',
   auth,
   async (req, res) => {
-    const { base64Data, filename, contentType } = req.body;
-    const { userId, side } = req.params;
-
-    if (!base64Data || !filename || !contentType || !userId || !side) {
-      return res.status(400).json({
-        success: false,
-        message: 'Missing required fields'
-      });
-    }
-
     try {
+      const { base64Data, filename, contentType } = req.body;
+      const { userId, side } = req.params;
+
+      console.log('📄 Verification document upload request:', {
+        userId,
+        side,
+        filename: !!filename,
+        contentType: !!contentType ? contentType : 'missing',
+        hasBase64: !!base64Data,
+        base64Length: base64Data ? base64Data.length : 0
+      });
+
+      // Basic validation with detailed error messages
+      if (!base64Data) {
+        return res.status(400).json({
+          success: false,
+          message: 'Missing base64Data in request body',
+          field: 'base64Data'
+        });
+      }
+
+      if (!filename) {
+        return res.status(400).json({
+          success: false, 
+          message: 'Missing filename in request body',
+          field: 'filename'
+        });
+      }
+
+      if (!contentType) {
+        return res.status(400).json({
+          success: false,
+          message: 'Missing contentType in request body',
+          field: 'contentType'
+        });
+      }
+
+      if (!userId) {
+        return res.status(400).json({
+          success: false,
+          message: 'Missing userId in URL params',
+          field: 'userId'
+        });
+      }
+
+      if (!side) {
+        return res.status(400).json({
+          success: false,
+          message: 'Missing side in URL params',
+          field: 'side'
+        });
+      }      if (side !== 'front' && side !== 'back') {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid side parameter. Must be "front" or "back"',
+          field: 'side'
+        });
+      }
+        // Make sure base64Data is properly formatted
+      let processedBase64 = base64Data;
+      
+      // Check if the base64 data includes the data URI prefix
+      if (!base64Data.startsWith('data:') && contentType) {
+        processedBase64 = `data:${contentType};base64,${base64Data}`;
+        console.log('Added data URI prefix to base64 data');
+      }
+      
       // Upload file to GridFS
-      const fileId = await mediaStorage.uploadBase64Media(base64Data, filename, contentType);
+      console.log(`Attempting to upload file with contentType: ${contentType}`);
+      const fileId = await mediaStorage.uploadBase64Media(processedBase64, filename, contentType);
+      
+      console.log('File uploaded successfully with ID:', fileId);
       
       // Get user profile
       const profile = await UserProfile.findById(userId);
@@ -169,10 +237,15 @@ router.post(
       
       if (hasFront && hasBack) {
         profile.verificationStatus = 'reviewing';
-      }
-
-      const updatedProfile = await profile.save();
-      res.json(updatedProfile);
+      }      const updatedProfile = await profile.save();
+      
+      // Return a response format that matches what the client expects
+      res.json({
+        success: true,
+        message: 'Document uploaded successfully',
+        verificationStatus: updatedProfile.verificationStatus || 'pending',
+        verificationDocuments: updatedProfile.verificationDocuments || []
+      });
     } catch (error) {
       console.error('Verification document upload error:', error);
       res.status(500).json({
@@ -190,21 +263,35 @@ router.post(
   auth,
   checkUserStatus,
   async (req, res) => {
+    console.log('🔵 Profile picture upload request received');
+    console.log('Route params:', req.params);
+    console.log('Request body keys:', Object.keys(req.body));
+    console.log('Request headers authorization:', req.headers.authorization ? 'Present' : 'Missing');
+    
     const { base64Data, filename, contentType } = req.body;
     const { userId } = req.params;
 
+    console.log('Validation check:', {
+      hasBase64Data: !!base64Data,
+      hasFilename: !!filename,
+      hasContentType: !!contentType,
+      hasUserId: !!userId
+    });
+
     if (!base64Data || !filename || !contentType || !userId) {
+      console.log('❌ Missing required fields');
       return res.status(400).json({
         success: false,
         message: 'Missing required fields'
       });
-    }
-
-    try {
+    }    try {
+      console.log('📤 Uploading to GridFS...');
       // Upload file to GridFS
       const fileId = await mediaStorage.uploadBase64Media(base64Data, filename, contentType);
+      console.log('📤 GridFS upload successful, fileId:', fileId);
       
       // Update user profile with new profile picture ID
+      console.log('🔄 Updating user profile with fileId...');
       const updatedProfile = await UserProfile.findByIdAndUpdate(
         userId,
         { profilePicture: fileId.toString() },
@@ -212,12 +299,14 @@ router.post(
       );
 
       if (!updatedProfile) {
+        console.log('❌ Profile not found for userId:', userId);
         return res.status(404).json({
           success: false,
           message: 'Profile not found'
         });
       }
 
+      console.log('✅ Profile picture uploaded and profile updated');
       res.json(updatedProfile);
     } catch (error) {
       console.error('Profile picture upload error:', error);
@@ -277,6 +366,15 @@ router.get('/:id', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid file ID format' });
     }
 
+    // First, get file info to determine content type
+    const fileInfo = await mediaStorage.bucket.find({ _id: objectId }).toArray();
+    if (!fileInfo || fileInfo.length === 0) {
+      return res.status(404).json({ success: false, message: 'File not found' });
+    }
+
+    const file = fileInfo[0];
+    const contentType = file.contentType || 'application/octet-stream';
+
     const downloadStream = mediaStorage.bucket.openDownloadStream(objectId);
 
     downloadStream.on('error', (err) => {
@@ -284,10 +382,11 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ success: false, message: 'File not found' });
     });
 
-    // Set appropriate headers for file streaming
+    // Set appropriate headers for file streaming with correct content type
     res.set({
-      'Content-Type': 'application/octet-stream',
-      'Transfer-Encoding': 'chunked'
+      'Content-Type': contentType,
+      'Cache-Control': 'public, max-age=31536000', // Cache for 1 year
+      'Access-Control-Allow-Origin': '*'
     });
 
     downloadStream.pipe(res);

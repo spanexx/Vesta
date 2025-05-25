@@ -154,10 +154,10 @@
             <option value="rejected">Rejected</option>
           </select>
         </div>
-        <div class="media-section" *ngIf="profile?.verificationDocuments && profile?.verificationDocuments.length > 0">
+        <div class="media-section" *ngIf="profile && profile.verificationDocuments && profile.verificationDocuments.length > 0">
           <h4>Verification Documents</h4>
           <div class="doc-grid">
-            <div *ngFor="let doc of profile?.verificationDocuments" class="doc-item">
+            <div *ngFor="let doc of profile.verificationDocuments" class="doc-item">
               <p><strong>{{ doc.side === 'front' ? 'ID Front' : (doc.side === 'back' ? 'ID Back' : 'Document') }}</strong></p>
               <img [src]="getMediaUrl(doc.data)" 
                    alt="Verification document {{doc.side}}" 
@@ -166,20 +166,18 @@
               <p><small>Uploaded: {{ doc.uploadedAt | date:'medium' }}</small></p>
             </div>
           </div>
-          <div class="verification-actions">
-            <button type="button" class="btn btn-success" 
+          <div class="verification-actions">            <button type="button" class="btn btn-success" 
                     (click)="approveVerification()"
-                    [disabled]="isProcessingVerification || profile?.verificationStatus === 'verified' || profile?.verificationStatus === 'rejected'">
+                    [disabled]="isProcessingVerification || profile.verificationStatus === 'verified' || profile.verificationStatus === 'rejected'">
               {{ isProcessingVerification ? 'Processing...' : 'Approve Verification' }}
-            </button>
-            <button type="button" class="btn btn-danger" 
+            </button>            <button type="button" class="btn btn-danger" 
                     (click)="rejectVerification()"
-                    [disabled]="isProcessingVerification || profile?.verificationStatus === 'verified' || profile?.verificationStatus === 'rejected'">
+                    [disabled]="isProcessingVerification || profile.verificationStatus === 'verified' || profile.verificationStatus === 'rejected'">
               {{ isProcessingVerification ? 'Processing...' : 'Reject Verification' }}
             </button>
           </div>
         </div>
-        <div *ngIf="!profile?.verificationDocuments || profile?.verificationDocuments.length === 0" class="no-documents-message">
+        <div *ngIf="!profile || !profile.verificationDocuments || profile.verificationDocuments.length === 0" class="no-documents-message">
           <p>No verification documents uploaded.</p>
         </div>
       </div>

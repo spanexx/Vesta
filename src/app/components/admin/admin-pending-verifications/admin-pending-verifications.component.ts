@@ -43,6 +43,7 @@ export class AdminPendingVerificationsComponent implements OnInit {
   }
 
   navigateToEditUser(userId: string): void {
-    this.router.navigate(['/admin/edit-user', userId]);
+    // No additional code needed here, just update the route below
+    this.router.navigate([`/admin/users/${userId}/edit`]);
   }
 }

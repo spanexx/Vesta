@@ -6,9 +6,9 @@ import { UserProfile } from '../../models/userProfile.model';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FileUploadService } from '../../services/file-upload.service';
 import { Role, RoleOption } from '../../models/role.model';
-import { forkJoin, lastValueFrom, map, Subscription } from 'rxjs';
+import { forkJoin, lastValueFrom, map, Subscription, Subject } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { take, switchMap, finalize } from 'rxjs/operators';
+import { take, switchMap, finalize, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-profile-settings',
@@ -17,11 +17,10 @@ import { take, switchMap, finalize } from 'rxjs/operators';
   templateUrl: './profile-settings.component.html',
   styleUrls: ['./profile-settings.component.css']
 })
-export class ProfileSettingsComponent implements OnInit, OnDestroy {
+export class ProfileSettingsComponent implements OnInit, OnDestroy {  
   profile: UserProfile | null = null;
   isLoading = false;
   error = '';
-  userId = '';
   profilePicturePreview: string | null = null;
   selectedFiles: File[] = [];
   selectedVideos: File[] = [];
@@ -50,6 +49,11 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
     { value: 'onenight', label: 'One Night' }
   ];
   private subscriptions: Subscription = new Subscription();
+  
+  // Debounce subjects for field updates
+  private fullNameUpdateSubject = new Subject<string>();
+  private bioUpdateSubject = new Subject<string>();
+  private physicalAttributeSubjects: { [key: string]: Subject<any> } = {};
 
   constructor(
     private profileService: ProfileService,
@@ -57,10 +61,31 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
     public fileUploadService: FileUploadService,
     private snackBar: MatSnackBar
   ) {}
-
   ngOnInit() {
     if (this.isLoading) return;
     this.isLoading = true;
+    
+    // Set up debounce for fullName updates
+    this.subscriptions.add(
+      this.fullNameUpdateSubject.pipe(
+        debounceTime(500), // Wait 500ms after the last keystroke
+        distinctUntilChanged() // Only emit if the value changed
+      ).subscribe(value => {
+        this.debouncedUpdateBasicInfo('fullName', value);
+      })
+    );
+    
+    // Set up debounce for bio updates
+    this.subscriptions.add(
+      this.bioUpdateSubject.pipe(
+        debounceTime(500),
+        distinctUntilChanged()
+      ).subscribe(value => {
+        this.debouncedUpdateBasicInfo('bio', value);
+      })
+    );
+    
+    // Load profile data
     this.subscriptions.add(
       this.authService.currentUser$.pipe(
         take(1),
@@ -74,6 +99,19 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
       ).subscribe({
         next: (profile) => {
           this.profile = profile;
+          // Initialize physical attribute subjects for all possible attributes
+          const physicalAttributes = ['gender', 'height', 'weight', 'ethnicity', 'bustSize', 'bustType', 'pubicHair', 'tattoos', 'piercings'];
+          physicalAttributes.forEach(attr => {
+            this.physicalAttributeSubjects[attr] = new Subject<any>();
+            this.subscriptions.add(
+              this.physicalAttributeSubjects[attr].pipe(
+                debounceTime(500),
+                distinctUntilChanged()
+              ).subscribe(value => {
+                this.debouncedUpdatePhysicalAttribute(attr, value);
+              })
+            );
+          });
         },
         error: (error: any) => {
           console.error('Failed to load profile:', error);
@@ -82,8 +120,15 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
       })
     );
   }
-
   ngOnDestroy(): void {
+    // Complete all subjects
+    this.fullNameUpdateSubject.complete();
+    this.bioUpdateSubject.complete();
+    
+    Object.values(this.physicalAttributeSubjects).forEach(subject => {
+      subject.complete();
+    });
+    
     this.subscriptions.unsubscribe();
   }
 
@@ -202,16 +247,15 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
 
       const reader = new FileReader();
       reader.onload = () => {
-        const base64Data = reader.result as string;
-        this.fileUploadService.uploadVideo(
+        const base64Data = reader.result as string;        this.fileUploadService.uploadVideo(
           base64Data,
           file.name,
           file.type,
-          this.userId
+          this.profile!._id
         ).subscribe({
           next: (response: any) => {
             if (response.fileId) {
-              this.profileService.updateVideos(this.userId, [response.fileId]).subscribe({
+              this.profileService.updateVideos(this.profile!._id, [response.fileId]).subscribe({
                 next: (updatedProfile) => {
                   this.profile = updatedProfile;
                   this.isLoading = false;
@@ -260,7 +304,7 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
     const extension = contentType.split('/')[1];
     const filename = `profile_picture.${extension}`;
 
-    this.fileUploadService.uploadProfilePicture(profilePicture, filename, contentType, this.userId)
+    this.fileUploadService.uploadProfilePicture(profilePicture, filename, contentType, this.profile!._id)
       .subscribe({
         next: (updatedProfile: UserProfile) => {
           this.profile = updatedProfile;
@@ -292,15 +336,15 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
       const contentType = image.split(';')[0].split(':')[1];
       const filename = `gallery_image.${contentType.split('/')[1]}`; // Use appropriate extension
       
-      return this.fileUploadService.uploadImage(image, filename, contentType, this.userId);
+      return this.fileUploadService.uploadImage(image, filename, contentType, this.profile!._id);
     });
     
     forkJoin(uploadObservables).subscribe({
       next: (responses: any[]) => {
         const fileIds = responses.map(res => res.fileId);
-        this.profileService.updateImages(this.userId, fileIds).subscribe({
+        this.profileService.updateImages(this.profile!._id, fileIds).subscribe({
           next: (updatedProfile) => {
-            console.log('Updated profile:', this.userId, fileIds);
+            console.log('Updated profile:', this.profile!._id, fileIds);
             this.profile = updatedProfile;
             this.isLoading = false;
             this.snackBar.open('Images uploaded successfully', 'Close', {
@@ -328,16 +372,15 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
   }
 
   updateVideos(videos: string[]) {
-    console.log('Videos:', videos);
-    this.isLoading = true;
+    console.log('Videos:', videos);    this.isLoading = true;
     const uploadObservables = videos.map(video =>
-      this.fileUploadService.uploadVideo(video, 'profile_video.mp4', 'video/mp4', this.userId)
+      this.fileUploadService.uploadVideo(video, 'profile_video.mp4', 'video/mp4', this.profile!._id)
     );
     
     forkJoin(uploadObservables).subscribe({
       next: (responses: any[]) => {
         const fileIds = responses.map(res => res.fileId);
-        this.profileService.updateVideos(this.userId, fileIds).subscribe({
+        this.profileService.updateVideos(this.profile!._id, fileIds).subscribe({
           next: (updatedProfile) => {
             this.profile = updatedProfile;
             this.isLoading = false;
@@ -410,7 +453,21 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  updatePhysicalAttribute(attribute: string, value: any) {
+  private debouncedUpdateBasicInfo(field: 'fullName' | 'bio', value: string) {
+    this.profileService.updateField(field, value).subscribe({
+      next: (response) => {
+        if (this.profile) {
+          this.profile[field] = value;
+        }
+      },
+      error: (error) => {
+        this.error = `Failed to update ${field}: ${error.message}`;
+        console.error(`Failed to update ${field}:`, error);
+      }
+    });
+  }
+
+  private debouncedUpdatePhysicalAttribute(attribute: string, value: any) {
     if (!this.profile?.physicalAttributes) return;
 
     // Added validations for weight and height
@@ -467,19 +524,34 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
       }
     });
   }
-
+  updatePhysicalAttribute(attribute: string, value: any) {
+    if (!this.profile?.physicalAttributes) return;
+    
+    // Push the value to the appropriate subject for debouncing
+    if (this.physicalAttributeSubjects[attribute]) {
+      this.physicalAttributeSubjects[attribute].next(value);
+    }
+    
+    // Immediately update the UI value to give immediate feedback
+    if (this.profile && this.profile.physicalAttributes) {
+      this.profile.physicalAttributes = {
+        ...this.profile.physicalAttributes,
+        [attribute]: value
+      };
+    }
+  }
   updateBasicInfo(field: 'fullName' | 'bio', value: string) {
-    this.profileService.updateField(field, value).subscribe({
-      next: (response) => {
-        if (this.profile) {
-          this.profile[field] = value;
-        }
-      },
-      error: (error) => {
-        this.error = `Failed to update ${field}: ${error.message}`;
-        console.error(`Failed to update ${field}:`, error);
-      }
-    });
+    // Push the value to the appropriate subject for debouncing
+    if (field === 'fullName') {
+      this.fullNameUpdateSubject.next(value);
+    } else if (field === 'bio') {
+      this.bioUpdateSubject.next(value);
+    }
+    
+    // Immediately update the UI value to give immediate feedback
+    if (this.profile) {
+      this.profile[field] = value;
+    }
   }
 
   updateMeetingWith(option: string, event: Event) {

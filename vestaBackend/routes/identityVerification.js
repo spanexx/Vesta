@@ -1,10 +1,15 @@
-const express = require('express');
+import express from 'express';
+import multer from 'multer';
+import fs from 'fs';
+import path from 'path';
+import UserProfile from '../models/UserProfile.js';
+import auth from '../middleware/auth.js';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const router = express.Router();
-const multer = require('multer');
-const fs = require('fs');
-const path = require('path');
-const UserProfile = require('../models/UserProfile.js'); // Assuming UserProfile.js is in models
-const { auth } = require('../middleware/auth.js'); // Assuming auth middleware for user ID validation
 
 // Simple error response utility if not defined elsewhere
 const createErrorResponse = (res, statusCode, errorCode, message) => {
@@ -36,7 +41,7 @@ router.post('/users/:userId/verification-document-base64', auth, async (req, res
     if (!userId || !base64Data || !side || !contentType || !filename) {
       return createErrorResponse(res, 400, 'MISSING_FIELDS', 'Required fields are missing.');
     }
-    if (req.user._id.toString() !== userId) {
+    if (req.userId !== userId) {
         return createErrorResponse(res, 403, 'FORBIDDEN', 'User ID does not match authenticated user.');
     }
 
@@ -121,19 +126,24 @@ router.post('/users/:userId/verification-document-base64', auth, async (req, res
 // Third-party verification integration
 router.post('/verify-identity', async (req, res) => {
   try {
-    const Onfido = require('onfido');
+    // Import Onfido properly using dynamic import for ES modules
+    const Onfido = (await import('onfido')).default;
     const onfido = new Onfido('api_sandbox.0nVJJkepm6W.IAWGSPV7ZNHBiEr_iaM7CR4QsgCYdkGr'); // Replace with actual API key if used
     
     // This is a placeholder and likely needs proper implementation if Onfido is used.
     // For now, it's not directly related to the base64 upload for manual verification.
     onfido.applicant.create({ /* applicant details */ }, (error, applicant) => {
-      if (error) return createErrorResponse(res, 500, 'ONFIDO_ERROR', error.message);
+      if (error) {
+        return createErrorResponse(res, 500, 'ONFIDO_ERROR', error.message);
+      }
 
       onfido.check.create({
         applicantId: applicant.id,
         reportNames: ['document', 'facial_similarity_photo']
       }, (error, check) => {
-        if (error) return createErrorResponse(res, 500, 'ONFIDO_ERROR', error.message);
+        if (error) {
+          return createErrorResponse(res, 500, 'ONFIDO_ERROR', error.message);
+        }
         res.json({ message: 'Onfido check initiated successfully', checkId: check.id });
       });
     });
@@ -143,4 +153,4 @@ router.post('/verify-identity', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

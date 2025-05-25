@@ -33,7 +33,7 @@
           <td>{{ user.email }}</td>
           <td>{{ user.createdAt | date:'mediumDate' }}</td>
           <td>
-            <span class="status-badge" [ngClass]="'status-' + user.verificationStatus?.toLowerCase()">
+            <span class="status-badge" [ngClass]="'status-' + user.verificationStatus.toLowerCase()">
               {{ user.verificationStatus }}
             </span>
           </td>
