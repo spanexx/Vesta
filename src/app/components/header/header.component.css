@@ -211,16 +211,22 @@
     margin-top: 1rem;
 
   }
+
+  /* Dark mode specific styles for role-menu within the media query */
+  :host-context(body.dark-mode) .role-menu {
+    background: var(--surface); /* Dark mode background for dropdown */
+    box-shadow: 0 2px 10px var(--shadow); /* Theme shadow for dark mode dropdown */
+  }
 }
 
-:host-context(.dark-mode) {
+:host-context(body.dark-mode) {
   .header {
-    background: #1a1a1a;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    background: #1a1a1a; /* This might be better as var(--surface-header) or similar if defined */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Consider var(--shadow) here too */
   }
 
   .role-menu a {
-    color: #fff;
+    color: var(--text); /* Changed from #fff to var(--text) */
   }
 
   .role-menu a:hover {
