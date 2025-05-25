@@ -199,8 +199,12 @@ export class ActivationComponent implements OnInit {
           this.profile!._id,
           side
         ).subscribe({
-          next: (updatedProfile: UserProfile) => {
-            this.profile = updatedProfile;
+          next: (response: { verificationStatus: string; verificationDocuments: any[] }) => {
+            if (this.profile) {
+              this.profile.verificationStatus = response.verificationStatus;
+              this.profile.verificationDocuments = response.verificationDocuments;
+              // Manually trigger change detection if needed, though direct assignment should work
+            }
             if (side === 'front') this.frontUploaded = true;
             if (side === 'back') this.backUploaded = true;
             this.uploading = false;

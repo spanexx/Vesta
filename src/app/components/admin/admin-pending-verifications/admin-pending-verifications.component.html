@@ -1,0 +1,49 @@
+<div class="pending-verifications-container">
+  <header class="page-header">
+    <h1>Users Pending Verification</h1>
+  </header>
+
+  <div *ngIf="isLoading" class="loading-spinner">
+    <p>Loading users...</p>
+    <!-- You can add a more sophisticated spinner here -->
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage && pendingUsers.length === 0" class="no-users-message">
+    <p>No users are currently pending verification.</p>
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage && pendingUsers.length > 0" class="users-table-container">
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Registration Date</th>
+          <th>Verification Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of pendingUsers">
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.createdAt | date:'mediumDate' }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="'status-' + user.verificationStatus?.toLowerCase()">
+              {{ user.verificationStatus }}
+            </span>
+          </td>
+          <td>
+            <button (click)="navigateToEditUser(user._id!)" class="btn btn-primary btn-sm">
+              Review Profile
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

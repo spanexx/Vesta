@@ -104,9 +104,28 @@ console.log('payload', payload);
   /**
    * Upload verification document
    */
-  uploadVerificationDocument(base64Data: string, filename: string, contentType: string, userId: string, side: 'front' | 'back'): Observable<UserProfile> {
-    const payload = { base64Data, filename, contentType };
-    return this.http.post<UserProfile>(`${this.mediaBaseUrl}/verification-documents/${userId}/${side}`, payload);
+  uploadVerificationDocument(base64Data: string, filename: string, contentType: string, userId: string, side: 'front' | 'back'): Observable<{ verificationStatus: string; verificationDocuments: any[] }> {
+    // The backend route is POST /users/:userId/verification-document-base64
+    // Assuming identityVerification.js routes are mounted under '/api/identity'
+    const url = `${this.apiUrl}/identity/users/${userId}/verification-document-base64`;
+    const payload = { base64Data, filename, contentType, side };
+
+    return this.http.post<{ message: string; verificationStatus: string; documents: any[] }>(url, payload).pipe(
+      map(response => {
+        if (!response || !response.verificationStatus || !response.documents) {
+          throw new Error('Invalid response from server during verification document upload.');
+        }
+        return { 
+          verificationStatus: response.verificationStatus, 
+          verificationDocuments: response.documents 
+        };
+      }),
+      catchError(error => {
+        console.error('Verification document upload error:', error);
+        // Rethrow a more specific error or the original error
+        return throwError(() => new Error(error.error?.message || 'Failed to upload verification document.'));
+      })
+    );
   }
 
   /**

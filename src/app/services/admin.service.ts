@@ -109,6 +109,24 @@ export class AdminService {  private currentAdminSubject = new BehaviorSubject<A
     return this.http.get<DashboardStats>(`${adminRoutes}/dashboard/stats`);
   }
 
+  getPendingVerificationUsers(): Observable<UserProfile[]> {
+    return this.http.get<UserProfile[]>(`${adminRoutes}/users/pending-verification`).pipe(
+      catchError(error => throwError(() => new Error(error.error?.message || 'Failed to fetch users pending verification')))
+    );
+  }
+
+  approveVerification(userId: string): Observable<UserProfile> {
+    return this.http.post<UserProfile>(`${adminRoutes}/users/${userId}/verify/approve`, {}).pipe(
+      catchError(error => throwError(() => new Error(error.error?.message || 'Failed to approve verification')))
+    );
+  }
+
+  rejectVerification(userId: string): Observable<UserProfile> {
+    return this.http.post<UserProfile>(`${adminRoutes}/users/${userId}/verify/reject`, {}).pipe(
+      catchError(error => throwError(() => new Error(error.error?.message || 'Failed to reject verification')))
+    );
+  }
+
   updateModerationFlags(userId: string, moderationFlags: { 
     contentWarnings: number; 
     lastReviewed: Date; 

@@ -68,6 +68,122 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Admin: Approve User Verification
+router.post('/users/:userId/verify/approve', adminAuth, async (req, res) => {
+  try {
+    // Check for specific admin permission if necessary, e.g., canModerateContent or canVerifyUsers
+    if (!req.admin.permissions.canModerateContent && !req.admin.permissions.canEditProfiles) {
+      return res.status(403).json({
+        error: 'FORBIDDEN',
+        message: 'You do not have permission to approve user verifications.'
+      });
+    }
+
+    const { userId } = req.params;
+    const userProfile = await UserProfile.findById(userId);
+
+    if (!userProfile) {
+      return res.status(404).json({ error: 'USER_NOT_FOUND', message: 'User profile not found.' });
+    }
+
+    // Check if documents are sufficient for approval (e.g., both front and back exist)
+    const hasFront = userProfile.verificationDocuments.some(doc => doc.side === 'front');
+    const hasBack = userProfile.verificationDocuments.some(doc => doc.side === 'back');
+
+    if (!hasFront || !hasBack) {
+      return res.status(400).json({ 
+        error: 'INSUFFICIENT_DOCUMENTS', 
+        message: 'User must have both front and back ID documents uploaded before approval.' 
+      });
+    }
+
+    userProfile.verificationStatus = 'verified';
+    userProfile.verified = true; // General verified flag
+    await userProfile.save();
+
+    res.status(200).json({
+      message: 'User verification approved successfully.',
+      profile: { // Return only relevant parts or full profile as needed
+        _id: userProfile._id,
+        username: userProfile.username,
+        verificationStatus: userProfile.verificationStatus,
+        verified: userProfile.verified
+      }
+    });
+
+  } catch (error) {
+    console.error('Error approving user verification:', error);
+    res.status(500).json({ error: 'APPROVAL_ERROR', message: `Failed to approve verification: ${error.message}` });
+  }
+});
+
+// Admin: Reject User Verification
+router.post('/users/:userId/verify/reject', adminAuth, async (req, res) => {
+  try {
+    // Check for specific admin permission
+    if (!req.admin.permissions.canModerateContent && !req.admin.permissions.canEditProfiles) {
+      return res.status(403).json({
+        error: 'FORBIDDEN',
+        message: 'You do not have permission to reject user verifications.'
+      });
+    }
+    
+    const { userId } = req.params;
+    // const { reason } = req.body; // Optional: for storing rejection reason
+
+    const userProfile = await UserProfile.findById(userId);
+
+    if (!userProfile) {
+      return res.status(404).json({ error: 'USER_NOT_FOUND', message: 'User profile not found.' });
+    }
+
+    userProfile.verificationStatus = 'rejected';
+    userProfile.verified = false;
+    // if (reason) { userProfile.rejectionReason = reason; } // Example if storing reason
+
+    await userProfile.save();
+
+    res.status(200).json({
+      message: 'User verification rejected successfully.',
+      profile: {
+        _id: userProfile._id,
+        username: userProfile.username,
+        verificationStatus: userProfile.verificationStatus,
+        verified: userProfile.verified
+      }
+    });
+
+  } catch (error) {
+    console.error('Error rejecting user verification:', error);
+    res.status(500).json({ error: 'REJECTION_ERROR', message: `Failed to reject verification: ${error.message}` });
+  }
+});
+
+// Get users pending verification
+router.get('/users/pending-verification', adminAuth, async (req, res) => {
+  try {
+    // Optional: Check for specific permission if needed, e.g., canModerateContent or a new one
+    if (!req.admin.permissions.canViewUsers && !req.admin.permissions.canModerateContent) {
+      return res.status(403).json({
+        error: 'FORBIDDEN',
+        message: 'You do not have permission to view users pending verification.'
+      });
+    }
+
+    const pendingUsers = await UserProfile.find({
+      verificationStatus: { $in: ['pending', 'reviewing'] }
+    }).select('username email createdAt verificationStatus status profileLevel'); // Select specific fields
+
+    res.json(pendingUsers);
+  } catch (error) {
+    console.error('Error fetching users pending verification:', error);
+    res.status(500).json({
+      error: 'FETCH_FAILED',
+      message: 'Failed to fetch users pending verification: ' + error.message
+    });
+  }
+});
+
 // Create new admin (requires admin with canCreateAdmin permission)
 router.post('/create', adminAuth, async (req, res) => {
   try {
@@ -329,7 +445,7 @@ router.get('/dashboard/stats', adminAuth, async (req, res) => {
     ] = await Promise.all([
       UserProfile.countDocuments({}),
       UserProfile.countDocuments({ status: 'active' }),
-      UserProfile.countDocuments({ verificationStatus: 'pending' }),
+      UserProfile.countDocuments({ verificationStatus: { $in: ['pending', 'reviewing'] } }),
       UserProfile.countDocuments({ profileLevel: { $in: ['premium', 'vip'] } })
     ]);
 

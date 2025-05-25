@@ -23,6 +23,7 @@ import { AdminLayoutComponent } from './components/admin/admin-layout/admin-layo
 import { ManualPaymentComponent } from './components/manual-payment/manual-payment.component';
 import { AdminManualPayersComponent } from './components/admin/admin-manual-payers/admin-manual-payers.component';
 import { AdminManualPaymentDetailComponent } from './components/admin/admin-manual-payment-detail/admin-manual-payment-detail.component';
+import { AdminPendingVerificationsComponent } from './components/admin/admin-pending-verifications/admin-pending-verifications.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { UnauthorizedComponent } from './components/shared/unauthorized/unauthorized.component';
 import { permissionGuard } from './guards/permission.guard';
@@ -94,6 +95,7 @@ export const routes: Routes = [
       { path: 'moderation', component: AdminModerationComponent, canActivate: [() => permissionGuard('canModerateContent')] },
       { path: 'analytics', component: AdminAnalyticsComponent },
       { path: 'users/:userId/edit', component: AdminEditUserComponent, canActivate: [() => permissionGuard('canEditProfiles')] },
+      { path: 'pending-verifications', component: AdminPendingVerificationsComponent }, // New route
       { path: 'manual-payers', component: AdminManualPayersComponent },
       { path: 'manual-payers/:id', component: AdminManualPaymentDetailComponent },
       { path: 'unauthorized', component: UnauthorizedComponent }

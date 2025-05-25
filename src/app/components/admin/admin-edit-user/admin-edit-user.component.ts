@@ -19,7 +19,9 @@ export class AdminEditUserComponent implements OnInit, OnDestroy {
   userForm: FormGroup;
   isLoading = false;
   isSaving = false;
+  isProcessingVerification = false; // New flag
   error = '';
+  successMessage = ''; // For success messages
   userId!: string;
   profile: UserProfile | null = null;
   previewUrl: string | null = null;
@@ -115,6 +117,7 @@ export class AdminEditUserComponent implements OnInit, OnDestroy {
         next: (users) => {
           const user = users.find(u => u._id === this.userId);
           if (user) {
+            this.profile = user; // Ensure this.profile is populated
             this.initializeForm(user);
           }
           this.isLoading = false;
@@ -235,6 +238,7 @@ export class AdminEditUserComponent implements OnInit, OnDestroy {
 
   // Helper method to initialize form with user data
   private initializeForm(user: UserProfile): void {
+    this.profile = user; // Also ensure profile is set here for consistency
     // Format the date to YYYY-MM-DD
     const birthdate = user.birthdate ? new Date(user.birthdate).toISOString().split('T')[0] : '';
 
@@ -264,5 +268,71 @@ export class AdminEditUserComponent implements OnInit, OnDestroy {
         lastReviewed: user.moderationFlags?.lastReviewed ? new Date(user.moderationFlags.lastReviewed).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
       }
     });
+  }
+
+  approveVerification(): void {
+    if (!this.profile || !this.profile._id || this.isProcessingVerification) {
+      this.error = 'User profile or ID is missing, or an operation is already in progress.';
+      return;
+    }
+    this.isProcessingVerification = true;
+    this.error = '';
+    this.successMessage = '';
+
+    this.subscriptions.add(
+      this.adminService.approveVerification(this.profile._id).subscribe({
+        next: (updatedProfile) => {
+          this.userForm.patchValue({ 
+            verificationStatus: 'verified', 
+            verified: true 
+          });
+          if (this.profile) {
+            this.profile.verificationStatus = 'verified';
+            this.profile.verified = true;
+          }
+          this.successMessage = 'User verification approved successfully.';
+          this.isProcessingVerification = false; 
+          // Consider also disabling buttons permanently after one action
+        },
+        error: (err) => {
+          console.error('Error approving verification:', err);
+          this.error = err.message || 'Failed to approve verification.';
+          this.isProcessingVerification = false;
+        }
+      })
+    );
+  }
+
+  rejectVerification(): void {
+    if (!this.profile || !this.profile._id || this.isProcessingVerification) {
+      this.error = 'User profile or ID is missing, or an operation is already in progress.';
+      return;
+    }
+    this.isProcessingVerification = true;
+    this.error = '';
+    this.successMessage = '';
+
+    this.subscriptions.add(
+      this.adminService.rejectVerification(this.profile._id).subscribe({
+        next: (updatedProfile) => {
+          this.userForm.patchValue({ 
+            verificationStatus: 'rejected', 
+            verified: false 
+          });
+          if (this.profile) {
+            this.profile.verificationStatus = 'rejected';
+            this.profile.verified = false;
+          }
+          this.successMessage = 'User verification rejected successfully.';
+          this.isProcessingVerification = false;
+           // Consider also disabling buttons permanently after one action
+        },
+        error: (err) => {
+          console.error('Error rejecting verification:', err);
+          this.error = err.message || 'Failed to reject verification.';
+          this.isProcessingVerification = false;
+        }
+      })
+    );
   }
 }

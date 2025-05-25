@@ -36,4 +36,8 @@ export class AdminHomeComponent implements OnInit {
   navigateToManualPayers(): void {
     this.router.navigate(['/admin/manual-payers']);
   }
+
+  navigateToPendingVerifications(): void {
+    this.router.navigate(['/admin/pending-verifications']);
+  }
 }
