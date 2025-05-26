@@ -130,14 +130,34 @@
 // Dark mode specific styles for currency dropdown
 :host-context(body.dark-mode) {
   .rates-header select {
-    background-color: var(--surface); // Uses global dark var(--surface)
-    color: var(--text);             // Uses global dark var(--text)
+    background-color: #2a2a2a !important; // Explicit dark background
+    color: #ffffff !important;             // White text for contrast
     border: 1px solid rgba(255, 255, 255, 0.2); // Dark mode border
+    
+    // For WebKit browsers (Chrome, Safari, Edge)
+    option {
+      background-color: #2a2a2a !important; // Dark background for options
+      color: #ffffff !important;             // White text for options
+    }
   }
 
+  // Additional fallback for all browsers
   .rates-header select option {
-    background-color: var(--surface); // Dark mode background for options
-    color: var(--text);             // Dark mode text for options
+    background-color: #2a2a2a !important; // Dark mode background for options
+    color: #ffffff !important;             // White text for options
+    border: none;
+  }
+
+  // Firefox specific option styling
+  .rates-header select option:checked {
+    background-color: #1e1e1e !important;
+    color: #ffffff !important;
+  }
+
+  // Hover states for options
+  .rates-header select option:hover {
+    background-color: #404040 !important;
+    color: #ffffff !important;
   }
 }
 

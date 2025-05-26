@@ -1134,6 +1134,27 @@ h2 {
   background: white;
 }
 
+/* Enhanced dark mode styles for currency dropdown with better browser support */
+:host-context(.dark-mode) .rates-header select {
+  background-color: #2a2a2a !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  appearance: none;
+  background-image: 
+    linear-gradient(45deg, transparent 50%, #ffffff 50%),
+    linear-gradient(135deg, #ffffff 50%, transparent 50%);
+  background-position: 
+    calc(100% - 12px) calc(1em + 2px),
+    calc(100% - 8px) calc(1em + 2px);
+  background-size: 4px 4px, 4px 4px;
+  background-repeat: no-repeat;
+}
+
+:host-context(.dark-mode) .rates-header select option {
+  background-color: #2a2a2a !important;
+  color: #ffffff !important;
+}
+
 .services-section {
   margin: 2rem 0;
   padding: 2rem;

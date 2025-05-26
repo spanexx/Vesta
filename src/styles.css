@@ -84,6 +84,12 @@ body.dark-mode input, select, textarea {
   border-color: rgba(255, 255, 255, 0.1);
 }
 
+/* Enhanced select option styling for dark mode */
+body.dark-mode select option {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+}
+
 body.dark-mode .card, 
 body.dark-mode .dialog,
 body.dark-mode .modal,
