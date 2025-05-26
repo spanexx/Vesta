@@ -332,17 +332,17 @@
   }
 
   .filter-item {
-    background: rgba(255, 255, 255, 0.03);
-    border-color: rgba(255, 255, 255, 0.1);
-    color: var(--dark-text);
+    background: #2c2c2e; /* New dark background */
+    border-color: rgba(255, 255, 255, 0.1); /* Existing, likely fine */
+    color: var(--text); /* Corrected text color variable */
 
     &:hover {
-      background: rgba(255, 255, 255, 0.08);
+      background: #3a3a3c; /* New darker hover background */
     }
 
     &.active {
-      background: rgba(234, 100, 184, 0.15);
-      border-color: var(--primary);
+      background: rgba(234, 100, 184, 0.25); /* Potentially slightly more opaque active background */
+      border-color: var(--primary); 
       color: var(--primary);
     }
   }
