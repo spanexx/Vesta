@@ -5,11 +5,12 @@ import { HeaderComponent } from './components/header/header.component';
 import { CustomIconComponent } from "./custom-icon/custom-icon.component";
 import { AuthenticationService } from './services/authentication.service';
 import { CommonModule } from '@angular/common';
+import { AdvertComponent } from './components/advert/advert.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, IconMenuComponent, HeaderComponent, CommonModule],
+  imports: [RouterOutlet, IconMenuComponent, HeaderComponent, CommonModule, AdvertComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

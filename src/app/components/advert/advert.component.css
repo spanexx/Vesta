@@ -1,0 +1,36 @@
+@keyframes slideInFromTop {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.advert-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  background-color: #f0f0f0; /* Light grey background, can be changed later */
+  animation: slideInFromTop 0.5s ease-out; /* Apply the animation */
+}
+
+.advert-card {
+  background-color: #ffffff; /* White card background */
+  border: 1px solid #cccccc;
+  padding: 20px; /* Slightly larger than a button */
+  margin-bottom: 10px; /* Space between cards */
+  width: clamp(200px, 60%, 300px); /* Or a fixed width like 200px, adjust as needed */
+  text-align: center;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.advert-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 4px 4px 8px rgba(0,0,0,0.15);
+}
