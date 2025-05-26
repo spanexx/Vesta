@@ -81,9 +81,6 @@ export const routes: Routes = [
   },
   // Admin routes
   { 
-    path: 'admin/login', 
-    component: AdminLoginComponent 
-  },  { 
     path: 'admin',
     component: AdminLayoutComponent,
     canActivate: [adminGuard],

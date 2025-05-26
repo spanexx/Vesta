@@ -12,20 +12,27 @@ import { BehaviorSubject, Observable, combineLatest, Subject } from 'rxjs';
 import { map, switchMap, debounceTime, distinctUntilChanged, tap, takeUntil } from 'rxjs/operators';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CacheService } from '../../services/cache.service';
-import { FileUploadService } from '../../services/file-upload.service';  // Add this import
+import { FileUploadService } from '../../services/file-upload.service';
+import { FilterComponent } from '../filter/filter.component';
+
+// Import FilterData interface for type safety
+interface FilterData {
+  username?: string;
+  physicalAttribute?: {attribute: string, value: any} | null;
+}
 
 type ProfileLevel = 'vip' | 'premium' | 'standard' | 'basic';
 type Coordinates = [number, number];
 
 @Component({
   selector: 'app-home',
-  standalone: true,
-  imports: [
+  standalone: true,  imports: [
     CommonModule,
     FormsModule,
     RouterModule,
     ScrollingModule,
     LocationFilterComponent,
+    FilterComponent,
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
@@ -49,21 +56,23 @@ export class HomeComponent implements OnInit, OnDestroy {
   currentFilter: LocationFilter = {};
   isUsingLocation = false;  // Add this property
   showFilters = false;
-
   // Add missing properties
   selectedAge?: number;
   selectedServices?: string[];
   location?: {
     latitude: number;
     longitude: number;
-  };
+  };  public allProfiles: UserProfile[] = [];
+  private physicalFilter: {attribute: string, value: any} | null = null;
+  private usernameFilter: string = '';
+  private combinedFilters: FilterData = {};
 
   constructor(
     private profileService: ProfileService,
     private router: Router,
     private route: ActivatedRoute,
     private cacheService: CacheService,
-    public fileUploadService: FileUploadService  // Add this service
+    public fileUploadService: FileUploadService
   ) {}
 
   ngOnInit(): void {
@@ -99,12 +108,13 @@ export class HomeComponent implements OnInit, OnDestroy {
           ...queryParams,
           coordinates: this.userLocation
         });
-      })
-    ).subscribe({
-      next: (profiles) => {
+      })    ).subscribe({
+      next: (profiles) => {        this.allProfiles = profiles;
         this.userProfiles = profiles;
         this.profilesCache.next(profiles);
         this.isLoading = false;
+        // Re-apply filters on new data
+        this.applyAllFilters();
       },
       error: (error) => {
         console.error('Error loading profiles:', error);
@@ -324,11 +334,12 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
     } else {
       if (!this.currentFilter.country && !this.currentFilter.city) {
-        this.fetchProfiles();
-      } else {
+        this.fetchProfiles();      } else {
         this.profileService.filterByLocation(this.currentFilter).subscribe({
           next: (profiles) => {
+            this.allProfiles = profiles;
             this.userProfiles = profiles;
+            this.applyAllFilters();
             this.isLoading = false;
           },
           error: (error) => this.handleError(error)
@@ -342,9 +353,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.error = null;
     
-    this.profileService.getAllProfiles(params).subscribe({
-      next: (profiles: UserProfile[]) => {
+    this.profileService.getAllProfiles(params).subscribe({      next: (profiles: UserProfile[]) => {
         console.log('Fetched profiles:', profiles.length); // Debug log
+        this.allProfiles = profiles;
         if (params?.coordinates && profiles.length > 0) {
           this.userProfiles = this.sortProfilesByDistanceAndStatus(
             profiles, 
@@ -353,6 +364,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         } else {
           this.userProfiles = profiles;
         }
+        this.applyAllFilters();
         this.profilesCache.next(this.userProfiles);
         this.loadingSubject.next(false);
       },
@@ -431,5 +443,148 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (overlay) {
       overlay.classList.toggle('show', this.showFilters);
     }
+  }  onPhysicalFilterChange(filterData: FilterData) {
+    // Update combined filters
+    this.combinedFilters = { ...filterData };
+    
+    // Update individual filters for compatibility
+    this.usernameFilter = filterData.username || '';
+    this.physicalFilter = filterData.physicalAttribute || null;
+    
+    // Apply all filters
+    this.applyAllFilters();
+  }
+
+  // Method to clear all filters
+  clearAllFilters() {
+    this.usernameFilter = '';
+    this.physicalFilter = null;
+    this.combinedFilters = {};
+    this.userProfiles = [...this.allProfiles];
+  }
+
+  // Method to get current active filters count for UI feedback
+  getActiveFiltersCount(): number {
+    let count = 0;
+    if (this.usernameFilter?.trim()) count++;
+    if (this.physicalFilter) count++;
+    return count;
+  }  private applyAllFilters() {
+    let filteredProfiles = [...this.allProfiles];
+
+    // Early return if no filters are active
+    if (!this.usernameFilter?.trim() && !this.physicalFilter) {
+      this.userProfiles = filteredProfiles;
+      return;
+    }
+
+    // Apply username filter
+    if (this.usernameFilter && this.usernameFilter.trim()) {
+      const searchTerm = this.usernameFilter.trim().toLowerCase();
+      filteredProfiles = filteredProfiles.filter(profile => 
+        profile.username?.toLowerCase().includes(searchTerm) ||
+        profile.fullName?.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    // Apply physical attribute filter
+    if (this.physicalFilter) {
+      filteredProfiles = filteredProfiles.filter(profile => 
+        this.matchesPhysicalFilter(profile, this.physicalFilter!)
+      );
+    }
+
+    this.userProfiles = filteredProfiles;
+  }
+
+  private matchesPhysicalFilter(profile: UserProfile, filter: {attribute: string, value: any}): boolean {
+    if (!profile.physicalAttributes) return false;
+
+    const { attribute, value } = filter;
+    
+    switch (attribute) {
+      case 'height':
+        const height = profile.physicalAttributes.height;
+        const heightRange = value as { min: number | null, max: number | null };
+        if (!height) return false;
+        if (heightRange.min && height < heightRange.min) return false;
+        if (heightRange.max && height > heightRange.max) return false;
+        return true;
+
+      case 'weight':
+        const weight = profile.physicalAttributes.weight;
+        const weightRange = value as { min: number | null, max: number | null };
+        if (!weight) return false;
+        if (weightRange.min && weight < weightRange.min) return false;
+        if (weightRange.max && weight > weightRange.max) return false;
+        return true;
+
+      case 'ethnicity':
+        return profile.physicalAttributes.ethnicity === value;
+
+      case 'bodyType':
+        return profile.physicalAttributes.bodyType === value;
+
+      case 'hairColor':
+        return profile.physicalAttributes.hairColor === value;
+
+      case 'eyeColor':
+        return profile.physicalAttributes.eyeColor === value;
+
+      case 'bustType':
+        return profile.physicalAttributes.bustType === value;
+
+      default:
+        return false;
+    }
+  }
+
+  private applyPhysicalFilter() {
+    if (!this.physicalFilter) {
+      this.userProfiles = [...this.allProfiles];
+      return;
+    }
+
+    this.userProfiles = this.allProfiles.filter(profile => {
+      if (!profile.physicalAttributes) return false;
+
+      const { attribute, value } = this.physicalFilter!;
+      
+      switch (attribute) {
+        case 'height':
+          const height = profile.physicalAttributes.height;
+          const heightRange = value as { min: number | null, max: number | null };
+          if (!height) return false;
+          if (heightRange.min && height < heightRange.min) return false;
+          if (heightRange.max && height > heightRange.max) return false;
+          return true;
+
+        case 'weight':
+          const weight = profile.physicalAttributes.weight;
+          const weightRange = value as { min: number | null, max: number | null };
+          if (!weight) return false;
+          if (weightRange.min && weight < weightRange.min) return false;
+          if (weightRange.max && weight > weightRange.max) return false;
+          return true;
+
+        case 'ethnicity':
+          return profile.physicalAttributes.ethnicity === value;
+
+        case 'bodyType':
+          return profile.physicalAttributes.bodyType === value;
+
+        case 'hairColor':
+          return profile.physicalAttributes.hairColor === value;
+
+        case 'eyeColor':
+          return profile.physicalAttributes.eyeColor === value;
+
+        case 'bustType':
+          return profile.physicalAttributes.bustType === value;
+
+        default:
+          return false;
+      }
+    });
   }
 }

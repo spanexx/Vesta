@@ -202,9 +202,7 @@
         <div class="attribute">
           <span class="label">Pubic Hair:</span>
           <span class="value">{{profile.physicalAttributes.pubicHair || 'Not specified'}}</span>
-        </div>
-
-        <!-- Tattoos & Piercings -->
+        </div>        <!-- Tattoos & Piercings -->
         <div class="attribute features">
           <span class="label">Features:</span>
           <span class="value">
@@ -213,6 +211,64 @@
             <span *ngIf="profile.physicalAttributes.piercings">Has Piercings</span>
             <span *ngIf="!profile.physicalAttributes.tattoos && !profile.physicalAttributes.piercings">None</span>
           </span>
+        </div>
+
+        <!-- Hair Color -->
+        <div class="attribute">
+          <span class="label">Hair Color:</span>
+          <span class="value">{{profile.physicalAttributes.hairColor || 'Not specified'}}</span>
+        </div>
+
+        <!-- Eye Color -->
+        <div class="attribute">
+          <span class="label">Eye Color:</span>
+          <span class="value">{{profile.physicalAttributes.eyeColor || 'Not specified'}}</span>
+        </div>
+
+        <!-- Body Type -->
+        <div class="attribute">
+          <span class="label">Body Type:</span>
+          <span class="value">{{profile.physicalAttributes.bodyType || 'Not specified'}}</span>
+        </div>
+
+        <!-- Skin Tone -->
+        <div class="attribute">
+          <span class="label">Skin Tone:</span>
+          <span class="value">{{profile.physicalAttributes.skinTone || 'Not specified'}}</span>
+        </div>
+
+        <!-- Waist Size -->
+        <div class="attribute">
+          <span class="label">Waist Size:</span>
+          <span class="value">{{profile.physicalAttributes.waistSize ? profile.physicalAttributes.waistSize + ' cm' : 'Not specified'}}</span>
+        </div>
+
+        <!-- Hip Size -->
+        <div class="attribute">
+          <span class="label">Hip Size:</span>
+          <span class="value">{{profile.physicalAttributes.hipSize ? profile.physicalAttributes.hipSize + ' cm' : 'Not specified'}}</span>
+        </div>
+
+        <!-- Smoker Status -->
+        <div class="attribute">
+          <span class="label">Smoker:</span>
+          <span class="value">{{profile.physicalAttributes.smoker || 'Not specified'}}</span>
+        </div>
+
+        <!-- Drinker Status -->
+        <div class="attribute">
+          <span class="label">Drinker:</span>
+          <span class="value">{{profile.physicalAttributes.drinker || 'Not specified'}}</span>
+        </div>
+
+        <!-- Nationality -->
+        <div class="attribute">
+          <span class="label">Nationality:</span>
+          <span class="value">{{profile.physicalAttributes.nationality || 'Not specified'}}</span>
+        </div>        <!-- Languages -->
+        <div class="attribute">
+          <span class="label">Languages:</span>
+          <span class="value">{{profile.physicalAttributes.languages && profile.physicalAttributes.languages.length ? profile.physicalAttributes.languages.join(', ') : 'Not specified'}}</span>
         </div>
       </div>
     </div>

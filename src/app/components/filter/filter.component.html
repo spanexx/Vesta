@@ -1,1 +1,164 @@
-<p>filter works!</p>
+<!-- Filter Component with Username Search and Physical Attributes -->
+<div class="filter-container">
+  <!-- Filter Header -->
+  <div class="filter-header">
+    <h3 class="filter-title">
+      <i class="fas fa-filter"></i>
+      Search & Filter
+    </h3>
+    <button 
+      *ngIf="username || selectedAttribute" 
+      (click)="clearAllFilters()" 
+      class="clear-all-btn"
+      title="Clear all filters">
+      <i class="fas fa-times"></i>
+      Clear All
+    </button>
+  </div>
+
+  <!-- Main Filter Layout -->
+  <div class="filter-layout">
+    
+    <!-- Left Section: Physical Attributes -->
+    <div class="physical-filters-section">
+      <div class="section-header">
+        <i class="fas fa-user-check"></i>
+        <span>Physical Attributes</span>
+      </div>
+      
+      <div class="filter-group">
+        <select [(ngModel)]="selectedAttribute" (change)="onAttributeChange()" class="attribute-select">
+          <option value="">Select Attribute</option>
+          <option value="ethnicity">Ethnicity</option>
+          <option value="bodyType">Body Type</option>
+          <option value="hairColor">Hair Color</option>
+          <option value="eyeColor">Eye Color</option>
+          <option value="bustType">Bust Type</option>
+          <option value="height">Height</option>
+          <option value="weight">Weight</option>
+        </select>
+
+        <!-- Dropdown for enumerated values -->
+        <select *ngIf="showEnumDropdown" [(ngModel)]="selectedValue" (change)="onValueChange()" class="value-select">
+          <option value="">Select Value</option>
+          <ng-container [ngSwitch]="selectedAttribute">
+            <ng-container *ngSwitchCase="'ethnicity'">
+              <option value="Asian">Asian</option>
+              <option value="Black">Black</option>
+              <option value="Caucasian">Caucasian</option>
+              <option value="Hispanic">Hispanic</option>
+              <option value="Indian">Indian</option>
+              <option value="Middle Eastern">Middle Eastern</option>
+              <option value="Mixed">Mixed</option>
+              <option value="Other">Other</option>
+            </ng-container>
+            <ng-container *ngSwitchCase="'bodyType'">
+              <option value="Slim">Slim</option>
+              <option value="Athletic">Athletic</option>
+              <option value="Average">Average</option>
+              <option value="Curvy">Curvy</option>
+              <option value="Full-figured">Full-figured</option>
+              <option value="Muscular">Muscular</option>
+              <option value="Petite">Petite</option>
+            </ng-container>
+            <ng-container *ngSwitchCase="'hairColor'">
+              <option value="Blonde">Blonde</option>
+              <option value="Brown">Brown</option>
+              <option value="Black">Black</option>
+              <option value="Red">Red</option>
+              <option value="Auburn">Auburn</option>
+              <option value="Grey">Grey</option>
+              <option value="White">White</option>
+              <option value="Colorful">Colorful</option>
+              <option value="Other">Other</option>
+            </ng-container>
+            <ng-container *ngSwitchCase="'eyeColor'">
+              <option value="Blue">Blue</option>
+              <option value="Green">Green</option>
+              <option value="Brown">Brown</option>
+              <option value="Hazel">Hazel</option>
+              <option value="Grey">Grey</option>
+              <option value="Amber">Amber</option>
+              <option value="Other">Other</option>
+            </ng-container>
+            <ng-container *ngSwitchCase="'bustType'">
+              <option value="Natural">Natural</option>
+              <option value="Enhanced">Enhanced</option>
+            </ng-container>
+          </ng-container>
+        </select>
+
+        <!-- Range inputs for height and weight -->
+        <div *ngIf="selectedAttribute === 'height'" class="range-inputs">
+          <div class="range-label">Height (cm)</div>
+          <input type="number" 
+                 [(ngModel)]="heightRange.min" 
+                 (input)="onRangeChange()"
+                 min="140" max="220" 
+                 placeholder="Min"
+                 class="range-input">
+          <span class="range-separator">-</span>
+          <input type="number" 
+                 [(ngModel)]="heightRange.max" 
+                 (input)="onRangeChange()"
+                 min="140" max="220" 
+                 placeholder="Max"
+                 class="range-input">
+        </div>
+
+        <div *ngIf="selectedAttribute === 'weight'" class="range-inputs">
+          <div class="range-label">Weight (kg)</div>
+          <input type="number" 
+                 [(ngModel)]="weightRange.min" 
+                 (input)="onRangeChange()"
+                 min="35" max="150" 
+                 placeholder="Min"
+                 class="range-input">
+          <span class="range-separator">-</span>
+          <input type="number" 
+                 [(ngModel)]="weightRange.max" 
+                 (input)="onRangeChange()"
+                 min="35" max="150" 
+                 placeholder="Max"
+                 class="range-input">
+        </div>
+
+        <button 
+          *ngIf="selectedAttribute" 
+          (click)="clearPhysicalFilter()" 
+          class="clear-section-btn"
+          title="Clear physical attribute filter">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Right Section: Username Search -->
+    <div class="username-search-section">
+      <div class="section-header">
+        <i class="fas fa-search"></i>
+        <span>Username Search</span>
+      </div>
+      
+      <div class="search-group">
+        <div class="search-input-wrapper">
+          <input 
+            type="text" 
+            [(ngModel)]="username" 
+            (input)="onUsernameChange()"
+            placeholder="Search by username..." 
+            class="username-input">
+          <i class="fas fa-search search-icon"></i>
+          <button 
+            *ngIf="username" 
+            (click)="clearUsernameFilter()" 
+            class="clear-search-btn"
+            title="Clear username search">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>

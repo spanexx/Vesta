@@ -1,13 +1,18 @@
 <div class="all">
-<span *ngIf="currentFilter.country || currentFilter.city" (click)="clearFilters()" class="clear-wrapper">
-  <i class="fas fa-times clear" title="Clear all filters"></i>
-</span>
-<aside class="filters-sidebar">
-
-  <div class="sidebar-header">
+<aside class="filters-sidebar">  <div class="sidebar-header">
     <div class="header-flex">
       <h2>Filter Profiles</h2>
     </div>
+    
+    <button 
+      *ngIf="currentFilter.country || currentFilter.city"
+      class="clear-button"
+      (click)="clearFilters()"
+    >
+      <i class="fas fa-times"></i>
+      Clear Filters
+    </button>
+    
     <button 
       class="location-button"
       (click)="useLocation()"

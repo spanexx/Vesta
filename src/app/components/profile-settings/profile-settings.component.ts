@@ -96,11 +96,15 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
           throw new Error('No user found');
         }),
         finalize(() => { this.isLoading = false; })
-      ).subscribe({
-        next: (profile) => {
+      ).subscribe({        next: (profile) => {
           this.profile = profile;
           // Initialize physical attribute subjects for all possible attributes
-          const physicalAttributes = ['gender', 'height', 'weight', 'ethnicity', 'bustSize', 'bustType', 'pubicHair', 'tattoos', 'piercings'];
+          const physicalAttributes = [
+            'gender', 'height', 'weight', 'ethnicity', 'bustSize', 'bustType', 
+            'pubicHair', 'tattoos', 'piercings', 'hairColor', 'eyeColor', 
+            'bodyType', 'skinTone', 'waistSize', 'hipSize', 'smoker', 
+            'drinker', 'languages', 'nationality'
+          ];
           physicalAttributes.forEach(attr => {
             this.physicalAttributeSubjects[attr] = new Subject<any>();
             this.subscriptions.add(
@@ -130,9 +134,7 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
     });
     
     this.subscriptions.unsubscribe();
-  }
-
-  initializeProfile(profile: UserProfile): UserProfile {
+  }  initializeProfile(profile: UserProfile): UserProfile {
     return {
       ...profile,
       physicalAttributes: {
@@ -144,7 +146,29 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
         bustType: profile.physicalAttributes?.bustType || 'Natural',
         pubicHair: profile.physicalAttributes?.pubicHair || 'Shaved',
         tattoos: profile.physicalAttributes?.tattoos || false,
-        piercings: profile.physicalAttributes?.piercings || false
+        piercings: profile.physicalAttributes?.piercings || false,
+        // Physical attributes with proper defaults
+        hairColor: profile.physicalAttributes?.hairColor || 'Other',
+        eyeColor: profile.physicalAttributes?.eyeColor || 'Other',
+        bodyType: profile.physicalAttributes?.bodyType || 'Average',
+        skinTone: profile.physicalAttributes?.skinTone || 'Medium',
+        waistSize: profile.physicalAttributes?.waistSize,
+        hipSize: profile.physicalAttributes?.hipSize,
+        smoker: profile.physicalAttributes?.smoker || 'Non-smoker',
+        drinker: profile.physicalAttributes?.drinker || 'Social',
+        languages: profile.physicalAttributes?.languages || [],
+        nationality: profile.physicalAttributes?.nationality || ''
+      },
+      // Ensure availableToMeet is initialized
+      availableToMeet: profile.availableToMeet || {
+        meetingWith: [],
+        available24_7: false,
+        advanceBooking: false
+      },
+      // Ensure services is initialized
+      services: profile.services || {
+        included: [],
+        extra: {}
       }
     };
   }
@@ -640,5 +664,10 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
       return this.fileUploadService.getMediaUrl(this.profile.profilePicture);
     }
     return 'assets/avatar.jpg';
+  }
+
+  updateLanguagesAttribute(languagesString: string) {
+    const languagesArray = languagesString.split(',').map(lang => lang.trim()).filter(lang => lang);
+    this.updatePhysicalAttribute('languages', languagesArray);
   }
 }

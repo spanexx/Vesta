@@ -9,13 +9,11 @@
   <!-- Add overlay -->
   <div class="filters-overlay" [class.show]="showFilters" (click)="toggleFilters()"></div>
   
-  <div class="home-layout">
-    <!-- Sidebar -->
+  <div class="home-layout">    <!-- Sidebar -->
     <aside class="filters-sidebar" [class.show-filters]="showFilters">
-      <button class="close-filters" (click)="toggleFilters()" *ngIf="showFilters">
+      <button class="close-filters" (click)="toggleFilters()">
         <i class="fas fa-times"></i>
-      </button>
-      <app-location-filter
+      </button>      <app-location-filter
         [isLoading]="isLoading"
         [locationError]="locationError"
         [currentFilter]="currentFilter"
@@ -23,10 +21,29 @@
         (filterChange)="onFilterChange($event)"
         (clearFiltersRequest)="onClearFilters()">
       </app-location-filter>
-    </aside>
-
-    <!-- Main content -->
+    </aside>    <!-- Main content -->
     <main class="main-content">
+      <!-- Combined search and filter component -->
+      <app-filter (filterChange)="onPhysicalFilterChange($event)"></app-filter>
+      
+      <!-- Filter status and results count -->
+      <div class="filter-status" *ngIf="getActiveFiltersCount() > 0 || userProfiles.length !== allProfiles.length">
+        <div class="status-info">
+          <span class="results-count">
+            <i class="fas fa-list"></i>
+            {{ userProfiles.length }} of {{ allProfiles.length }} profiles
+          </span>
+          <span class="active-filters" *ngIf="getActiveFiltersCount() > 0">
+            <i class="fas fa-filter"></i>
+            {{ getActiveFiltersCount() }} active filter{{ getActiveFiltersCount() > 1 ? 's' : '' }}
+          </span>
+        </div>
+        <button class="clear-all-filters" (click)="clearAllFilters()" *ngIf="getActiveFiltersCount() > 0">
+          <i class="fas fa-times"></i>
+          Clear All Filters
+        </button>
+      </div>
+      
       <cdk-virtual-scroll-viewport itemSize="350">
         <div class="profiles-grid">
           <ng-container *ngIf="isLoading">

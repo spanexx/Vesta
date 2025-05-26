@@ -130,8 +130,7 @@ const userProfileSchema = new mongoose.Schema({
       type: String,
       default: 'EUR'
     }
-  },
-  physicalAttributes: {
+  },  physicalAttributes: {
     gender: { 
       type: String, 
       trim: true,
@@ -177,9 +176,62 @@ const userProfileSchema = new mongoose.Schema({
       type: Boolean, 
       default: false 
     },
-    piercings: { 
+  piercings: {
       type: Boolean, 
       default: false 
+    },
+    // Additional physical attributes
+    hairColor: {
+      type: String,
+      trim: true,
+      enum: ['Blonde', 'Brown', 'Black', 'Red', 'Auburn', 'Grey', 'White', 'Colorful', 'Other'],
+      default: 'Other'
+    },
+    eyeColor: {
+      type: String,
+      trim: true,
+      enum: ['Blue', 'Green', 'Brown', 'Hazel', 'Grey', 'Amber', 'Other'],
+      default: 'Other'
+    },
+    bodyType: {
+      type: String,
+      trim: true,
+      enum: ['Slim', 'Athletic', 'Average', 'Curvy', 'Full-figured', 'Muscular', 'Petite'],
+      default: 'Average'
+    },
+    skinTone: {
+      type: String,
+      trim: true,
+      enum: ['Fair', 'Light', 'Medium', 'Olive', 'Tan', 'Brown', 'Dark'],
+      default: 'Medium'
+    },
+    waistSize: {
+      type: Number,
+      min: 50, // Minimum realistic waist size in cm
+      max: 150, // Maximum realistic waist size in cm
+    },
+    hipSize: {
+      type: Number,
+      min: 70, // Minimum realistic hip size in cm
+      max: 170, // Maximum realistic hip size in cm
+    },
+    smoker: {
+      type: String,
+      enum: ['Non-smoker', 'Occasional', 'Regular'],
+      default: 'Non-smoker'
+    },
+    drinker: {
+      type: String,
+      enum: ['Non-drinker', 'Social', 'Regular'],
+      default: 'Social'
+    },
+    languages: {
+      type: [String],
+      default: []
+    },
+    nationality: {
+      type: String,
+      trim: true
     }
   },
   availableToMeet: {

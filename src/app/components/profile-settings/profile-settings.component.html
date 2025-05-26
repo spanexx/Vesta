@@ -259,6 +259,127 @@
           Has Piercings
         </label>
       </div>
+
+      <!-- New Physical Attributes -->
+      <!-- Hair Color -->
+      <div class="attribute-item">
+        <label>Hair Color</label>
+        <select [(ngModel)]="profile!.physicalAttributes!.hairColor"
+                (ngModelChange)="updatePhysicalAttribute('hairColor', $event)">
+          <option value="Blonde">Blonde</option>
+          <option value="Brown">Brown</option>
+          <option value="Black">Black</option>
+          <option value="Red">Red</option>
+          <option value="Auburn">Auburn</option>
+          <option value="Grey">Grey</option>
+          <option value="White">White</option>
+          <option value="Colorful">Colorful</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <!-- Eye Color -->
+      <div class="attribute-item">
+        <label>Eye Color</label>
+        <select [(ngModel)]="profile!.physicalAttributes!.eyeColor"
+                (ngModelChange)="updatePhysicalAttribute('eyeColor', $event)">
+          <option value="Blue">Blue</option>
+          <option value="Green">Green</option>
+          <option value="Brown">Brown</option>
+          <option value="Hazel">Hazel</option>
+          <option value="Grey">Grey</option>
+          <option value="Amber">Amber</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <!-- Body Type -->
+      <div class="attribute-item">
+        <label>Body Type</label>
+        <select [(ngModel)]="profile!.physicalAttributes!.bodyType"
+                (ngModelChange)="updatePhysicalAttribute('bodyType', $event)">
+          <option value="Slim">Slim</option>
+          <option value="Athletic">Athletic</option>
+          <option value="Average">Average</option>
+          <option value="Curvy">Curvy</option>
+          <option value="Full-figured">Full-figured</option>
+          <option value="Muscular">Muscular</option>
+          <option value="Petite">Petite</option>
+        </select>
+      </div>
+
+      <!-- Skin Tone -->
+      <div class="attribute-item">
+        <label>Skin Tone</label>
+        <select [(ngModel)]="profile!.physicalAttributes!.skinTone"
+                (ngModelChange)="updatePhysicalAttribute('skinTone', $event)">
+          <option value="Fair">Fair</option>
+          <option value="Light">Light</option>
+          <option value="Medium">Medium</option>
+          <option value="Olive">Olive</option>
+          <option value="Tan">Tan</option>
+          <option value="Brown">Brown</option>
+          <option value="Dark">Dark</option>
+        </select>
+      </div>
+
+      <!-- Waist Size -->
+      <div class="attribute-item">
+        <label>Waist Size (cm)</label>
+        <input type="number" 
+               [(ngModel)]="profile!.physicalAttributes!.waistSize"
+               (ngModelChange)="updatePhysicalAttribute('waistSize', $event)"
+               min="50" max="150" 
+               placeholder="50-150 cm">
+      </div>
+
+      <!-- Hip Size -->
+      <div class="attribute-item">
+        <label>Hip Size (cm)</label>
+        <input type="number" 
+               [(ngModel)]="profile!.physicalAttributes!.hipSize"
+               (ngModelChange)="updatePhysicalAttribute('hipSize', $event)"
+               min="70" max="170" 
+               placeholder="70-170 cm">
+      </div>
+
+      <!-- Smoker Status -->
+      <div class="attribute-item">
+        <label>Smoker Status</label>
+        <select [(ngModel)]="profile!.physicalAttributes!.smoker"
+                (ngModelChange)="updatePhysicalAttribute('smoker', $event)">
+          <option value="Non-smoker">Non-smoker</option>
+          <option value="Occasional">Occasional</option>
+          <option value="Regular">Regular</option>
+        </select>
+      </div>
+
+      <!-- Drinker Status -->
+      <div class="attribute-item">
+        <label>Drinker Status</label>
+        <select [(ngModel)]="profile!.physicalAttributes!.drinker"
+                (ngModelChange)="updatePhysicalAttribute('drinker', $event)">
+          <option value="Non-drinker">Non-drinker</option>
+          <option value="Social">Social</option>
+          <option value="Regular">Regular</option>
+        </select>
+      </div>
+
+      <!-- Nationality -->
+      <div class="attribute-item">
+        <label>Nationality</label>
+        <input type="text" 
+               [(ngModel)]="profile!.physicalAttributes!.nationality"
+               (ngModelChange)="updatePhysicalAttribute('nationality', $event)"
+               placeholder="Your nationality">
+      </div>      <!-- Languages -->
+      <div class="attribute-item">
+        <label>Languages (comma-separated)</label>
+        <input type="text" 
+               [ngModel]="profile!.physicalAttributes!.languages?.join(', ')"
+               (ngModelChange)="updateLanguagesAttribute($event)"
+               placeholder="e.g., English, Spanish, French">
+      </div>
     </div>
   </section><br>
 

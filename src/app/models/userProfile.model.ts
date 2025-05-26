@@ -45,6 +45,17 @@ export interface UserProfile {
         pubicHair: 'Shaved' | 'Trimmed' | 'Natural';
         tattoos: boolean;
         piercings: boolean;
+        // Added physical attributes
+        hairColor?: 'Blonde' | 'Brown' | 'Black' | 'Red' | 'Auburn' | 'Grey' | 'White' | 'Colorful' | 'Other';
+        eyeColor?: 'Blue' | 'Green' | 'Brown' | 'Hazel' | 'Grey' | 'Amber' | 'Other';
+        bodyType?: 'Slim' | 'Athletic' | 'Average' | 'Curvy' | 'Full-figured' | 'Muscular' | 'Petite';
+        skinTone?: 'Fair' | 'Light' | 'Medium' | 'Olive' | 'Tan' | 'Brown' | 'Dark';
+        waistSize?: number;
+        hipSize?: number;
+        smoker?: 'Non-smoker' | 'Occasional' | 'Regular';
+        drinker?: 'Non-drinker' | 'Social' | 'Regular';
+        languages?: string[];
+        nationality?: string;
     };
     availableToMeet?: {
         meetingWith: string[];
