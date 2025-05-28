@@ -38,15 +38,15 @@
         [(ngModel)]="countrySearch"
         (ngModelChange)="onCountrySearchChange($event)"
       >
-    </div>
-    <div class="filter-list">
+    </div>    <div class="filter-list">
       <button
-        *ngFor="let country of countries | filter:countrySearch"
-        [class.active]="currentFilter.country === country"
-        (click)="onCountrySelect(country)"
+        *ngFor="let countryData of filteredCountries"
+        [class.active]="currentFilter.country === countryData.country"
+        (click)="onCountrySelect(countryData.country)"
         class="filter-item"
       >
-        {{ country }}
+        {{ countryData.country }}
+        <span class="count-badge" *ngIf="countryData.count > 0">({{ countryData.count }})</span>
       </button>
     </div>
   </div>
@@ -60,15 +60,15 @@
         [(ngModel)]="citySearch"
         (ngModelChange)="onCitySearchChange($event)"
       >
-    </div>
-    <div class="filter-list">
+    </div>    <div class="filter-list">
       <button
-        *ngFor="let city of getCitiesForCountry(currentFilter.country) | filter:citySearch"
-        [class.active]="currentFilter.city === city"
-        (click)="onCitySelect(city)"
+        *ngFor="let cityData of filteredCities"
+        [class.active]="currentFilter.city === cityData.city"
+        (click)="onCitySelect(cityData.city)"
         class="filter-item"
       >
-        {{ city }}
+        {{ cityData.city }}
+        <span class="count-badge" *ngIf="cityData.count > 0">({{ cityData.count }})</span>
       </button>
     </div>
   </div>

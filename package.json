@@ -1,6 +1,7 @@
 {
   "name": "vesta-frontend",
-  "version": "0.0.0",  "scripts": {
+  "version": "0.0.0",
+  "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
@@ -32,6 +33,7 @@
     "dotenv": "^16.4.7",
     "geoip-lite": "^1.4.10",
     "geolib": "^3.3.4",
+    "node-fetch": "^3.3.2",
     "render": "^0.1.4",
     "rxjs": "~7.8.0",
     "stripe": "^17.7.0",

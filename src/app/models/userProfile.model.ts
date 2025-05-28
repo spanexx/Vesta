@@ -36,7 +36,7 @@ export interface UserProfile {
         currency: string;
     };
     physicalAttributes?: {
-        gender: 'female' | 'male' | 'other';
+        gender: 'female' | 'male' | 'trans';
         height: number;
         weight: number;
         ethnicity: 'Asian' | 'Black' | 'Caucasian' | 'Hispanic' | 'Indian' | 'Middle Eastern' | 'Mixed' | 'Other';

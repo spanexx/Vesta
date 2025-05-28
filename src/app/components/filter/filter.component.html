@@ -2,10 +2,10 @@
 <div class="filter-container">
   <!-- Filter Header -->
   <div class="filter-header">
-    <h3 class="filter-title">
-      <i class="fas fa-filter"></i>
-      Search & Filter
-    </h3>
+    <!-- <h3 class="filter-title">
+      <!-- <i class="fas fa-filter"></i> -->
+      <!-- Search & Filter -->
+    <!-- </h3> --> 
     <button 
       *ngIf="username || selectedAttribute" 
       (click)="clearAllFilters()" 
@@ -21,14 +21,14 @@
     
     <!-- Left Section: Physical Attributes -->
     <div class="physical-filters-section">
-      <div class="section-header">
-        <i class="fas fa-user-check"></i>
-        <span>Physical Attributes</span>
-      </div>
+      <!-- <div class="section-header">
+        <!-- <i class="fas fa-user-check"></i> -->
+        <!-- <span>Physical Attributes</span> -->
+      <!-- </div> -->
       
-      <div class="filter-group">
-        <select [(ngModel)]="selectedAttribute" (change)="onAttributeChange()" class="attribute-select">
+      <div class="filter-group">        <select [(ngModel)]="selectedAttribute" (change)="onAttributeChange()" class="attribute-select">
           <option value="">Select Attribute</option>
+          <option value="gender">Gender</option>
           <option value="ethnicity">Ethnicity</option>
           <option value="bodyType">Body Type</option>
           <option value="hairColor">Hair Color</option>
@@ -38,10 +38,14 @@
           <option value="weight">Weight</option>
         </select>
 
-        <!-- Dropdown for enumerated values -->
-        <select *ngIf="showEnumDropdown" [(ngModel)]="selectedValue" (change)="onValueChange()" class="value-select">
+        <!-- Dropdown for enumerated values -->        <select *ngIf="showEnumDropdown" [(ngModel)]="selectedValue" (change)="onValueChange()" class="value-select">
           <option value="">Select Value</option>
           <ng-container [ngSwitch]="selectedAttribute">
+            <ng-container *ngSwitchCase="'gender'">
+              <option value="female">Female</option>
+              <option value="male">Male</option>
+              <option value="trans">Trans</option>
+            </ng-container>
             <ng-container *ngSwitchCase="'ethnicity'">
               <option value="Asian">Asian</option>
               <option value="Black">Black</option>
@@ -136,8 +140,8 @@
     <!-- Right Section: Username Search -->
     <div class="username-search-section">
       <div class="section-header">
-        <i class="fas fa-search"></i>
-        <span>Username Search</span>
+        <!-- <i class="fas fa-search"></i>
+        <span>Username Search</span> -->
       </div>
       
       <div class="search-group">
@@ -148,7 +152,7 @@
             (input)="onUsernameChange()"
             placeholder="Search by username..." 
             class="username-input">
-          <i class="fas fa-search search-icon"></i>
+          <!-- <i class="fas fa-search search-icon"></i> -->
           <button 
             *ngIf="username" 
             (click)="clearUsernameFilter()" 

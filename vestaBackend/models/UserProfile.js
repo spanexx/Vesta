@@ -130,11 +130,10 @@ const userProfileSchema = new mongoose.Schema({
       type: String,
       default: 'EUR'
     }
-  },  physicalAttributes: {
-    gender: { 
+  },  physicalAttributes: {    gender: { 
       type: String, 
       trim: true,
-      enum: ['female', 'male', 'other'],
+      enum: ['female', 'male', 'trans'],
       default: 'female'
     },
     height: { 

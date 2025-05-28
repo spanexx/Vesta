@@ -49,7 +49,7 @@ export class FilterComponent {
     this.heightRange = { min: null, max: null };
     this.weightRange = { min: null, max: null };
     
-    this.showEnumDropdown = ['ethnicity', 'bodyType', 'hairColor', 'eyeColor', 'bustType'].includes(this.selectedAttribute);
+    this.showEnumDropdown = ['gender', 'ethnicity', 'bodyType', 'hairColor', 'eyeColor', 'bustType'].includes(this.selectedAttribute);
     
     this.emitFilterChange();
   }

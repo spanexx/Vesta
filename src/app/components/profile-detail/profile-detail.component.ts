@@ -46,9 +46,8 @@ interface ApiError {
     ProfileSkeletonComponent,
     // ProfileHeaderComponent,
     ProfileGalleryComponent
-  ],
-  templateUrl: './profile-detail.component.html',
-  styleUrls: ['./profile-detail.component.css']
+  ],  templateUrl: './profile-detail.component.html',
+  styleUrls: ['./profile-detail.component.scss', './profile-detail.component.css'],
 })
 export class ProfileDetailComponent implements OnInit, OnDestroy {
   // Add debug flag
@@ -109,6 +108,9 @@ export class ProfileDetailComponent implements OnInit, OnDestroy {
 
   usePhoneForWhatsapp = false;
   isAuthenticated = false;
+  
+  // Track user interaction for visual hints
+  hasInteracted = false;
 
   transformedImages: string[] = [];
   transformedVideos: string[] = [];
@@ -407,9 +409,11 @@ export class ProfileDetailComponent implements OnInit, OnDestroy {
   private getNestedValue(obj: any, path: EditableFields): any {
     return path.split('.').reduce((acc, part) => acc && acc[part], obj);
   }
-
   startEditing(fieldName: EditableFields): void {
     if (!this.isCurrentUser || !this.profile) return;
+    
+    // Mark as interacted to disable initial hint animation
+    this.hasInteracted = true;
     
     let currentValue: EditingState['currentValue'] = null;
     
@@ -485,8 +489,7 @@ export class ProfileDetailComponent implements OnInit, OnDestroy {
         this.error = 'Please select a gender';
         this.isUpdating = false;
         return;
-      }
-      if (!['female', 'male', 'other'].includes(valueToSend)) {
+      }      if (!['female', 'male', 'trans'].includes(valueToSend)) {
         this.error = 'Invalid gender value';
         this.isUpdating = false;
         return;

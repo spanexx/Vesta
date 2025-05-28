@@ -24,24 +24,13 @@ import { FileUploadService } from '../../services/file-upload.service';
           <p>Your account is currently pending verification. Our team will review your profile within 24-48 hours.</p>
         </div>
         <div class="requirements-section">
-          <h2>Verification Requirements:</h2>
+          <h2>Verification Requirement:</h2>
           <ul>
             <li [class.completed]="hasVerificationDocuments()">
               <i [class]="hasVerificationDocuments() ? 'fas fa-check' : 'fas fa-times'"></i>
               Upload verification documents
             </li>
-            <li [class.completed]="hasPhysicalAttributes()">
-              <i [class]="hasPhysicalAttributes() ? 'fas fa-check' : 'fas fa-times'"></i>
-              Complete physical attributes
-            </li>
-            <li [class.completed]="hasServices()">
-              <i [class]="hasServices() ? 'fas fa-check' : 'fas fa-times'"></i>
-              Add your services
-            </li>
-            <li [class.completed]="hasRates()">
-              <i [class]="hasRates() ? 'fas fa-check' : 'fas fa-times'"></i>
-              Set your rates
-            </li>
+
           </ul>
         </div>
 

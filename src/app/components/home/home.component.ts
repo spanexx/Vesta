@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { of, Subscription } from 'rxjs';
-import { ProfileService, LocationFilter, ProfileQueryParams } from '../../services/profile.service';
+import { ProfileService, LocationFilter, ProfileQueryParams, PaginatedProfileResponse, PaginationInfo } from '../../services/profile.service';
 import { UserProfile } from '../../models/userProfile.model';
 import { FilterPipe } from '../../pipes/filter.pipe';
 import { calculateDistance } from '../../utils/distance.util';
@@ -35,7 +35,7 @@ type Coordinates = [number, number];
     FilterComponent,
   ],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss', './home.component.css'],
 })
 export class HomeComponent implements OnInit, OnDestroy {
   private loadingSubject = new BehaviorSubject<boolean>(true);
@@ -63,9 +63,17 @@ export class HomeComponent implements OnInit, OnDestroy {
     latitude: number;
     longitude: number;
   };  public allProfiles: UserProfile[] = [];
-  private physicalFilter: {attribute: string, value: any} | null = null;
-  private usernameFilter: string = '';
-  private combinedFilters: FilterData = {};
+  private physicalFilter: {attribute: string, value: any} | null = null;  private usernameFilter: string = '';
+  private combinedFilters: FilterData = {};  public selectedGender: 'female' | 'male' | 'trans' | null = null;
+
+  // Pagination properties
+  public currentPage = 1;
+  public pageSize = 20;
+  public pagination: PaginationInfo | null = null;
+  public isLoadingMore = false;
+
+  // Template helpers
+  public Math = Math;
 
   constructor(
     private profileService: ProfileService,
@@ -92,26 +100,41 @@ export class HomeComponent implements OnInit, OnDestroy {
           country: queryParams['country'],
           city: queryParams['city']
         };
-      }),
-      switchMap(([_, queryParams]) => {
+      }),      switchMap(([_, queryParams]) => {
         if (queryParams['role']) {
-          return this.profileService.filterByRole(queryParams['role']);
+          return this.profileService.filterByRole(queryParams['role']).pipe(
+            map(profiles => ({ profiles, pagination: null }))
+          );
         }
         if (queryParams['country'] || queryParams['city']) {
           return this.profileService.filterByLocation({
             country: queryParams['country'],
             city: queryParams['city']
-          });
+          }).pipe(
+            map(profiles => ({ profiles, pagination: null }))
+          );
         }
         // Pass query parameters to getAllProfiles
         return this.profileService.getAllProfiles({
           ...queryParams,
-          coordinates: this.userLocation
+          coordinates: this.userLocation,
+          page: this.currentPage,
+          limit: this.pageSize
         });
       })    ).subscribe({
-      next: (profiles) => {        this.allProfiles = profiles;
-        this.userProfiles = profiles;
-        this.profilesCache.next(profiles);
+      next: (response) => {        
+        if ('profiles' in response) {
+          // Paginated response
+          this.allProfiles = response.profiles;
+          this.userProfiles = response.profiles;
+          this.pagination = response.pagination;
+        } else {
+          // Non-paginated response (from filterByRole or filterByLocation)
+          this.allProfiles = response as UserProfile[];
+          this.userProfiles = response as UserProfile[];
+          this.pagination = null;
+        }
+        this.profilesCache.next(this.userProfiles);
         this.isLoading = false;
         // Re-apply filters on new data
         this.applyAllFilters();
@@ -176,8 +199,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   onFilterChange(filter: LocationFilter): void {
     this.updateUrlParams(filter);
   }
-
   onLocationRequest(): void {
+    // Reset pagination when changing location settings
+    this.resetPagination();
+    
     // First toggle the flag
     this.isUsingLocation = !this.isUsingLocation;
     
@@ -276,12 +301,13 @@ export class HomeComponent implements OnInit, OnDestroy {
       const { coordinates, timestamp } = JSON.parse(savedLocation);
       const fiveMinutes = 5 * 60 * 1000;
       
-      if (Date.now() - timestamp < fiveMinutes) {
-        this.userLocation = coordinates;
+      if (Date.now() - timestamp < fiveMinutes) {        this.userLocation = coordinates;
         const params: ProfileQueryParams = {
           coordinates: this.userLocation,
           age: this.selectedAge,
-          services: this.selectedServices?.join(',')
+          services: this.selectedServices?.join(','),
+          page: this.currentPage,
+          limit: this.pageSize
         };
         this.fetchProfiles(params);
         return;
@@ -295,11 +321,12 @@ export class HomeComponent implements OnInit, OnDestroy {
             this.currentFilter = {};
             const coordinates: [number, number] = [position.coords.longitude, position.coords.latitude];
             this.userLocation = coordinates;
-            
-            const params: ProfileQueryParams = {
+              const params: ProfileQueryParams = {
               coordinates: this.userLocation,  // Now this will match the expected type
               age: this.selectedAge,
-              services: this.selectedServices?.join(',')
+              services: this.selectedServices?.join(','),
+              page: this.currentPage,
+              limit: this.pageSize
             };
 
             // Store location in session storage
@@ -331,10 +358,12 @@ export class HomeComponent implements OnInit, OnDestroy {
       } else {
         this.locationError = 'Geolocation is not supported by your browser.';
         this.isLoading = false;
-      }
-    } else {
+      }    } else {
       if (!this.currentFilter.country && !this.currentFilter.city) {
-        this.fetchProfiles();      } else {
+        this.fetchProfiles({
+          page: this.currentPage,
+          limit: this.pageSize
+        });      } else {
         this.profileService.filterByLocation(this.currentFilter).subscribe({
           next: (profiles) => {
             this.allProfiles = profiles;
@@ -346,32 +375,40 @@ export class HomeComponent implements OnInit, OnDestroy {
         });
       }
     }
-  }
-
-  // Add new helper method
+  }  // Add new helper method
   private fetchProfiles(params?: ProfileQueryParams): void {
     this.isLoading = true;
     this.error = null;
     
-    this.profileService.getAllProfiles(params).subscribe({      next: (profiles: UserProfile[]) => {
-        console.log('Fetched profiles:', profiles.length); // Debug log
-        this.allProfiles = profiles;
-        if (params?.coordinates && profiles.length > 0) {
+    this.profileService.getAllProfiles(params).subscribe({      
+      next: (response: PaginatedProfileResponse) => {
+        console.log('Fetched profiles:', response.profiles.length); // Debug log
+        this.allProfiles = response.profiles;
+        this.pagination = response.pagination;
+        if (params?.coordinates && response.profiles.length > 0) {
           this.userProfiles = this.sortProfilesByDistanceAndStatus(
-            profiles, 
+            response.profiles, 
             params.coordinates as [number, number]
           );
         } else {
-          this.userProfiles = profiles;
+          this.userProfiles = response.profiles;
         }
-        this.applyAllFilters();
+        
+        // Don't apply local filters when using pagination - server handles filtering
+        // Only apply filters if we're not using pagination (pagination is null)
+        if (!this.pagination) {
+          this.applyAllFilters();
+        }
+        
         this.profilesCache.next(this.userProfiles);
         this.loadingSubject.next(false);
+        this.isLoading = false;
       },
       error: (error) => {
         console.error('Error fetching profiles:', error); // Debug log
         this.handleError(error);
         this.loadingSubject.next(false);
+        this.isLoading = false;
       }
     });
   }
@@ -444,6 +481,9 @@ export class HomeComponent implements OnInit, OnDestroy {
       overlay.classList.toggle('show', this.showFilters);
     }
   }  onPhysicalFilterChange(filterData: FilterData) {
+    // Reset pagination when filters change
+    this.resetPagination();
+    
     // Update combined filters
     this.combinedFilters = { ...filterData };
     
@@ -454,25 +494,54 @@ export class HomeComponent implements OnInit, OnDestroy {
     // Apply all filters
     this.applyAllFilters();
   }
-
   // Method to clear all filters
   clearAllFilters() {
     this.usernameFilter = '';
     this.physicalFilter = null;
+    this.selectedGender = null;
     this.combinedFilters = {};
     this.userProfiles = [...this.allProfiles];
   }
-
   // Method to get current active filters count for UI feedback
   getActiveFiltersCount(): number {
     let count = 0;
     if (this.usernameFilter?.trim()) count++;
     if (this.physicalFilter) count++;
+    if (this.selectedGender) count++;
     return count;
-  }  private applyAllFilters() {
+  }
+  // Gender filtering methods
+  filterByGender(gender: 'female' | 'male' | 'trans') {
+    this.resetPagination();
+    this.selectedGender = gender;
+    this.applyGenderFilter();
+  }
+
+  clearGenderFilter() {
+    this.resetPagination();
+    this.selectedGender = null;
+    this.applyGenderFilter();
+  }
+
+  getGenderCount(gender: 'female' | 'male' | 'trans'): number {
+    return this.allProfiles.filter(profile => 
+      profile.physicalAttributes?.gender === gender
+    ).length;
+  }
+  private applyGenderFilter() {
+    // Simply trigger the unified filter application
+    this.applyAllFilters();
+  }private applyAllFilters() {
     let filteredProfiles = [...this.allProfiles];
 
-    // Early return if no filters are active
+    // Apply gender filter first if selected
+    if (this.selectedGender) {
+      filteredProfiles = filteredProfiles.filter(profile =>
+        profile.physicalAttributes?.gender === this.selectedGender
+      );
+    }
+
+    // Early return if no other filters are active
     if (!this.usernameFilter?.trim() && !this.physicalFilter) {
       this.userProfiles = filteredProfiles;
       return;
@@ -496,7 +565,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     this.userProfiles = filteredProfiles;
   }
-
   private matchesPhysicalFilter(profile: UserProfile, filter: {attribute: string, value: any}): boolean {
     if (!profile.physicalAttributes) return false;
 
@@ -519,6 +587,9 @@ export class HomeComponent implements OnInit, OnDestroy {
         if (weightRange.max && weight > weightRange.max) return false;
         return true;
 
+      case 'gender':
+        return profile.physicalAttributes.gender === value;
+
       case 'ethnicity':
         return profile.physicalAttributes.ethnicity === value;
 
@@ -538,7 +609,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         return false;
     }
   }
-
   private applyPhysicalFilter() {
     if (!this.physicalFilter) {
       this.userProfiles = [...this.allProfiles];
@@ -567,6 +637,9 @@ export class HomeComponent implements OnInit, OnDestroy {
           if (weightRange.max && weight > weightRange.max) return false;
           return true;
 
+        case 'gender':
+          return profile.physicalAttributes.gender === value;
+
         case 'ethnicity':
           return profile.physicalAttributes.ethnicity === value;
 
@@ -586,5 +659,108 @@ export class HomeComponent implements OnInit, OnDestroy {
           return false;
       }
     });
+  }
+
+  // Pagination methods
+  goToPage(page: number): void {
+    if (page < 1 || (this.pagination && page > this.pagination.totalPages)) {
+      return;
+    }
+    
+    this.currentPage = page;
+    this.loadCurrentPage();
+  }
+
+  nextPage(): void {
+    if (this.pagination && this.pagination.hasNextPage) {
+      this.goToPage(this.currentPage + 1);
+    }
+  }
+
+  prevPage(): void {
+    if (this.pagination && this.pagination.hasPrevPage) {
+      this.goToPage(this.currentPage - 1);
+    }
+  }
+
+  loadMore(): void {
+    if (this.pagination && this.pagination.hasNextPage && !this.isLoadingMore) {
+      this.isLoadingMore = true;
+      const nextPage = this.currentPage + 1;
+      
+      const params: ProfileQueryParams = {
+        coordinates: this.userLocation,
+        age: this.selectedAge,
+        services: this.selectedServices?.join(','),
+        page: nextPage,
+        limit: this.pageSize
+      };
+
+      this.profileService.getAllProfiles(params).subscribe({
+        next: (response: PaginatedProfileResponse) => {
+          // Append new profiles to existing ones
+          this.allProfiles = [...this.allProfiles, ...response.profiles];
+          this.userProfiles = [...this.userProfiles, ...response.profiles];
+          this.pagination = response.pagination;
+          this.currentPage = nextPage;
+          this.isLoadingMore = false;
+          this.applyAllFilters();
+        },
+        error: (error) => {
+          console.error('Error loading more profiles:', error);
+          this.isLoadingMore = false;
+        }
+      });
+    }
+  }
+  private loadCurrentPage(): void {
+    const params: ProfileQueryParams = {
+      page: this.currentPage,
+      limit: this.pageSize
+    };
+
+    // Only add parameters that have valid values
+    if (this.userLocation) {
+      params.coordinates = this.userLocation;
+    }
+    if (this.selectedAge !== undefined && this.selectedAge !== null) {
+      params.age = this.selectedAge;
+    }
+    if (this.selectedServices && this.selectedServices.length > 0) {
+      params.services = this.selectedServices.join(',');
+    }
+
+    this.fetchProfiles(params);
+  }
+
+  // Helper methods for pagination UI
+  getPageNumbers(): number[] {
+    if (!this.pagination) return [];
+    
+    const totalPages = this.pagination.totalPages;
+    const current = this.currentPage;
+    const pages: number[] = [];
+    
+    // Show max 5 pages around current page
+    const maxVisible = 5;
+    let start = Math.max(1, current - Math.floor(maxVisible / 2));
+    let end = Math.min(totalPages, start + maxVisible - 1);
+    
+    // Adjust start if we're near the end
+    if (end - start + 1 < maxVisible) {
+      start = Math.max(1, end - maxVisible + 1);
+    }
+    
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    
+    return pages;
+  }
+
+  // Reset pagination when filters change
+  private resetPagination(): void {
+    this.currentPage = 1;
+    this.pagination = null;
   }
 }

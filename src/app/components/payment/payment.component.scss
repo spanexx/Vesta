@@ -146,8 +146,420 @@
     transform: translateY(-2px);
     box-shadow: 0 4px 15px rgba(234, 100, 184, 0.2);
   }
-
   i {
     font-size: 1.2rem;
+  }
+}
+
+// Crypto Payment Section
+.crypto-payment {
+  margin-top: 2rem;
+  
+  .crypto-details {
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+    
+    h3 {
+      color: #333;
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+    }
+    
+    p {
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+      color: #666;
+    }
+  }
+  
+  .qr-container {
+    margin: 2rem 0;
+    display: flex;
+    justify-content: center;
+    
+    img {
+      max-width: 250px;
+      width: 100%;
+      height: auto;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 1rem;
+      background: white;
+    }
+  }
+  
+  .payment-links {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin: 2rem 0;
+    flex-wrap: wrap;
+    
+    a {
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: inline-block;
+      
+      &.web-link {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: white;
+        
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+      }
+      
+      &.app-link {
+        background: linear-gradient(135deg, #f0b90b, #d4a10b);
+        color: white;
+        
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 15px rgba(240, 185, 11, 0.3);
+        }
+      }
+    }
+  }
+  
+  .payment-timer {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    color: #856404;
+    padding: 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    margin-top: 1rem;
+  }
+}
+
+// Form elements
+.form-control {
+  margin-bottom: 1.5rem;
+  
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+// Spinner for processing state
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #4CAF50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .payment-container {
+    margin: 1rem;
+    padding: 1.5rem;
+    max-width: none;
+  }
+  
+  .payment-method-selector {
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 1.5rem 0;
+  }
+  
+  .payment-method-btn {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1rem;
+    justify-content: center;
+    
+    i {
+      font-size: 1.1rem;
+    }
+  }
+  
+  .payment-details {
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .plan-details {
+    .amount {
+      font-size: 1.3rem;
+    }
+  }
+  
+  .crypto-payment {
+    .crypto-details {
+      padding: 1.5rem;
+      
+      h3 {
+        font-size: 1.3rem;
+      }
+      
+      p {
+        font-size: 1rem;
+      }
+    }
+    
+    .qr-container {
+      margin: 1.5rem 0;
+      
+      img {
+        max-width: 200px;
+        padding: 0.75rem;
+      }
+    }
+    
+    .payment-links {
+      flex-direction: column;
+      gap: 0.75rem;
+      margin: 1.5rem 0;
+      
+      a {
+        width: 100%;
+        text-align: center;
+        padding: 1rem;
+      }
+    }
+  }
+  
+  .submit-button {
+    padding: 1rem;
+    font-size: 1rem;
+  }
+  
+  .test-buttons {
+    flex-direction: column;
+    gap: 0.75rem;
+    
+    .test-button {
+      width: 100%;
+      padding: 0.75rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .payment-container {
+    margin: 0.5rem;
+    padding: 1rem;
+  }
+  
+  .payment-method-btn {
+    padding: 0.875rem;
+    font-size: 0.9rem;
+    
+    i {
+      font-size: 1rem;
+    }
+  }
+  
+  .payment-details {
+    padding: 1rem;
+  }
+  
+  .plan-details {
+    h3 {
+      font-size: 1.1rem;
+    }
+    
+    .amount {
+      font-size: 1.2rem;
+    }
+  }
+  
+  .crypto-payment {
+    .crypto-details {
+      padding: 1rem;
+      
+      h3 {
+        font-size: 1.2rem;
+      }
+      
+      p {
+        font-size: 0.95rem;
+      }
+    }
+    
+    .qr-container {
+      margin: 1rem 0;
+      
+      img {
+        max-width: 180px;
+        padding: 0.5rem;
+      }
+    }
+    
+    .payment-links {
+      margin: 1rem 0;
+      
+      a {
+        padding: 0.875rem;
+        font-size: 0.9rem;
+      }
+    }
+    
+    .payment-timer {
+      padding: 0.875rem;
+      font-size: 0.9rem;
+    }
+  }
+  
+  .submit-button {
+    padding: 0.875rem;
+    font-size: 0.95rem;
+  }
+  
+  .form-control {
+    margin-bottom: 1.25rem;
+    
+    label {
+      font-size: 0.9rem;
+    }
+  }
+  
+  .card-element {
+    padding: 0.875rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .payment-container {
+    margin: 0.25rem;
+    padding: 0.875rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .payment-method-btn {
+    padding: 0.75rem;
+    font-size: 0.85rem;
+    gap: 0.375rem;
+    
+    i {
+      font-size: 0.9rem;
+    }
+  }
+  
+  .plan-details {
+    h3 {
+      font-size: 1rem;
+    }
+    
+    .amount {
+      font-size: 1.1rem;
+    }
+  }
+  
+  .crypto-payment {
+    .crypto-details {
+      padding: 0.875rem;
+      
+      h3 {
+        font-size: 1.1rem;
+      }
+      
+      p {
+        font-size: 0.9rem;
+      }
+    }
+    
+    .qr-container {
+      img {
+        max-width: 160px;
+      }
+    }
+    
+    .payment-links {
+      a {
+        padding: 0.75rem;
+        font-size: 0.85rem;
+      }
+    }
+  }
+  
+  .submit-button {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+}
+
+// Large screens (desktop)
+@media (min-width: 1200px) {
+  .payment-container {
+    max-width: 700px;
+    padding: 2.5rem;
+  }
+  
+  .payment-details {
+    padding: 2rem;
+  }
+  
+  .crypto-payment {
+    .crypto-details {
+      padding: 2.5rem;
+    }
+    
+    .qr-container {
+      img {
+        max-width: 300px;
+      }
+    }
+    
+    .payment-links {
+      gap: 1.5rem;
+      
+      a {
+        padding: 1.25rem 2.5rem;
+      }
+    }
+  }
+  
+  .payment-method-btn {
+    padding: 1.25rem 2.5rem;
+    font-size: 1.2rem;
+    
+    i {
+      font-size: 1.3rem;
+    }
+  }
+}
+
+// Tablet landscape
+@media (min-width: 769px) and (max-width: 1024px) {
+  .payment-container {
+    max-width: 650px;
+    padding: 2rem;
+  }
+  
+  .payment-method-selector {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .payment-method-btn {
+    min-width: 200px;
   }
 }

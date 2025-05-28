@@ -69,15 +69,50 @@
       </label>
       <span *ngIf="imageFile">{{imageFile.name}}</span>
     </div>
-  </div>
-
-  <!-- New user info inputs -->
-  <div class="user-info">
-    <label for="username">Username</label>
-    <input id="username" type="text" [(ngModel)]="username" placeholder="Enter your username">
-  
-    <label for="email">Email</label>
-    <input id="email" type="email" [(ngModel)]="email" placeholder="Enter your email">
+  </div>  <!-- New user info inputs -->
+  <div class="user-info">    <div class="input-container">
+      <label for="username">Username</label>
+      <div class="autocomplete-wrapper">        <input 
+          id="username" 
+          type="text" 
+          [(ngModel)]="username"
+          (input)="onUsernameInput($event)"
+          (focus)="onUsernameFocus()"
+          (blur)="hideUsernameSuggestions()"
+          placeholder="Enter your username"
+          autocomplete="off">
+        <div class="autocomplete-dropdown" *ngIf="showUsernameSuggestions && filteredUsernameSuggestions.length > 0">
+          <div 
+            class="autocomplete-item" 
+            *ngFor="let suggestion of filteredUsernameSuggestions"
+            (mousedown)="selectUsernameSuggestion(suggestion)">
+            {{ suggestion }}
+          </div>
+        </div>
+      </div>
+      <p class="username-note"><strong>Important:</strong> Please make sure your username is entered correctly - it is case sensitive!</p>
+    </div>
+    <div class="input-container">
+      <label for="email">Email</label>
+      <div class="autocomplete-wrapper">        <input 
+          id="email" 
+          type="email" 
+          [(ngModel)]="email"
+          (input)="onEmailInput($event)"
+          (focus)="onEmailFocus()"
+          (blur)="hideEmailSuggestions()"
+          placeholder="Enter your email"
+          autocomplete="off">
+        <div class="autocomplete-dropdown" *ngIf="showEmailSuggestions && filteredEmailSuggestions.length > 0">
+          <div 
+            class="autocomplete-item" 
+            *ngFor="let suggestion of filteredEmailSuggestions"
+            (mousedown)="selectEmailSuggestion(suggestion)">
+            {{ suggestion }}
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="error-message" *ngIf="error">

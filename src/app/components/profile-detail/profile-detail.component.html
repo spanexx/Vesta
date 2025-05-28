@@ -1,4 +1,4 @@
-<div class="profile-detail-container">
+<div class="profile-detail-container" [class.isCurrentUser]="isCurrentUser" [class.interacted]="hasInteracted">
   <!-- Show skeleton while loading -->
   <app-profile-skeleton *ngIf="isLoading"></app-profile-skeleton>
 
@@ -27,14 +27,14 @@
                 <button (click)="$event.stopPropagation(); cancelEditing()" class="cancel-btn">Cancel</button>
               </div>
             </div>
-          </div>
-
-          <p class="username">
+          </div>          <p class="username">
               {{  '@' + profile.username}}
             <i *ngIf="profile.verified" class="fas fa-gem verified-badge"><i class="fas fa-check verified-badge"></i></i>
           </p>
-          <p class="birthday" *ngIf="profile.birthdate">Age: {{formatBirthday(profile.birthdate)}}</p>
-            <div class="bio" (click)="startEditing('bio')" *ngIf="profile">
+          <p class="birthday" *ngIf="profile.birthdate">Age: {{formatBirthday(profile.birthdate)}}</p>          <p class="gender" *ngIf="profile.physicalAttributes?.gender">
+            <i class="fas fa-venus-mars"></i>
+            Gender: {{profile.physicalAttributes?.gender | titlecase}}
+          </p>            <div class="bio editable-field" (click)="startEditing('bio')" *ngIf="profile">
               <p *ngIf="editingState.fieldName !== 'bio'">Bio: <span>{{profile.bio || 'Add a bio to tell people about yourself'}}</span></p>
               <div *ngIf="editingState.fieldName === 'bio'" class="edit-controls">
                 <textarea [(ngModel)]="editingState.currentValue" (keyup.enter)="saveField('bio')" (keyup.escape)="cancelEditing()"></textarea>
@@ -56,10 +56,28 @@
             </div>
           </div>
 
+          <!-- Edit Help Text for Profile Owners -->
+          <div class="edit-help-banner" *ngIf="isCurrentUser && !hasInteracted">
+            <div class="help-content">
+              <i class="fas fa-info-circle"></i>
+              <div class="help-text">
+                <strong>Click on highlighted fields to edit your profile</strong>
+                <span>Keep your information up to date to attract more clients</span>
+              </div>
+              <button class="dismiss-help" (click)="hasInteracted = true">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+
         </div>
+      </div>      <div>
+          <!-- Simple notice for pending verification -->
+      <div class="pending-notice" *ngIf="isCurrentUser && profile.status === 'pending'">
+        <i class="fas fa-info-circle"></i>
+        <span>Click "pending" below to verify</span>
       </div>
-      <div>
-        
+
       <div class="profile-badges">
         <span class="badge level" [ngClass]="{
           'level-standard': profile.profileLevel.toLowerCase() === 'standard',
@@ -68,8 +86,7 @@
         }">
           {{profile.profileLevel}}
           <i *ngIf="profile.profileLevel.toLowerCase() === 'vip'" class="fas fa-star vip-star"></i>
-        </span>
-        <span class="badge status" 
+        </span>        <span class="badge status" 
               [ngClass]="{
                 'status-active': profile.status === 'active',
                 'status-suspended': profile.status === 'suspended',
@@ -77,11 +94,11 @@
               }"
               [routerLink]="profile.status === 'pending' ? ['/activation'] : null"
               [style.cursor]="profile.status === 'pending' ? 'pointer' : 'default'"
+              [title]="profile.status === 'pending' ? 'Click to complete verification' : ''"
               >
           {{profile.status}}
-          <div *ngIf="isCurrentUser && profile.status === 'pending'" class="status-hint">
-            Click here to complete your verification
-            <i class="fas fa-arrow-right"></i>
+          <i *ngIf="isCurrentUser && profile.status === 'pending'" class="fas fa-arrow-right status-action-icon"></i>          <div *ngIf="isCurrentUser && profile.status === 'pending'" class="status-hint">
+            Click to verify your profile
           </div>
         </span>
         <span *ngIf="isCurrentUser" class="badge settings" routerLink="/settings"><i class="fas fa-magic"></i></span>

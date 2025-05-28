@@ -161,12 +161,11 @@
     <div class="physical-attributes-grid">
       <!-- Gender -->
       <div class="attribute-item">
-        <label>Gender</label>
-        <select [(ngModel)]="profile!.physicalAttributes!.gender"
+        <label>Gender</label>        <select [(ngModel)]="profile!.physicalAttributes!.gender"
                 (ngModelChange)="updatePhysicalAttribute('gender', $event)">
           <option value="female">Female</option>
           <option value="male">Male</option>
-          <option value="other">Other</option>
+          <option value="trans">Trans</option>
         </select>
       </div>
 

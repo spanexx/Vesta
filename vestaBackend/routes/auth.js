@@ -12,7 +12,7 @@ const router = express.Router();
 // User registration with age verification
 router.post('/register', async (req, res) => {
   try {
-    const { username, email, password, birthdate, currentLocation } = req.body;
+    const { username, email, password, birthdate, gender, currentLocation } = req.body;
 
     // Age verification (18+)
     const age = new Date().getFullYear() - new Date(birthdate).getFullYear();
@@ -70,14 +70,15 @@ router.post('/register', async (req, res) => {
         };
       }
       console.log('Contact data set to:', contactData);
-    }
-
-    const user = new UserProfile({
+    }    const user = new UserProfile({
       username,
       email,
       password,
       birthdate: new Date(birthdate),
       contact: contactData,
+      physicalAttributes: {
+        gender: gender || 'female' // Default to female if not provided
+      }
     });
 
     await user.save();
@@ -243,16 +244,34 @@ router.get('/profiles', async (req, res) => {
           profileLevel: -1 // Sort by profile level if no location provided
         }
       });
-    }
-
-    // ------ 4. Pagination ------
+    }    // ------ 4. Pagination ------
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
+    
+    // Get total count before pagination
+    const totalCountPipeline = [...pipeline];
+    totalCountPipeline.push({ $count: "total" });
+    const totalCountResult = await UserProfile.aggregate(totalCountPipeline);
+    const total = totalCountResult.length > 0 ? totalCountResult[0].total : 0;
+    
+    // Apply pagination
     pipeline.push({ $skip: (page - 1) * limit });
     pipeline.push({ $limit: limit });
 
     const profiles = await UserProfile.aggregate(pipeline);
-    res.json(profiles);
+    
+    // Return paginated response
+    res.json({
+      profiles,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+        hasNextPage: page < Math.ceil(total / limit),
+        hasPrevPage: page > 1
+      }
+    });
   } catch (error) {
     console.error('Error getting profiles:', error);
     createErrorResponse(res, 500, 'GET_PROFILES_FAILED', 'Failed to get profiles', error);

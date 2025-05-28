@@ -101,11 +101,28 @@
   transition: all 0.3s ease;
 }
 
+.input-wrapper select {
+  width: 100%;
+  padding: 12px 40px; /* Equal padding on both sides */
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+  cursor: pointer;
+}
+
 .input-wrapper input[type="date"] {
   padding-right: 12px;
 }
 
 .input-wrapper input:focus {
+  border-color: #ea64b8;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(234, 100, 184, 0.1);
+}
+
+.input-wrapper select:focus {
   border-color: #ea64b8;
   outline: none;
   box-shadow: 0 0 0 3px rgba(234, 100, 184, 0.1);
@@ -249,14 +266,23 @@
   .form-group label {
     color: #ccc;
   }
-
   .input-wrapper input {
     background: #121212;
     border-color: #333;
     color: #fff;
   }
 
+  .input-wrapper select {
+    background: #121212;
+    border-color: #333;
+    color: #fff;
+  }
+
   .input-wrapper input:focus {
+    border-color: #ea64b8;
+  }
+
+  .input-wrapper select:focus {
     border-color: #ea64b8;
   }
 

@@ -26,13 +26,13 @@ export class RegisterComponent implements OnInit {
     private authService: AuthenticationService,
     private router: Router
   ) {}
-
   ngOnInit(): void {
     this.registerForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(4)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       birthdate: ['', Validators.required],
+      gender: ['', Validators.required],
       termsAccepted: [false, Validators.requiredTrue]  // Add this line
     });
   }
@@ -50,13 +50,13 @@ export class RegisterComponent implements OnInit {
     try {
       // Get user's precise location
       const locationResult = await this.locationService.getSmartLocation();
-      
-      // Ensure the backend receives city & country
+        // Ensure the backend receives city & country
       const registrationData = {
         username: formValue.username,
         email: formValue.email,
         password: formValue.password,
         birthdate: formValue.birthdate,
+        gender: formValue.gender,
         termsAccepted: formValue.termsAccepted,  // Add this line
         currentLocation: {
           latitude: locationResult.location.latitude,

@@ -249,6 +249,89 @@ router.get('/location', async (req, res) => {
   }
 });
 
+// Get location statistics (country and city counts)
+router.get('/location-stats', async (req, res) => {
+  try {
+    // Get all unique countries with counts
+    const countryCounts = await UserProfile.aggregate([
+      {
+        $match: {
+          'contact.country': { $exists: true, $ne: null, $ne: '' }
+        }
+      },
+      {
+        $group: {
+          _id: '$contact.country',
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $project: {
+          country: '$_id',
+          count: 1,
+          _id: 0
+        }
+      },
+      { $sort: { count: -1 } }
+    ]);
+
+    // Get all unique cities with counts grouped by country
+    const cityCounts = await UserProfile.aggregate([
+      {
+        $match: {
+          'contact.country': { $exists: true, $ne: null, $ne: '' },
+          'contact.city': { $exists: true, $ne: null, $ne: '' }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            country: '$contact.country',
+            city: '$contact.city'
+          },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $group: {
+          _id: '$_id.country',
+          cities: {
+            $push: {
+              city: '$_id.city',
+              count: '$count'
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          country: '$_id',
+          cities: { $sortArray: { input: '$cities', sortBy: { count: -1 } } },
+          _id: 0
+        }
+      },
+      { $sort: { country: 1 } }
+    ]);
+
+    // Transform city data into a more usable format
+    const cityStats = {};
+    cityCounts.forEach(item => {
+      cityStats[item.country] = item.cities;
+    });
+
+    res.json({
+      countries: countryCounts,
+      cities: cityStats
+    });
+  } catch (error) {
+    console.error('Error getting location statistics:', error);
+    res.status(500).json({
+      error: 'LOCATION_STATS_FAILED',
+      message: 'Failed to get location statistics'
+    });
+  }
+});
+
 // Get all profiles with optional filters and sorting
 router.get('/profiles', async (req, res) => {
   try {

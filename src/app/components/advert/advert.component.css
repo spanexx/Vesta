@@ -9,28 +9,265 @@
   }
 }
 
+@keyframes autoScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes flashy {
+  0%, 100% {
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.4), 0 0 15px rgba(255, 165, 0, 0.3);
+    transform: scale(1.01);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@keyframes rainbow {
+  0% { border-color: #ff0000; }
+  16% { border-color: #ff8000; }
+  32% { border-color: #ffff00; }
+  48% { border-color: #80ff00; }
+  64% { border-color: #00ff80; }
+  80% { border-color: #0080ff; }
+  96% { border-color: #8000ff; }
+  100% { border-color: #ff0000; }
+}
+
 .advert-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 10px;
-  background-color: #f0f0f0; /* Light grey background, can be changed later */
+  flex-direction: row;
+  align-items: stretch; /* Make cards same height */
+  justify-content: flex-start;
+  padding: 5px;
+  background: linear-gradient(45deg, #f0f0f0, #e8e8e8); /* Gradient background */
   animation: slideInFromTop 0.5s ease-out; /* Apply the animation */
+  gap: 5px; /* Space between horizontal cards */
+  flex-wrap: nowrap; /* Prevent wrapping */
+  overflow: hidden; /* Hide overflow for auto-scroll effect */
+  position: relative;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.advert-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7);
+  background-size: 300% 300%;
+  animation: rainbow 10s ease infinite;
+  z-index: -1;
+  padding: 2px;
+  border-radius: inherit;
+}
+
+.advert-scroll-wrapper {
+  display: flex;
+  animation: autoScroll 40s linear infinite;
+  gap: 5px;
+}
+
+.advert-scroll-wrapper:hover {
+  animation-play-state: paused;
 }
 
 .advert-card {
-  background-color: #ffffff; /* White card background */
-  border: 1px solid #cccccc;
-  padding: 20px; /* Slightly larger than a button */
-  margin-bottom: 10px; /* Space between cards */
-  width: clamp(200px, 60%, 300px); /* Or a fixed width like 200px, adjust as needed */
+  background: linear-gradient(135deg, #ffffff, #f8f9fa); /* Gradient background */
+  border: 2px solid #007bff;
+  padding: 8px 12px; /* Reduced padding for better content fit */
+  width: 300px; /* Base width */
+  height: 50px; /* Increased height for content */
+  flex-shrink: 0; /* Prevent cards from shrinking initially */
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
-  border-radius: 8px;
-  transition: transform 0.2s ease-in-out;
+  border-radius: 12px;
+  transition: all 0.3s ease-in-out;
+  animation: 4s ease-in-out infinite, pulse 3s ease-in-out infinite;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+}
+
+.card-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  animation: pulse 4s ease-in-out infinite;
+  z-index: 2;
+  position: relative;
+}
+
+.card-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  opacity: 0.6;
+  z-index: 1;
+  filter: brightness(0.8) contrast(1.1);
+}
+
+.card-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: #007bff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  line-height: 1.2;
+  z-index: 2;
+  position: relative;
+  text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  backdrop-filter: blur(2px);
+}
+
+.advert-card::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+  background-size: 300% 300%;
+  animation: rainbow 2s ease infinite;
+  border-radius: 12px;
+  z-index: -1;
+}
+
+.advert-card:nth-child(even) {
+  animation-delay: 0.5s;
+}
+
+.advert-card:nth-child(3n) {
+  animation-delay: 1s;
 }
 
 .advert-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 4px 4px 8px rgba(0,0,0,0.15);
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 10px 25px rgba(0, 123, 255, 0.4);
+  animation-play-state: paused;
+}
+
+/* Media queries for responsive card sizing */
+@media (max-width: 1200px) {
+  .advert-card {
+    width: 250px;
+    height: 65px;
+  }
+  
+  .card-text {
+    font-size: 11px;
+  }
+  
+  .card-icon {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 900px) {
+  .advert-card {
+    width: 220px;
+    height: 60px;
+    padding: 6px 10px;
+  }
+  
+  .card-content {
+    gap: 6px;
+  }
+  
+  .card-text {
+    font-size: 10px;
+  }
+  
+  .card-icon {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 700px) {
+  .advert-card {
+    width: 180px;
+    height: 55px;
+    padding: 4px 8px;
+  }
+  
+  .card-content {
+    gap: 4px;
+  }
+  
+  .card-text {
+    font-size: 9px;
+  }
+  
+  .card-icon {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 500px) {
+  .advert-container {
+    padding: 3px;
+    gap: 3px;
+  }
+  
+  .advert-card {
+    width: 150px;
+    height: 50px;
+    padding: 3px 6px;
+  }
+  
+  .card-content {
+    gap: 3px;
+  }
+  
+  .card-text {
+    font-size: 8px;
+  }
+  
+  .card-icon {
+    font-size: 10px;
+  }
+}
+
+.advert-card:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 10px 25px rgba(0, 123, 255, 0.4);
+  animation-play-state: paused;
 }

@@ -45,12 +45,11 @@
   overflow-y: auto;
   scroll-behavior: smooth;
   -ms-overflow-style: none;
-  scrollbar-width: none;
-  box-shadow: 0 8px 32px var(--glass-shadow),
+  scrollbar-width: none;  box-shadow: 0 8px 32px var(--glass-shadow),
               0 0 16px var(--primary-glow),
               inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transition: var(--transition);
-  z-index: 99; /* Added z-index to ensure it's below header but above other content */
+  z-index: 101; /* Increased z-index to ensure it's above header */
 }
 
 .filters-sidebar:hover {
@@ -223,6 +222,9 @@
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .filter-item::before {
@@ -260,6 +262,26 @@
 .filter-item.active::before {
   width: 100%;
   opacity: 0.2;
+}
+
+/* Count badge styles */
+.count-badge {
+  background: rgba(234, 100, 184, 0.2);
+  color: var(--primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  margin-left: auto;
+  white-space: nowrap;
+  border: 1px solid rgba(234, 100, 184, 0.3);
+  backdrop-filter: blur(5px);
+}
+
+.filter-item.active .count-badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .location-button {

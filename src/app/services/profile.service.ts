@@ -6,6 +6,16 @@ import { Observable, catchError, tap, throwError, map } from 'rxjs';
 import { UserProfile } from '../models/userProfile.model';
 import { profileRoutes } from '../../environments/apiRoutes';
 
+export interface LocationStats {
+  countries: Array<{country: string, count: number}>;
+  cities: {[country: string]: Array<{city: string, count: number}>};
+}
+
+export interface LocationStats {
+  countries: Array<{country: string, count: number}>;
+  cities: {[country: string]: Array<{city: string, count: number}>};
+}
+
 export interface LocationFilter {
   country?: string;
   city?: string;
@@ -16,7 +26,23 @@ export interface ProfileQueryParams {
   coordinates?: [number, number] | undefined;  // Updated to match possible undefined state
   age?: number;
   services?: string;
+  page?: number;
+  limit?: number;
   // role?: string;
+}
+
+export interface PaginationInfo {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+}
+
+export interface PaginatedProfileResponse {
+  profiles: UserProfile[];
+  pagination: PaginationInfo;
 }
 
 @Injectable({
@@ -43,6 +69,16 @@ export class ProfileService {
     });
   }
 
+  getLocationStats(): Observable<LocationStats> {
+    return this.http.get<LocationStats>(`${profileRoutes}/location-stats`)
+      .pipe(
+        catchError(error => {
+          console.error('Location stats failed:', error);
+          throw error;
+        })
+      );
+  }
+
   filterByLocation(filter: LocationFilter): Observable<UserProfile[]> {
     let params = new HttpParams();
     
@@ -60,15 +96,57 @@ export class ProfileService {
           throw error;
         })
       );
-  }
+  }  getAllProfiles(filters?: ProfileQueryParams): Observable<PaginatedProfileResponse> {
+    // Filter out undefined values and properly format the parameters
+    const cleanParams: any = {};
+    
+    if (filters) {
+      if (filters.coordinates && Array.isArray(filters.coordinates)) {
+        cleanParams.coordinates = filters.coordinates.join(',');
+      }
+      if (filters.age !== undefined && filters.age !== null) {
+        cleanParams.age = filters.age.toString();
+      }
+      if (filters.services && filters.services.trim() !== '') {
+        cleanParams.services = filters.services;
+      }
+      if (filters.page !== undefined) {
+        cleanParams.page = filters.page.toString();
+      }
+      if (filters.limit !== undefined) {
+        cleanParams.limit = filters.limit.toString();
+      }
+    }
 
-  getAllProfiles(filters?: ProfileQueryParams): Observable<UserProfile[]> {
-    return this.http.get<UserProfile[]>(`${authRoutes}/profiles`, {
-      params: { ...filters }
+    return this.http.get<PaginatedProfileResponse>(`${authRoutes}/profiles`, {
+      params: cleanParams
     }).pipe(
-      tap(), // Debug log
+      tap((response) => console.log('Fetched paginated profiles:', response.profiles.length)), // Debug log
       catchError(error => {
         console.error('Error fetching profiles:', error); // Error log
+        return throwError(() => error);
+      })
+    );
+  }
+
+  // Method to get usernames and emails for autocomplete
+  getProfileSuggestions(): Observable<{usernames: string[], emails: string[]}> {
+    return this.getAllProfiles({ limit: 1000 }).pipe(
+      map(response => {
+        const usernames = response.profiles
+          .map(profile => profile.username)
+          .filter(username => username && username.trim() !== '')
+          .sort();
+        
+        const emails = response.profiles
+          .map(profile => profile.email)
+          .filter(email => email && email.trim() !== '')
+          .sort();
+        
+        return { usernames, emails };
+      }),
+      catchError(error => {
+        console.error('Error fetching profile suggestions:', error);
         return throwError(() => error);
       })
     );
