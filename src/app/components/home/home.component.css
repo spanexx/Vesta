@@ -1,14 +1,14 @@
 /* Gender Filter Buttons */
 .gender-filter-buttons {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
   flex-wrap: wrap;
   justify-content: center;
-  padding: 1rem;
+  padding: 0.75rem;
   background: var(--surface, white);
-  border-radius: 15px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
 }
 
 app-location-filter{
@@ -18,19 +18,19 @@ app-location-filter{
 .gender-btn {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.8rem 1.5rem;
+  gap: 0.4rem;
+  padding: 0.6rem 1.2rem;
   border: 2px solid transparent;
-  border-radius: 10px;
+  border-radius: 8px;
   background: rgba(234, 100, 184, 0.1);
   color: #ea64b8;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   text-decoration: none;
   white-space: nowrap;
-  min-width: 120px;
+  min-width: 100px;
   justify-content: center;
 }
 

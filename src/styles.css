@@ -8,6 +8,15 @@
   font-family: 'Playfair', sans-serif;
 }
 
+/* Global scale reduction for more compact UI */
+html {
+  font-size: 12px; /* Reduced from default 16px */
+}
+
+body {
+  line-height: 1.2; /* Reduced from typical 1.5-1.6 */
+}
+
 :root {
   --primary: #ea64b8;
   --primary-light: rgba(234, 100, 184, 0.1);
