@@ -888,3 +888,5 @@
 {"level":"info","message":"Performance metrics collection initialized","service":"vesta-backend","timestamp":"2025-06-09T11:35:30.737Z"}
 {"level":"info","message":"Baseline metrics loaded from file","service":"vesta-backend","timestamp":"2025-06-09T11:35:30.739Z"}
 {"level":"info","message":"Establishing performance baseline...","service":"vesta-backend","timestamp":"2025-06-09T11:35:40.740Z"}
+{"level":"info","message":"Baseline metrics saved to file","service":"vesta-backend","timestamp":"2025-06-09T11:40:36.245Z"}
+{"cpu":{"percentageAvg":0.01},"errors":{"rateAvg":0},"level":"info","measurementCount":30,"measurementDuration":"5 minutes","memory":{"heapUsedAvg":35.24,"percentageUsedAvg":91.85},"message":"Performance baseline established:","requests":{"perSecondAvg":0},"responseTime":{"averageAvg":0},"service":"vesta-backend","timestamp":"2025-06-09T11:40:36.112Z"}
