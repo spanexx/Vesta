@@ -887,3 +887,4 @@
 {"level":"info","message":"Performance metrics service initialized successfully","service":"vesta-backend","timestamp":"2025-06-09T11:35:30.725Z"}
 {"level":"info","message":"Performance metrics collection initialized","service":"vesta-backend","timestamp":"2025-06-09T11:35:30.737Z"}
 {"level":"info","message":"Baseline metrics loaded from file","service":"vesta-backend","timestamp":"2025-06-09T11:35:30.739Z"}
+{"level":"info","message":"Establishing performance baseline...","service":"vesta-backend","timestamp":"2025-06-09T11:35:40.740Z"}
