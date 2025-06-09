@@ -1,0 +1,21 @@
+{
+  "timestamp": "2025-05-29T07:10:38.294Z",
+  "memory": {
+    "heapUsedAvg": 36.59,
+    "percentageUsedAvg": 92.89
+  },
+  "cpu": {
+    "percentageAvg": 0.01
+  },
+  "responseTime": {
+    "averageAvg": 0
+  },
+  "requests": {
+    "perSecondAvg": 0
+  },
+  "errors": {
+    "rateAvg": 0
+  },
+  "measurementCount": 30,
+  "measurementDuration": "5 minutes"
+}

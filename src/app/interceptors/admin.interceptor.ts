@@ -10,9 +10,8 @@ export function adminInterceptor(req: HttpRequest<any>, next: HttpHandlerFn): Ob
   const router = inject(Router);
   const token = adminService.getToken();
   console.log('Admin interceptor', token);
-  
-  // Only add token for admin API requests
-  if (req.url.includes('/api/admin') && token) {
+    // Only add token for admin API requests and performance API requests (which require admin auth)
+  if ((req.url.includes('/api/admin') || req.url.includes('/api/performance')) && token) {
     req = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`

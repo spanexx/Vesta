@@ -1,11 +1,13 @@
+# APi
+
 openrouter key = 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
+
 OpenAIkey=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
 
 openrouter=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<
 
-
 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
 
-
-
 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
+
+google: AIzaSyDoGtCgcI0GMqXA0XeNNVWZqh6kMpNZY1g

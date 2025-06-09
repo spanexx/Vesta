@@ -27,6 +27,7 @@ import { AdminPendingVerificationsComponent } from './components/admin/admin-pen
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { UnauthorizedComponent } from './components/shared/unauthorized/unauthorized.component';
 import { permissionGuard } from './guards/permission.guard';
+import { PerformanceDashboardComponent } from './components/performance-dashboard/performance-dashboard.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -91,10 +92,11 @@ export const routes: Routes = [
       { path: 'users', component: AdminUsersComponent },
       { path: 'moderation', component: AdminModerationComponent, canActivate: [() => permissionGuard('canModerateContent')] },
       { path: 'analytics', component: AdminAnalyticsComponent },
-      { path: 'users/:userId/edit', component: AdminEditUserComponent, canActivate: [() => permissionGuard('canEditProfiles')] },
+      { path: 'users/:userId/edit', component: AdminEditUserComponent, canActivate: [() => permissionGuard('canEditProfiles')] }, 
       { path: 'pending-verifications', component: AdminPendingVerificationsComponent }, // New route
       { path: 'manual-payers', component: AdminManualPayersComponent },
       { path: 'manual-payers/:id', component: AdminManualPaymentDetailComponent },
+      { path: 'performance', component: PerformanceDashboardComponent }, // Performance monitoring dashboard
       { path: 'unauthorized', component: UnauthorizedComponent }
     ]
   },

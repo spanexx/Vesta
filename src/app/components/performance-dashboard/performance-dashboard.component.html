@@ -1,0 +1,284 @@
+<div class="performance-dashboard">
+  <div class="dashboard-header">
+    <h2>Performance Monitoring Dashboard</h2>
+    <div class="dashboard-actions">
+      <button 
+        class="btn btn-secondary" 
+        (click)="refreshMetrics()"
+        [disabled]="isLoading">
+        🔄 Refresh
+      </button>
+      <button 
+        class="btn btn-primary" 
+        (click)="establishBaseline()"
+        *ngIf="currentMetrics">
+        📊 Set Baseline
+      </button>
+      <button 
+        class="btn btn-warning" 
+        (click)="forceGC()"
+        title="Force Garbage Collection">
+        🗑️ GC
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading performance metrics...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="error-container">
+    <p class="error-message">{{ error }}</p>
+    <button class="btn btn-primary" (click)="refreshMetrics()">Retry</button>
+  </div>
+
+  <!-- Performance Alerts -->
+  <div *ngIf="alerts.length > 0" class="alerts-section">
+    <h3>🚨 Performance Alerts</h3>
+    <div class="alerts-container">
+      <div 
+        *ngFor="let alert of alerts" 
+        class="alert"
+        [class.alert-warning]="alert.type === 'warning'"
+        [class.alert-error]="alert.type === 'error'">
+        <span class="alert-icon">{{ getAlertIcon(alert.type) }}</span>
+        <div class="alert-content">
+          <strong>{{ alert.metric }}</strong>
+          <p>{{ alert.message }}</p>
+          <small>{{ alert.timestamp | date:'short' }}</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Frontend Performance Metrics -->
+  <div *ngIf="currentMetrics" class="metrics-section">
+    <h3>🌐 Frontend Performance (Core Web Vitals)</h3>
+    
+    <div class="metrics-grid">
+      <!-- First Contentful Paint -->
+      <div class="metric-card">
+        <div class="metric-header">
+          <h4>First Contentful Paint</h4>
+          <div 
+            class="metric-status" 
+            [style.background-color]="getStatusColor(getWebVitalStatus('fcp', currentMetrics.webVitals.fcp))">
+            {{ getWebVitalStatus('fcp', currentMetrics.webVitals.fcp) }}
+          </div>
+        </div>
+        <div class="metric-value">
+          {{ formatMetric(currentMetrics.webVitals.fcp) }}
+        </div>
+        <div class="metric-description">
+          Time until first content appears
+        </div>
+      </div>
+
+      <!-- Largest Contentful Paint -->
+      <div class="metric-card">
+        <div class="metric-header">
+          <h4>Largest Contentful Paint</h4>
+          <div 
+            class="metric-status" 
+            [style.background-color]="getStatusColor(getWebVitalStatus('lcp', currentMetrics.webVitals.lcp))">
+            {{ getWebVitalStatus('lcp', currentMetrics.webVitals.lcp) }}
+          </div>
+        </div>
+        <div class="metric-value">
+          {{ formatMetric(currentMetrics.webVitals.lcp) }}
+        </div>
+        <div class="metric-description">
+          Time until largest content loads
+        </div>
+      </div>
+
+      <!-- First Input Delay -->
+      <div class="metric-card">
+        <div class="metric-header">
+          <h4>First Input Delay</h4>
+          <div 
+            class="metric-status" 
+            [style.background-color]="getStatusColor(getWebVitalStatus('fid', currentMetrics.webVitals.fid))">
+            {{ getWebVitalStatus('fid', currentMetrics.webVitals.fid) }}
+          </div>
+        </div>
+        <div class="metric-value">
+          {{ formatMetric(currentMetrics.webVitals.fid) }}
+        </div>
+        <div class="metric-description">
+          Time to first user interaction
+        </div>
+      </div>
+
+      <!-- Cumulative Layout Shift -->
+      <div class="metric-card">
+        <div class="metric-header">
+          <h4>Cumulative Layout Shift</h4>
+          <div 
+            class="metric-status" 
+            [style.background-color]="getStatusColor(getWebVitalStatus('cls', currentMetrics.webVitals.cls))">
+            {{ getWebVitalStatus('cls', currentMetrics.webVitals.cls) }}
+          </div>
+        </div>
+        <div class="metric-value">
+          {{ formatMetric(currentMetrics.webVitals.cls, '') }}
+        </div>
+        <div class="metric-description">
+          Visual stability score
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Metrics -->
+    <div class="navigation-metrics">
+      <h4>📊 Navigation Performance</h4>
+      <div class="nav-metrics-grid">
+        <div class="nav-metric">
+          <span class="label">Load Time:</span>
+          <span class="value">{{ formatMetric(currentMetrics.navigation.loadTime) }}</span>
+        </div>
+        <div class="nav-metric">
+          <span class="label">DOM Ready:</span>
+          <span class="value">{{ formatMetric(currentMetrics.navigation.domContentLoaded) }}</span>
+        </div>
+        <div class="nav-metric">
+          <span class="label">First Paint:</span>
+          <span class="value">{{ formatMetric(currentMetrics.navigation.firstPaint) }}</span>
+        </div>
+        <div class="nav-metric">
+          <span class="label">TTFB:</span>
+          <span class="value">{{ formatMetric(currentMetrics.webVitals.ttfb) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resource Metrics -->
+    <div class="resource-metrics">
+      <h4>📦 Resource Performance</h4>
+      <div class="resource-stats">
+        <div class="resource-stat">
+          <span class="label">Total Resources:</span>
+          <span class="value">{{ currentMetrics.resources.totalResources }}</span>
+        </div>
+        <div class="resource-stat">
+          <span class="label">Total Size:</span>
+          <span class="value">{{ formatBytes(currentMetrics.resources.totalSize) }}</span>
+        </div>
+        <div class="resource-stat">
+          <span class="label">Slow Resources:</span>
+          <span class="value">{{ currentMetrics.resources.slowResources.length }}</span>
+        </div>
+      </div>
+      
+      <div *ngIf="currentMetrics.resources.slowResources.length > 0" class="slow-resources">
+        <h5>⚠️ Slow Loading Resources</h5>
+        <div class="slow-resource" *ngFor="let resource of currentMetrics.resources.slowResources">
+          <div class="resource-name">{{ resource.name | slice:0:50 }}...</div>
+          <div class="resource-time">{{ formatMetric(resource.duration) }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Memory Usage -->
+    <div *ngIf="currentMetrics.memory" class="memory-metrics">
+      <h4>💾 Memory Usage</h4>
+      <div class="memory-bar">
+        <div 
+          class="memory-used" 
+          [style.width.%]="(currentMetrics.memory.usedJSHeapSize / currentMetrics.memory.jsHeapSizeLimit) * 100">
+        </div>
+      </div>
+      <div class="memory-stats">
+        <div>Used: {{ formatBytes(currentMetrics.memory.usedJSHeapSize) }}</div>
+        <div>Total: {{ formatBytes(currentMetrics.memory.totalJSHeapSize) }}</div>
+        <div>Limit: {{ formatBytes(currentMetrics.memory.jsHeapSizeLimit) }}</div>
+      </div>
+    </div>
+
+    <!-- Connection Info -->
+    <div *ngIf="currentMetrics.connection" class="connection-metrics">
+      <h4>🌐 Connection Info</h4>
+      <div class="connection-stats">
+        <div class="connection-stat">
+          <span class="label">Type:</span>
+          <span class="value">{{ currentMetrics.connection.effectiveType }}</span>
+        </div>
+        <div class="connection-stat">
+          <span class="label">Downlink:</span>
+          <span class="value">{{ currentMetrics.connection.downlink }} Mbps</span>
+        </div>
+        <div class="connection-stat">
+          <span class="label">RTT:</span>
+          <span class="value">{{ currentMetrics.connection.rtt }}ms</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Backend Metrics (Admin Only) -->
+  <div *ngIf="isAdmin && backendMetrics" class="backend-metrics-section">
+    <h3>🖥️ Backend Performance</h3>
+    
+    <div class="backend-metrics-grid">
+      <div class="backend-metric-card">
+        <h4>Memory Usage</h4>
+        <div class="metric-value">{{ backendMetrics.basic?.memory | number:'1.1-1' }} MB</div>
+      </div>
+      
+      <div class="backend-metric-card">
+        <h4>CPU Usage</h4>
+        <div class="metric-value">{{ backendMetrics.basic?.cpu | number:'1.1-1' }}%</div>
+      </div>
+      
+      <div class="backend-metric-card">
+        <h4>Active Connections</h4>
+        <div class="metric-value">{{ backendMetrics.basic?.activeConnections }}</div>
+      </div>
+      
+      <div class="backend-metric-card">
+        <h4>Total Requests</h4>
+        <div class="metric-value">{{ backendMetrics.basic?.requests }}</div>
+      </div>
+      
+      <div class="backend-metric-card">
+        <h4>Error Count</h4>
+        <div class="metric-value">{{ backendMetrics.basic?.errors }}</div>
+      </div>
+      
+      <div class="backend-metric-card">
+        <h4>Avg Response Time</h4>
+        <div class="metric-value">{{ backendMetrics.basic?.latency | number:'1.0-0' }}ms</div>
+      </div>
+    </div>
+
+    <div *ngIf="backendMetrics.enhanced" class="enhanced-backend-metrics">
+      <h4>📈 Enhanced Backend Metrics</h4>
+      <div class="enhanced-metrics-grid">
+        <div class="enhanced-metric">
+          <span class="label">Response Time (Avg):</span>
+          <span class="value">{{ backendMetrics.enhanced.responseTime?.average | number:'1.0-0' }}ms</span>
+        </div>
+        <div class="enhanced-metric">
+          <span class="label">Memory %:</span>
+          <span class="value">{{ backendMetrics.enhanced.memory?.percentage | number:'1.1-1' }}%</span>
+        </div>
+        <div class="enhanced-metric">
+          <span class="label">CPU %:</span>
+          <span class="value">{{ backendMetrics.enhanced.cpu?.percentage | number:'1.1-1' }}%</span>
+        </div>
+        <div class="enhanced-metric">
+          <span class="label">Error Rate:</span>
+          <span class="value">{{ backendMetrics.enhanced.errorRate | number:'1.2-2' }}%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Note -->
+  <div *ngIf="!isAdmin" class="admin-note">
+    <p>🔒 Additional backend metrics are available for administrators only.</p>
+  </div>
+</div>

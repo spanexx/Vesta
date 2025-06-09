@@ -22,9 +22,11 @@ import { AdminService } from '../../../services/admin.service';
           </a>
           <a routerLink="/admin/moderation" routerLinkActive="active">
             <i class="fas fa-shield-alt"></i> Moderation
-          </a>
-          <a routerLink="/admin/analytics" routerLinkActive="active">
+          </a>          <a routerLink="/admin/analytics" routerLinkActive="active">
             <i class="fas fa-chart-bar"></i> Analytics
+          </a>
+          <a routerLink="/admin/performance" routerLinkActive="active">
+            <i class="fas fa-tachometer-alt"></i> Performance
           </a>
         </div>
         <div class="sidebar-footer">

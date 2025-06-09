@@ -1,6 +1,10 @@
 import io from '@pm2/io';
 import { config } from '../config/config.js';
 import logger from './logger.js';
+import { PerformanceMetricsService } from '../services/PerformanceMetricsService.js';
+
+// Initialize enhanced performance metrics service
+let performanceMetricsService;
 
 // Initialize metrics first
 const metrics = {
@@ -58,16 +62,48 @@ export const monitorRequest = (req, res, next) => {
   
   req.trackingId = Math.random().toString(36).substring(7);
   
+  // Initialize request metrics globally if not exists
+  if (!global.requestMetrics) {
+    global.requestMetrics = {
+      total: 0,
+      perSecond: 0,
+      active: 0,
+      responseTimes: []
+    };
+  }
+  
+  global.requestMetrics.total++;
+  global.requestMetrics.active++;
+  
   res.once('finish', () => {
     const duration = Date.now() - startTime;
     
     try {
       metrics.responseTime.set(duration);
       metrics.activeConnections.dec();
+      global.requestMetrics.active--;
+      global.requestMetrics.responseTimes.push(duration);
+      
+      // Keep only last 100 response times for performance
+      if (global.requestMetrics.responseTimes.length > 100) {
+        global.requestMetrics.responseTimes = global.requestMetrics.responseTimes.slice(-100);
+      }
 
       if (res.statusCode >= 400) {
         metrics.errorCount.inc();
         metrics.errorRate.mark();
+        
+        // Initialize error metrics globally if not exists
+        if (!global.errorMetrics) {
+          global.errorMetrics = {
+            total: 0,
+            rate: 0,
+            last24h: 0
+          };
+        }
+        
+        global.errorMetrics.total++;
+        
         if (res.statusCode >= 500) {
           metrics.lastError.set(`${res.statusCode} error on ${req.method} ${req.path}`);
         }
@@ -91,6 +127,16 @@ export const monitorRequest = (req, res, next) => {
         logger.error(`Critical CPU usage: ${cpuPercent.toFixed(2)}%`);
       } else if (cpuPercent > thresholds.cpu.warning) {
         logger.warn(`High CPU usage: ${cpuPercent.toFixed(2)}%`);
+      }
+      
+      // Update performance metrics service if available
+      if (performanceMetricsService) {
+        performanceMetricsService.updateRequestMetrics({
+          duration,
+          statusCode: res.statusCode,
+          path: req.path,
+          method: req.method
+        });
       }
     } catch (err) {
       logger.error('Error in monitoring middleware:', err);
@@ -139,5 +185,20 @@ export const getMetrics = () => ({
   latency: metrics.responseTime.mean,
   uptime: process.uptime()
 });
+
+// Initialize performance metrics service
+export const initializePerformanceMetrics = () => {
+  try {
+    performanceMetricsService = new PerformanceMetricsService();
+    logger.info('Performance metrics service initialized successfully');
+    return performanceMetricsService;
+  } catch (error) {
+    logger.error('Failed to initialize performance metrics service:', error);
+    return null;
+  }
+};
+
+// Get performance metrics service instance
+export const getPerformanceMetricsService = () => performanceMetricsService;
 
 export default metrics;
