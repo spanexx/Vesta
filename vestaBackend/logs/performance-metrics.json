@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2025-06-10T21:10:36.017Z",
+  "lastUpdated": "2025-06-10T21:15:36.029Z",
   "baseline": {
     "timestamp": "2025-06-10T21:05:39.519Z",
     "memory": {
@@ -1589,6 +1589,326 @@
         "max": 0
       },
       "uptime": 578.5555971
+    },
+    {
+      "timestamp": "2025-06-10T21:10:36.172Z",
+      "memory": {
+        "heapUsed": 37.6,
+        "heapTotal": 39.79,
+        "external": 160.84,
+        "rss": 26.25,
+        "percentageUsed": 94.5
+      },
+      "cpu": {
+        "user": 0,
+        "system": 0,
+        "percentage": 0
+      },
+      "requests": {
+        "total": 0,
+        "perSecond": 0,
+        "active": 0
+      },
+      "errors": {
+        "total": 0,
+        "rate": 0,
+        "last24h": 0
+      },
+      "responseTime": {
+        "average": 0,
+        "p95": 0,
+        "p99": 0,
+        "max": 0
+      },
+      "uptime": 608.5594217
+    },
+    {
+      "timestamp": "2025-06-10T21:11:06.186Z",
+      "memory": {
+        "heapUsed": 37.47,
+        "heapTotal": 40.29,
+        "external": 160.83,
+        "rss": 26.75,
+        "percentageUsed": 93.01
+      },
+      "cpu": {
+        "user": 0,
+        "system": 0,
+        "percentage": 0
+      },
+      "requests": {
+        "total": 0,
+        "perSecond": 0,
+        "active": 0
+      },
+      "errors": {
+        "total": 0,
+        "rate": 0,
+        "last24h": 0
+      },
+      "responseTime": {
+        "average": 0,
+        "p95": 0,
+        "p99": 0,
+        "max": 0
+      },
+      "uptime": 638.5755301
+    },
+    {
+      "timestamp": "2025-06-10T21:11:36.195Z",
+      "memory": {
+        "heapUsed": 37.62,
+        "heapTotal": 40.29,
+        "external": 160.85,
+        "rss": 26.06,
+        "percentageUsed": 93.38
+      },
+      "cpu": {
+        "user": 0,
+        "system": 0,
+        "percentage": 0
+      },
+      "requests": {
+        "total": 0,
+        "perSecond": 0,
+        "active": 0
+      },
+      "errors": {
+        "total": 0,
+        "rate": 0,
+        "last24h": 0
+      },
+      "responseTime": {
+        "average": 0,
+        "p95": 0,
+        "p99": 0,
+        "max": 0
+      },
+      "uptime": 668.5835076
+    },
+    {
+      "timestamp": "2025-06-10T21:12:06.199Z",
+      "memory": {
+        "heapUsed": 37.78,
+        "heapTotal": 40.29,
+        "external": 160.88,
+        "rss": 25.58,
+        "percentageUsed": 93.78
+      },
+      "cpu": {
+        "user": 0,
+        "system": 0,
+        "percentage": 0
+      },
+      "requests": {
+        "total": 0,
+        "perSecond": 0,
+        "active": 0
+      },
+      "errors": {
+        "total": 0,
+        "rate": 0,
+        "last24h": 0
+      },
+      "responseTime": {
+        "average": 0,
+        "p95": 0,
+        "p99": 0,
+        "max": 0
+      },
+      "uptime": 698.5877704
+    },
+    {
+      "timestamp": "2025-06-10T21:12:36.201Z",
+      "memory": {
+        "heapUsed": 37.55,
+        "heapTotal": 40.29,
+        "external": 160.9,
+        "rss": 26.25,
+        "percentageUsed": 93.2
+      },
+      "cpu": {
+        "user": 0,
+        "system": 0,
+        "percentage": 0
+      },
+      "requests": {
+        "total": 0,
+        "perSecond": 0,
+        "active": 0
+      },
+      "errors": {
+        "total": 0,
+        "rate": 0,
+        "last24h": 0
+      },
+      "responseTime": {
+        "average": 0,
+        "p95": 0,
+        "p99": 0,
+        "max": 0
+      },
+      "uptime": 728.5890843
+    },
+    {
+      "timestamp": "2025-06-10T21:13:06.208Z",
+      "memory": {
+        "heapUsed": 37.69,
+        "heapTotal": 40.54,
+        "external": 160.92,
+        "rss": 26.7,
+        "percentageUsed": 92.99
+      },
+      "cpu": {
+        "user": 0,
+        "system": 0,
+        "percentage": 0
+      },
+      "requests": {
+        "total": 0,
+        "perSecond": 0,
+        "active": 0
+      },
+      "errors": {
+        "total": 0,
+        "rate": 0,
+        "last24h": 0
+      },
+      "responseTime": {
+        "average": 0,
+        "p95": 0,
+        "p99": 0,
+        "max": 0
+      },
+      "uptime": 758.5966407
+    },
+    {
+      "timestamp": "2025-06-10T21:13:36.221Z",
+      "memory": {
+        "heapUsed": 37.81,
+        "heapTotal": 40.79,
+        "external": 160.95,
+        "rss": 27.25,
+        "percentageUsed": 92.71
+      },
+      "cpu": {
+        "user": 0,
+        "system": 0,
+        "percentage": 0
+      },
+      "requests": {
+        "total": 0,
+        "perSecond": 0,
+        "active": 0
+      },
+      "errors": {
+        "total": 0,
+        "rate": 0,
+        "last24h": 0
+      },
+      "responseTime": {
+        "average": 0,
+        "p95": 0,
+        "p99": 0,
+        "max": 0
+      },
+      "uptime": 788.6088994
+    },
+    {
+      "timestamp": "2025-06-10T21:14:06.232Z",
+      "memory": {
+        "heapUsed": 38.54,
+        "heapTotal": 40.79,
+        "external": 160.97,
+        "rss": 27.48,
+        "percentageUsed": 94.49
+      },
+      "cpu": {
+        "user": 0,
+        "system": 0,
+        "percentage": 0
+      },
+      "requests": {
+        "total": 0,
+        "perSecond": 0,
+        "active": 0
+      },
+      "errors": {
+        "total": 0,
+        "rate": 0,
+        "last24h": 0
+      },
+      "responseTime": {
+        "average": 0,
+        "p95": 0,
+        "p99": 0,
+        "max": 0
+      },
+      "uptime": 818.6207171
+    },
+    {
+      "timestamp": "2025-06-10T21:14:36.233Z",
+      "memory": {
+        "heapUsed": 38.71,
+        "heapTotal": 40.79,
+        "external": 160.99,
+        "rss": 25.44,
+        "percentageUsed": 94.92
+      },
+      "cpu": {
+        "user": 0,
+        "system": 0,
+        "percentage": 0
+      },
+      "requests": {
+        "total": 0,
+        "perSecond": 0,
+        "active": 0
+      },
+      "errors": {
+        "total": 0,
+        "rate": 0,
+        "last24h": 0
+      },
+      "responseTime": {
+        "average": 0,
+        "p95": 0,
+        "p99": 0,
+        "max": 0
+      },
+      "uptime": 848.6221523
+    },
+    {
+      "timestamp": "2025-06-10T21:15:06.244Z",
+      "memory": {
+        "heapUsed": 38.56,
+        "heapTotal": 40.79,
+        "external": 161.02,
+        "rss": 23.94,
+        "percentageUsed": 94.53
+      },
+      "cpu": {
+        "user": 0,
+        "system": 0,
+        "percentage": 0
+      },
+      "requests": {
+        "total": 0,
+        "perSecond": 0,
+        "active": 0
+      },
+      "errors": {
+        "total": 0,
+        "rate": 0,
+        "last24h": 0
+      },
+      "responseTime": {
+        "average": 0,
+        "p95": 0,
+        "p99": 0,
+        "max": 0
+      },
+      "uptime": 878.6330651
     }
   ]
 }
