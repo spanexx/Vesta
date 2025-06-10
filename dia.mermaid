@@ -1,0 +1,152 @@
+VESTA PLATFORM ARCHITECTURE - LINE DIAGRAM
+=============================================
+
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                              FRONTEND LAYER                                     │
+│                             Angular 17 App                                      │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                 │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐            │
+│  │ Components  │  │  Services   │  │   Guards    │  │Interceptors │            │
+│  │             │  │             │  │             │  │             │            │
+│  │ • Profile   │  │ • Auth      │  │ • Auth      │  │ • HTTP      │            │
+│  │ • Auth      │  │ • Profile   │  │ • Admin     │  │ • Auth      │            │
+│  │ • Payment   │  │ • Payment   │  │             │  │             │            │
+│  │ • Admin     │  │ • GeoLoc    │  │             │  │             │            │
+│  │ • Video     │  │ • Upload    │  │             │  │             │            │
+│  │             │  │ • WebSocket │  │             │  │             │            │
+│  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘            │
+│                                       │                                         │
+└───────────────────────────────────────┼─────────────────────────────────────────┘
+                                        │
+                                        │ HTTPS/API Calls
+                                        │
+┌───────────────────────────────────────▼─────────────────────────────────────────┐
+│                               API LAYER                                         │
+│                           Express.js Server                                     │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                 │
+│  Middleware Stack:                                                              │
+│  ┌─────────────────────────────────────────────────────────────────────────┐   │
+│  │ CORS → Helmet → Rate Limit → Auth → File Upload → Performance Monitor │   │
+│  └─────────────────────────────────────────────────────────────────────────┘   │
+│                                       │                                         │
+└───────────────────────────────────────┼─────────────────────────────────────────┘
+                                        │
+                                        │ Route Handling
+                                        │
+┌───────────────────────────────────────▼─────────────────────────────────────────┐
+│                            BACKEND SERVICES                                     │
+│                              Node.js API                                        │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                 │
+│  API Routes:                          Business Logic:                          │
+│  ┌─────────────────────────┐          ┌─────────────────────────┐              │
+│  │ • /api/auth             │          │ • User Management       │              │
+│  │ • /api/profiles         │ ──────── │ • Subscription System   │              │
+│  │ • /api/payments         │          │ • Payment Processing    │              │
+│  │ • /api/admin            │          │ • Content Moderation    │              │
+│  │ • /api/videos           │          │ • Geolocation Services  │              │
+│  │ • /api/media            │          │ • Performance Analytics │              │
+│  │ • /api/identity         │          │                         │              │
+│  │ • /api/performance      │          │                         │              │
+│  │ • /api/moderation       │          │                         │              │
+│  └─────────────────────────┘          └─────────────────────────┘              │
+│                                                │                                │
+└────────────────────────────────────────────────┼────────────────────────────────┘
+                                                 │
+                                                 │ Data Operations
+                                                 │
+┌────────────────────────────────────────────────▼────────────────────────────────┐
+│                            DATABASE LAYER                                       │
+│                              MongoDB                                            │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                 │
+│  Collections:                         GridFS Storage:                          │
+│  ┌─────────────────────────┐          ┌─────────────────────────┐              │
+│  │ • users                 │          │ • Video Files           │              │
+│  │ • profiles              │          │ • Profile Images        │              │
+│  │ • payments              │ ◄────────┤ • Document Files        │              │
+│  │ • admin                 │          │ • Verification Photos   │              │
+│  │ • performance_metrics   │          │                         │              │
+│  │ • moderation_logs       │          │                         │              │
+│  └─────────────────────────┘          └─────────────────────────┘              │
+│                                                                                 │
+└─────────────────────────────────────────────────────────────────────────────────┘
+
+
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                           EXTERNAL SERVICES                                     │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                 │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐      │
+│  │ Stripe API  │    │ GeoIP Lite  │    │  Socket.IO  │    │File Storage │      │
+│  │             │    │             │    │             │    │             │      │
+│  │ • Payments  │    │ • Location  │    │ • Real-time │    │ • Uploads   │      │
+│  │ • Subscript │    │ • Filtering │    │ • Messaging │    │ • Images    │      │
+│  │ • Webhooks  │    │ • Distance  │    │ • Notify    │    │ • Videos    │      │
+│  └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘      │
+│                                                                                 │
+└─────────────────────────────────────────────────────────────────────────────────┘
+
+
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                              SECURITY LAYER                                     │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                 │
+│  Authentication:              Authorization:              Data Protection:      │
+│  ┌─────────────────┐          ┌─────────────────┐        ┌─────────────────┐    │
+│  │ • JWT Tokens    │          │ • Role-based    │        │ • Crypto-JS     │    │
+│  │ • bcrypt Hash   │ ──────── │ • Admin Access  │ ────── │ • Secure Headers│    │
+│  │ • Sessions      │          │ • User Perms    │        │ • CORS Policy   │    │
+│  └─────────────────┘          └─────────────────┘        └─────────────────┘    │
+│                                                                                 │
+└─────────────────────────────────────────────────────────────────────────────────┘
+
+
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                            DEPLOYMENT LAYER                                     │
+│                               Render Cloud                                      │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                 │
+│  Frontend Hosting:                    Backend Hosting:                         │
+│  ┌─────────────────────────┐          ┌─────────────────────────┐              │
+│  │ • Static Files          │          │ • Node.js Server        │              │
+│  │ • Angular Build         │          │ • PM2 Process Manager   │              │
+│  │ • CDN Distribution      │ ◄────────┤ • Environment Variables │              │
+│  │ • HTTPS Encryption      │          │ • Auto-scaling          │              │
+│  │                         │          │ • Health Monitoring     │              │
+│  └─────────────────────────┘          └─────────────────────────┘              │
+│                                                                                 │
+│  URLs:                                                                          │
+│  • Frontend: https://vestagirls.online                                         │
+│  • Backend:  https://vesta-btp1.onrender.com                                   │
+│  • GitHub:   https://github.com/spanexx/Vesta                                  │
+│                                                                                 │
+└─────────────────────────────────────────────────────────────────────────────────┘
+
+
+DATA FLOW:
+==========
+1. User interacts with Angular Frontend
+2. HTTP requests pass through API middleware stack
+3. Express routes handle business logic
+4. MongoDB stores/retrieves data
+5. External APIs provide additional services
+6. Security layer protects all communications
+7. Render hosts and scales the application
+
+KEY FEATURES:
+=============
+• Multi-tier subscription system (Free, Standard, Premium, VIP)
+• Geolocation-based user discovery and matching
+• Video content streaming and subscription
+• Real-time messaging and notifications
+• Identity verification with document upload
+• Payment processing (Stripe, Crypto, Manual)
+• Admin dashboard with content moderation
+• Performance monitoring and analytics
+• Virtual scrolling for 10,000+ profiles
+• Progressive image loading with skeleton states
+• Mobile-responsive design
+• Enterprise-grade security and data protection
