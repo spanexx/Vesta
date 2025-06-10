@@ -1,15 +1,34 @@
 import axios from 'axios';
 import { MongoClient } from 'mongodb';
 import dotenv from 'dotenv';
-dotenv.config();
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load .env file from the parent directory (vestaBackend folder)
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
 const url = process.env.MONGODB_URI;
 const dbName = 'Vesta';
 
+// Debug: Check if environment variables are loaded
+console.log('Environment check:');
+console.log('MONGODB_URI exists:', !!process.env.MONGODB_URI);
+console.log('Backend URL:', process.env.BACKEND_URL || 'http://localhost:6388');
+
+if (!url) {
+  console.error('❌ MONGODB_URI not found in environment variables');
+  console.error('Make sure .env file exists in the vestaBackend directory');
+  process.exit(1);
+}
+
 const registerUser = async (userData) => {
   try {
+    const apiUrl = process.env.BACKEND_URL || 'http://localhost:6388';
     console.log(`Registering user ${userData.email}...`);
-    const response = await axios.post('http://localhost:6388/api/auth/register', userData);
+    const response = await axios.post(`${apiUrl}/api/auth/register`, userData);
     return response.data;
   } catch (error) {
     console.error(`Error registering user ${userData.email}:`, error.response?.data || error.message);
@@ -425,9 +444,11 @@ async function dropDatabase() {
 }
 
 dropDatabase().then(() => {
+  const apiUrl = process.env.BACKEND_URL || 'http://localhost:6388';
+  
   Promise.all(users.map(async (user) => {
     try {
-      const existingUser = await axios.get(`http://localhost:6388/api/auth/user/${user.email}`);
+      const existingUser = await axios.get(`${apiUrl}/api/auth/user/${user.email}`);
       if (existingUser.data) {
         console.log(`User ${user.email} already exists, skipping registration`);
         return;

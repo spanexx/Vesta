@@ -890,3 +890,115 @@
 {"level":"info","message":"Establishing performance baseline...","service":"vesta-backend","timestamp":"2025-06-09T11:35:40.740Z"}
 {"level":"info","message":"Baseline metrics saved to file","service":"vesta-backend","timestamp":"2025-06-09T11:40:36.245Z"}
 {"cpu":{"percentageAvg":0.01},"errors":{"rateAvg":0},"level":"info","measurementCount":30,"measurementDuration":"5 minutes","memory":{"heapUsedAvg":35.24,"percentageUsedAvg":91.85},"message":"Performance baseline established:","requests":{"perSecondAvg":0},"responseTime":{"averageAvg":0},"service":"vesta-backend","timestamp":"2025-06-09T11:40:36.112Z"}
+{"level":"info","message":"Performance metrics service initialized successfully","service":"vesta-backend","timestamp":"2025-06-10T20:49:31.783Z"}
+{"level":"info","message":"Performance metrics collection initialized","service":"vesta-backend","timestamp":"2025-06-10T20:49:31.785Z"}
+{"level":"info","message":"Baseline metrics loaded from file","service":"vesta-backend","timestamp":"2025-06-10T20:49:31.787Z"}
+{"level":"warn","message":"Slow request detected: GET /user/phoenix@example.com took 654ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:40.692Z"}
+{"level":"warn","message":"Slow request detected: GET /user/valencia@example.com took 654ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:40.693Z"}
+{"level":"warn","message":"Slow request detected: GET /user/sage@example.com took 655ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:40.696Z"}
+{"level":"warn","message":"Slow request detected: GET /user/dante@example.com took 656ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:40.700Z"}
+{"level":"warn","message":"Slow request: GET /user/nova@example.com took 1496ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:41.541Z"}
+{"level":"warn","message":"Slow request detected: GET /user/nova@example.com took 1496ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:41.541Z"}
+{"level":"warn","message":"Slow request: GET /user/crystal@example.com took 1497ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:41.543Z"}
+{"level":"warn","message":"Slow request detected: GET /user/crystal@example.com took 1497ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:41.543Z"}
+{"level":"warn","message":"Slow request: GET /user/marcus@example.com took 1496ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:41.545Z"}
+{"level":"warn","message":"Slow request detected: GET /user/marcus@example.com took 1496ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:41.546Z"}
+{"level":"warn","message":"Slow request: GET /user/ruby@example.com took 1497ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:41.547Z"}
+{"level":"warn","message":"Slow request detected: GET /user/ruby@example.com took 1497ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:41.547Z"}
+{"level":"info","message":"Establishing performance baseline...","service":"vesta-backend","timestamp":"2025-06-10T20:49:42.662Z"}
+{"level":"warn","message":"Slow request: GET /user/diego@example.com took 2632ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:42.683Z"}
+{"level":"warn","message":"Slow request detected: GET /user/diego@example.com took 2632ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:42.683Z"}
+{"level":"warn","message":"Slow request: GET /user/aurora@example.com took 2631ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:42.684Z"}
+{"level":"warn","message":"Slow request detected: GET /user/aurora@example.com took 2631ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:42.685Z"}
+{"level":"warn","message":"Slow request: GET /user/kai@example.com took 2632ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:42.686Z"}
+{"level":"warn","message":"Slow request detected: GET /user/kai@example.com took 2632ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:42.686Z"}
+{"level":"warn","message":"Slow request: GET /user/stella@example.com took 2633ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:42.688Z"}
+{"level":"warn","message":"Slow request detected: GET /user/stella@example.com took 2633ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:42.688Z"}
+{"level":"warn","message":"Slow request: GET /user/titan@example.com took 3881ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:43.937Z"}
+{"level":"warn","message":"Slow request detected: GET /user/titan@example.com took 3881ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:43.937Z"}
+{"level":"warn","message":"Slow request: GET /user/lunaf@example.com took 3879ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:43.938Z"}
+{"level":"warn","message":"Slow request detected: GET /user/lunaf@example.com took 3879ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:43.938Z"}
+{"level":"warn","message":"Slow request: GET /user/orion@example.com took 3879ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:43.939Z"}
+{"level":"warn","message":"Slow request detected: GET /user/orion@example.com took 3879ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:43.939Z"}
+{"level":"warn","message":"Slow request: GET /user/venus@example.com took 3880ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:43.941Z"}
+{"level":"warn","message":"Slow request detected: GET /user/venus@example.com took 3880ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:43.942Z"}
+{"level":"warn","message":"Slow request: GET /user/ace@example.com took 5242ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:45.305Z"}
+{"level":"warn","message":"Slow request detected: GET /user/ace@example.com took 5242ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:45.305Z"}
+{"level":"warn","message":"Slow request: GET /user/jasmine@example.com took 5245ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:45.309Z"}
+{"level":"warn","message":"Slow request detected: GET /user/jasmine@example.com took 5245ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:45.309Z"}
+{"level":"warn","message":"Slow request: GET /user/raven@example.com took 5246ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:45.311Z"}
+{"level":"warn","message":"Slow request detected: GET /user/raven@example.com took 5246ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:45.311Z"}
+{"level":"warn","message":"Slow request: GET /user/storm@example.com took 5245ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:45.313Z"}
+{"level":"warn","message":"Slow request detected: GET /user/storm@example.com took 5245ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:45.313Z"}
+{"level":"warn","message":"Slow request: GET /user/maya@example.com took 6648ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:46.669Z"}
+{"level":"warn","message":"Slow request detected: GET /user/maya@example.com took 6648ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:46.670Z"}
+{"level":"warn","message":"Slow request: GET /user/jordan@example.com took 6648ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:46.673Z"}
+{"level":"warn","message":"Slow request detected: GET /user/jordan@example.com took 6648ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:46.674Z"}
+{"level":"warn","message":"Slow request: POST /register took 6439ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:46.687Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 6439ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:46.687Z"}
+{"level":"warn","message":"Slow request: POST /register took 6013ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:46.689Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 6013ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:46.689Z"}
+{"level":"warn","message":"Slow request: POST /register took 6433ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:46.691Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 6433ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:46.692Z"}
+{"level":"warn","message":"Slow request: POST /register took 6013ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:46.693Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 6013ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:46.694Z"}
+{"level":"warn","message":"Slow request: POST /register took 7341ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:48.025Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 7341ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:48.025Z"}
+{"level":"warn","message":"Slow request: POST /register took 7340ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:48.027Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 7340ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:48.027Z"}
+{"level":"warn","message":"Slow request: POST /register took 6504ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:48.028Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 6504ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:48.029Z"}
+{"level":"warn","message":"Slow request: POST /register took 6502ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:48.030Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 6502ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:48.030Z"}
+{"level":"warn","message":"Slow request: POST /register took 6500ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:48.032Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 6500ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:48.032Z"}
+{"level":"warn","message":"Slow request: POST /register took 6497ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:48.033Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 6497ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:48.034Z"}
+{"level":"warn","message":"Slow request: POST /register took 6453ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:49.121Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 6453ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:49.121Z"}
+{"level":"warn","message":"Slow request: POST /register took 6446ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:49.122Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 6446ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:49.122Z"}
+{"level":"warn","message":"Slow request: POST /register took 6460ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:49.124Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 6460ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:49.124Z"}
+{"level":"warn","message":"Slow request: POST /register took 6454ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:49.126Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 6454ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:49.126Z"}
+{"level":"warn","message":"Slow request: POST /register took 5935ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:49.854Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 5935ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:49.854Z"}
+{"level":"warn","message":"Slow request: POST /register took 5932ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:49.856Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 5932ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:49.856Z"}
+{"level":"warn","message":"Slow request: POST /register took 5930ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:49.858Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 5930ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:49.858Z"}
+{"level":"warn","message":"Slow request: POST /register took 5927ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:49.859Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 5927ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:49.859Z"}
+{"level":"warn","message":"Slow request: POST /register took 4906ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:50.114Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 4906ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:50.114Z"}
+{"level":"warn","message":"Slow request: POST /register took 4903ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:50.115Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 4903ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:50.115Z"}
+{"level":"warn","message":"Slow request: POST /register took 4830ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:50.116Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 4830ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:50.116Z"}
+{"level":"warn","message":"Slow request: POST /register took 4824ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:50.118Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 4824ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:50.118Z"}
+{"level":"warn","message":"Slow request: POST /register took 3478ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:50.155Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 3478ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:50.155Z"}
+{"level":"warn","message":"Slow request: POST /register took 3493ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:50.157Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 3493ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:50.157Z"}
+{"level":"warn","message":"Slow request: POST /register took 3501ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:50.159Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 3501ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:50.159Z"}
+{"level":"warn","message":"Slow request: POST /register took 3478ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:50.161Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 3478ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:50.161Z"}
+{"level":"warn","message":"Slow request: POST /register took 2164ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:50.183Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 2164ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:50.183Z"}
+{"level":"warn","message":"Slow request: POST /register took 2171ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:50.186Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 2171ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:50.186Z"}
+{"level":"warn","message":"Slow request: POST /register took 10087ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:50.220Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 10087ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:50.221Z"}
+{"level":"warn","message":"Slow request: POST /register took 9972ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:50.224Z"}
+{"level":"warn","message":"Slow request detected: POST /register took 9972ms","service":"vesta-backend","timestamp":"2025-06-10T20:49:50.224Z"}
+{"level":"info","message":"Baseline metrics saved to file","service":"vesta-backend","timestamp":"2025-06-10T20:54:37.375Z"}
+{"cpu":{"percentageAvg":0.41},"errors":{"rateAvg":0},"level":"info","measurementCount":30,"measurementDuration":"5 minutes","memory":{"heapUsedAvg":39.78,"percentageUsedAvg":91.74},"message":"Performance baseline established:","requests":{"perSecondAvg":0},"responseTime":{"averageAvg":0},"service":"vesta-backend","timestamp":"2025-06-10T20:54:37.374Z"}
+{"level":"info","message":"Performance metrics service initialized successfully","service":"vesta-backend","timestamp":"2025-06-10T21:00:35.985Z"}
+{"level":"info","message":"Performance metrics collection initialized","service":"vesta-backend","timestamp":"2025-06-10T21:00:35.996Z"}
+{"level":"info","message":"Baseline metrics loaded from file","service":"vesta-backend","timestamp":"2025-06-10T21:00:35.997Z"}
+{"level":"info","message":"Establishing performance baseline...","service":"vesta-backend","timestamp":"2025-06-10T21:00:46.006Z"}
+{"level":"info","message":"Baseline metrics saved to file","service":"vesta-backend","timestamp":"2025-06-10T21:05:39.521Z"}
+{"cpu":{"percentageAvg":0.01},"errors":{"rateAvg":0},"level":"info","measurementCount":30,"measurementDuration":"5 minutes","memory":{"heapUsedAvg":35.59,"percentageUsedAvg":91.58},"message":"Performance baseline established:","requests":{"perSecondAvg":0},"responseTime":{"averageAvg":0},"service":"vesta-backend","timestamp":"2025-06-10T21:05:39.519Z"}

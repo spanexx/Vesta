@@ -22,30 +22,45 @@ export async function createMainAdmin() {
     if (!existingAdmin) {
       console.log('Admin not found by email, checking by username...');
       existingAdmin = await Admin.findOne({ username: adminUsername });
-    }
-      if (!existingAdmin) {
+    }    if (!existingAdmin) {
       console.log('No admin account found. Creating new admin account...');
       
-      // Don't hash password here, let the mongoose model middleware handle it
-      const mainAdmin = new Admin({
-        username: adminUsername,
-        email: adminEmail,
-        password: adminPassword, // The model's pre-save hook will hash this
-        permissions: {
-          canEditProfiles: true,
-          canDeleteProfiles: true,
-          canModerateContent: true,
-          canManageSubscriptions: true,
-          canCreateAdmin: true
-        }
-      });
+      try {
+        // Don't hash password here, let the mongoose model middleware handle it
+        const mainAdmin = new Admin({
+          username: adminUsername,
+          email: adminEmail,
+          password: adminPassword, // The model's pre-save hook will hash this
+          permissions: {
+            canEditProfiles: true,
+            canDeleteProfiles: true,
+            canModerateContent: true,
+            canManageSubscriptions: true,
+            canCreateAdmin: true
+          }
+        });
 
-      await mainAdmin.save();
-      console.log('✅ Main admin created successfully with credentials:');
-      console.log(`   Username: ${adminUsername}`);
-      console.log(`   Email: ${adminEmail}`);
-      console.log(`   Password: ${adminPassword}`);
-      return mainAdmin;
+        console.log('About to save admin...');
+        const savedAdmin = await mainAdmin.save();
+        console.log('Admin saved successfully:', savedAdmin._id);
+        
+        // Verify the admin was actually saved
+        const verifyAdmin = await Admin.findById(savedAdmin._id);
+        if (verifyAdmin) {
+          console.log('✅ Admin verified in database');
+        } else {
+          console.log('❌ Admin not found after save');
+        }
+        
+        console.log('✅ Main admin created successfully with credentials:');
+        console.log(`   Username: ${adminUsername}`);
+        console.log(`   Email: ${adminEmail}`);
+        console.log(`   Password: ${adminPassword}`);
+        return savedAdmin;
+      } catch (saveError) {
+        console.error('❌ Error saving admin:', saveError);
+        throw saveError;
+      }
     } else {
       console.log('✅ Main admin already exists:');
       console.log(`   Username: ${existingAdmin.username}`);
