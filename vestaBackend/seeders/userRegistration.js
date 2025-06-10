@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { MongoClient } from 'mongodb';
-const url = 'mongodb+srv://girlfriendExp:cc58uyAWEgVu7KT6@girlfriendexp.7qu5l.mongodb.net/Vesta?retryWrites=true&w=majority&appName=girlfriendExp';
+import dotenv from 'dotenv';
+dotenv.config();
+
+const url = process.env.MONGODB_URI;
 const dbName = 'Vesta';
 
 const registerUser = async (userData) => {
