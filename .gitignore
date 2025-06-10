@@ -6,6 +6,7 @@
 /out-tsc
 /bazel-out
 .env*
+.env.production
 
 # Node
 /node_modules
