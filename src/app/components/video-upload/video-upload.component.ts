@@ -6,7 +6,7 @@ import { FileUploadService } from '../../services/file-upload.service';
 import { VideoService } from '../../services/video.service';
 import { lastValueFrom, Subscription, forkJoin } from 'rxjs';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../environments/environment';
 import { AuthenticationService } from '../../services/authentication.service';
 import { SubscriberVideo } from '../../models/subscriberVideo.model';
 import { RouterModule } from '@angular/router';

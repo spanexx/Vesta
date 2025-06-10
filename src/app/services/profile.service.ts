@@ -1,10 +1,10 @@
-import { authRoutes } from './../../environments/apiRoutes';
+import { authRoutes } from '../environments/apiRoutes';
 import { Injectable } from '@angular/core';
 import { AuthenticationService } from './authentication.service';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, tap, throwError, map } from 'rxjs';
 import { UserProfile } from '../models/userProfile.model';
-import { profileRoutes } from '../../environments/apiRoutes';
+import { profileRoutes } from '../environments/apiRoutes';
 
 export interface LocationStats {
   countries: Array<{country: string, count: number}>;

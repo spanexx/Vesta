@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
 import { Observable, map, catchError, throwError } from 'rxjs';
-import { environment } from '../../environments/environment';
-import { profileRoutes } from '../../environments/apiRoutes';
+import { environment } from '../environments/environment';
+import { profileRoutes } from '../environments/apiRoutes';
 import { AuthenticationService } from './authentication.service';
 import { UserProfile } from '../models/userProfile.model';
 

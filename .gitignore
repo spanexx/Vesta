@@ -8,6 +8,7 @@
 .env*
 .env.production
 environment.prod.ts
+environment.ts
 
 # Node
 /node_modules

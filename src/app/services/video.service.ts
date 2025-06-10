@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { videoRoutes } from '../../environments/apiRoutes';
-import { environment } from '../../environments/environment';
+import { videoRoutes } from '../environments/apiRoutes';
+import { environment } from '../environments/environment';
 import { AuthenticationService } from './authentication.service';
 import { SubscriberVideo, VideoResponse, VideoSubscriptionStatus, VideoUploadPayload } from '../models/subscriberVideo.model';
 

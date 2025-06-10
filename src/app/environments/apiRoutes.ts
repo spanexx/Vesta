@@ -1,4 +1,4 @@
-import { environment } from '../environments/environment';
+import { environment } from './environment';
 
 const apiUrl = environment.apiUrl;
 

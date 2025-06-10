@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, tap, throwError } from 'rxjs'
 import { UserProfile } from '../models/userProfile.model';
-import { authRoutes, meRoute } from '../../environments/apiRoutes';
+import { authRoutes, meRoute } from '../environments/apiRoutes';
 import { LoginResponse } from '../interfaces/auth.interface';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root',

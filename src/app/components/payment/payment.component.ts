@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { loadStripe } from '@stripe/stripe-js';
 import { PaymentService } from '../../services/payment.service';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';

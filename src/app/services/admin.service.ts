@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, tap, catchError, throwError } from 'rxjs';
-import { adminRoutes } from '../../environments/apiRoutes';
+import { adminRoutes } from '../environments/apiRoutes';
 import { Admin, AdminLoginResponse, AdminCreateResponse, UserFileResponse } from '../models/admin.model';
 import { UserProfile } from '../models/userProfile.model';
 
