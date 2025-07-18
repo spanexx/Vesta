@@ -6,7 +6,7 @@ import { authRoutes, meRoute } from '../environments/apiRoutes';
 import { LoginResponse } from '../interfaces/auth.interface';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { environment } from '../environments/environment';
+import { environment } from '../environments/environment.prod';
 
 @Injectable({
   providedIn: 'root',

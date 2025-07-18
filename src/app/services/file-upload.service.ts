@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
 import { Observable, map, catchError, throwError } from 'rxjs';
-import { environment } from '../environments/environment';
 import { profileRoutes } from '../environments/apiRoutes';
 import { AuthenticationService } from './authentication.service';
 import { UserProfile } from '../models/userProfile.model';
+import { environment } from '../environments/environment';
 
 interface UploadResponse {
   success: boolean;
@@ -183,7 +183,7 @@ console.log('payload', payload);
    * Returns the URL for a given media file ID.
    */
   getMediaUrl(fileId: string): string {
-    return `${this.baseUrl}/api/media/${fileId}`;
+    return `${this.mediaBaseUrl}/${fileId}`;
   }
 
   uploadPaymentSlip(base64Data: string, filename: string, contentType: string): Observable<any> {
@@ -199,3 +199,4 @@ console.log('payload', payload);
     );
   }
 }
+
